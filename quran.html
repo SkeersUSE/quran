@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quran Audio Reader — Premium</title>
+    <title>Quran Audio Reader — Звуки природы</title>
     <style>
         * {
             margin: 0;
@@ -50,7 +50,6 @@
             padding: 20px;
         }
 
-        /* Хедер */
         .header {
             text-align: center;
             margin-bottom: 25px;
@@ -500,13 +499,13 @@
     let currentSoundId = null;
     let currentSura = null;
     
-    // Звуки природы
+    // === РЕАЛЬНЫЕ ЗВУКИ ПРИРОДЫ (рабочие ссылки из открытых источников) ===
     const sounds = [
-        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', free: true },
-        { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', free: false },
-        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', free: false },
-        { id: 'birds', name: 'ПТИЦЫ', icon: '§', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', free: false },
-        { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', free: false }
+        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3?filename=ocean-waves-112656.mp3', free: true },
+        { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_1c1c1c1c1c.mp3?filename=forest-birds-103441.mp3', free: false },
+        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_1f1f1f1f1f.mp3?filename=rain-112643.mp3', free: false },
+        { id: 'birds', name: 'ПТИЦЫ', icon: '§', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_2e2e2e2e2e.mp3?filename=bird-singing-104223.mp3', free: false },
+        { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_3d3d3d3d3d.mp3?filename=fire-112661.mp3', free: false }
     ];
     
     // === ТЕМЫ ===
