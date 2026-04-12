@@ -3,206 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quran Audio Reader — Чтение Корана со звуками природы</title>
+    <title>Quran Audio Reader — Premium</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
-            background: radial-gradient(ellipse at 30% 40%, #1a1a2e, #0a0a15);
+            font-family: -apple-system, 'SF Pro Display', 'Segoe UI', Helvetica, sans-serif;
+            background: linear-gradient(57deg, #000000 0%, #1a1a1a 45%, #000000 100%);
             min-height: 100vh;
             color: #ffffff;
             transition: background 0.3s;
         }
-        
-        /* iOS 26 Glass эффект */
+
+        /* iOS 26 Glass эффект — прозрачный блюр */
         .glass {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: rgba(30, 30, 35, 0.35);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: 44px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
-        
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            background: rgba(40, 40, 45, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 32px;
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border: 0.5px solid rgba(255, 255, 255, 0.12);
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
-        
+
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(60, 60, 70, 0.4);
             transform: scale(1.02);
         }
-        
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
-        
+
         /* Хедер */
         .header {
             text-align: center;
             margin-bottom: 25px;
         }
-        
+
         h1 {
             padding: 20px;
             font-size: 1.8em;
             font-weight: 600;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(20, 20, 25, 0.5);
             backdrop-filter: blur(20px);
             border-radius: 55px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
             letter-spacing: -0.5px;
         }
-        
+
         /* Premium бейдж */
         .premium-badge {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            background: linear-gradient(135deg, #d4af37, #b8860b);
             padding: 8px 16px;
             border-radius: 40px;
             font-size: 0.7em;
             font-weight: 600;
-            color: #1a1a2e;
+            color: #000000;
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
             cursor: pointer;
             transition: all 0.2s;
+            font-family: monospace;
         }
-        
+
         .premium-badge:hover {
             transform: scale(1.05);
         }
-        
+
         /* Профиль */
         .profile-panel {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(138, 180, 248, 0.08);
+            background: rgba(30, 30, 35, 0.3);
             backdrop-filter: blur(20px);
             border-radius: 60px;
             padding: 8px 16px;
             margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 10px;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .profile-info {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-        
+
         .avatar {
             width: 45px;
             height: 45px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            background: linear-gradient(135deg, #d4af37, #b8860b);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.5em;
         }
-        
+
         .username {
             font-weight: 600;
             font-size: 1.1em;
         }
-        
+
         /* Звуки природы */
         .sounds-section {
             margin-bottom: 25px;
         }
-        
+
         .section-title {
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #8ab4f8;
+            color: #b0b0b0;
             margin-bottom: 12px;
             padding-left: 8px;
         }
-        
+
         .sounds-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 12px;
         }
-        
+
         .sound-card {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(40, 40, 45, 0.35);
             backdrop-filter: blur(20px);
             border-radius: 28px;
             padding: 14px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
             position: relative;
         }
-        
+
         .sound-card.active {
-            background: rgba(255, 215, 0, 0.2);
-            border-color: #ffd700;
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
         }
-        
+
         .sound-card.locked {
             opacity: 0.5;
             cursor: default;
         }
-        
+
         .sound-card.locked:hover {
             transform: none;
         }
-        
+
         .sound-card:hover:not(.locked) {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(80, 80, 90, 0.5);
             transform: scale(1.02);
         }
-        
+
         .sound-icon {
             font-size: 2em;
             margin-bottom: 8px;
         }
-        
+
         .sound-name {
             font-size: 0.75em;
             font-weight: 500;
         }
-        
+
         .lock-icon {
             position: absolute;
             top: 8px;
             right: 8px;
             font-size: 0.7em;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             border-radius: 20px;
             padding: 2px 6px;
         }
-        
+
         .volume-slider {
             margin-top: 15px;
             padding: 0 10px;
         }
-        
+
         .volume-slider input {
             width: 100%;
             height: 4px;
@@ -210,16 +210,16 @@
             background: rgba(255,255,255,0.2);
             -webkit-appearance: none;
         }
-        
+
         .volume-slider input::-webkit-slider-thumb {
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            background: #ffd700;
+            background: #d4af37;
             -webkit-appearance: none;
             cursor: pointer;
         }
-        
+
         /* Суры */
         .sura-list {
             display: grid;
@@ -230,46 +230,47 @@
             overflow-y: auto;
             padding: 5px;
         }
-        
+
         .sura-card {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(40, 40, 45, 0.35);
             backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 14px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .sura-card:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(80, 80, 90, 0.5);
             transform: scale(1.02);
         }
-        
+
         .sura-number {
-            color: #ffd966;
+            color: #d4af37;
             font-weight: 600;
             font-size: 0.8em;
         }
-        
+
         .sura-name {
             font-size: 0.9em;
             margin-top: 5px;
         }
-        
+
         /* Чтение суры */
         .reading-panel {
-            background: rgba(18, 28, 40, 0.65);
-            backdrop-filter: blur(32px);
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(35px);
             border-radius: 44px;
             padding: 24px;
             margin-top: 20px;
             display: none;
             max-height: 500px;
             overflow-y: auto;
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .reading-header {
             display: flex;
             justify-content: space-between;
@@ -278,9 +279,9 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .close-btn {
-            background: rgba(255,85,85,0.3);
+            background: rgba(200, 70, 70, 0.4);
             border: none;
             padding: 8px 20px;
             border-radius: 30px;
@@ -288,36 +289,36 @@
             font-size: 0.8em;
             color: white;
         }
-        
+
         .ayah {
             margin-bottom: 20px;
             padding: 16px;
-            background: rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.03);
             border-radius: 28px;
             transition: all 0.2s;
         }
-        
+
         .ayah:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.07);
         }
-        
+
         .arabic {
             font-family: 'Noto Naskh Arabic', 'Amiri', serif;
             font-size: 1.4em;
             text-align: right;
             line-height: 1.8;
             margin-bottom: 10px;
-            color: #eef4ff;
+            color: #f0f0f0;
         }
-        
+
         .translation {
             font-size: 0.9em;
-            color: #cbd5e6;
+            color: #c0c0c0;
             line-height: 1.5;
             padding-left: 12px;
-            border-left: 3px solid #ffd700;
+            border-left: 3px solid #d4af37;
         }
-        
+
         /* Premium модалка */
         .premium-overlay {
             position: fixed;
@@ -332,34 +333,34 @@
             justify-content: center;
             z-index: 1000;
         }
-        
+
         .premium-card {
-            background: rgba(20,30,50,0.95);
+            background: rgba(20,20,25,0.95);
             backdrop-filter: blur(30px);
             border-radius: 48px;
             padding: 30px;
             text-align: center;
             width: 320px;
-            border: 0.5px solid rgba(255,215,0,0.3);
+            border: 0.5px solid rgba(212,175,55,0.3);
         }
-        
+
         .premium-card h3 {
             font-size: 1.8em;
             margin-bottom: 10px;
-            color: #ffd700;
+            color: #d4af37;
         }
-        
+
         .premium-price {
             font-size: 2em;
             font-weight: bold;
             margin: 20px 0;
         }
-        
+
         .premium-features {
             text-align: left;
             margin: 20px 0;
         }
-        
+
         .premium-features li {
             list-style: none;
             margin: 10px 0;
@@ -367,9 +368,9 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .premium-btn {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            background: linear-gradient(135deg, #d4af37, #b8860b);
             border: none;
             padding: 14px 28px;
             border-radius: 40px;
@@ -377,8 +378,9 @@
             cursor: pointer;
             width: 100%;
             font-size: 1.1em;
+            color: #000;
         }
-        
+
         .close-premium {
             background: rgba(255,255,255,0.1);
             border: none;
@@ -387,8 +389,9 @@
             margin-top: 10px;
             cursor: pointer;
             width: 100%;
+            color: white;
         }
-        
+
         .footer {
             text-align: center;
             padding: 20px;
@@ -396,29 +399,29 @@
             opacity: 0.6;
             margin-top: 20px;
         }
-        
+
         @media (max-width: 550px) {
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .arabic { font-size: 1.2em; }
             .sounds-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
         }
-        
+
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="premium-badge" onclick="openPremium()">👑 PREMIUM</div>
+    <div class="premium-badge" onclick="openPremium()">✦ PREMIUM ✦</div>
     
     <div class="header">
-        <h1>📖 Quran Audio Reader</h1>
+        <h1>۞ Quran Audio Reader ۞</h1>
     </div>
     
     <div class="profile-panel">
         <div class="profile-info">
-            <div class="avatar">🕌</div>
+            <div class="avatar">۞</div>
             <div class="username">Читатель</div>
         </div>
         <div class="theme-buttons" style="display: flex; gap: 8px;">
@@ -429,7 +432,7 @@
     
     <!-- Звуки природы -->
     <div class="sounds-section">
-        <div class="section-title">🎵 ФОНОВЫЕ ЗВУКИ</div>
+        <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
         <div class="sounds-grid" id="soundsGrid"></div>
         <div class="volume-slider">
             <input type="range" id="volumeSlider" min="0" max="100" value="30">
@@ -437,37 +440,37 @@
     </div>
     
     <!-- Суры -->
-    <div class="section-title">📖 ВЫБЕРИ СУРУ</div>
-    <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✨ Загрузка...</div></div>
+    <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
+    <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
     
     <!-- Панель чтения -->
     <div id="readingPanel" class="reading-panel">
         <div class="reading-header">
             <span id="suraTitle"></span>
-            <button class="close-btn" onclick="closeReading()">✕ Закрыть</button>
+            <button class="close-btn" onclick="closeReading()">✕ ЗАКРЫТЬ</button>
         </div>
         <div id="suraText"></div>
     </div>
     
-    <div class="footer">Читай Коран под звуки природы | Premium — больше звуков 🌊🌧️🐦🔥</div>
+    <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
 </div>
 
 <!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
-        <h3>👑 PREMIUM</h3>
-        <p>Разблокируй все звуки природы</p>
-        <div class="premium-price">199 ₽ / месяц</div>
+        <h3>✦ PREMIUM ✦</h3>
+        <p>РАЗБЛОКИРУЙ ВСЕ ЗВУКИ</p>
+        <div class="premium-price">199 ₽ / МЕСЯЦ</div>
         <ul class="premium-features">
-            <li>🌊 + Звук "Лес"</li>
-            <li>🌧️ + Звук "Дождь"</li>
-            <li>🐦 + Звук "Птицы"</li>
-            <li>🔥 + Звук "Костер"</li>
-            <li>🎚️ Сохранение настроек</li>
-            <li>✨ Без рекламы</li>
+            <li>✧ + ЗВУК "ЛЕС"</li>
+            <li>✧ + ЗВУК "ДОЖДЬ"</li>
+            <li>✧ + ЗВУК "ПТИЦЫ"</li>
+            <li>✧ + ЗВУК "КОСТЕР"</li>
+            <li>✧ СОХРАНЕНИЕ НАСТРОЕК</li>
+            <li>✧ БЕЗ РЕКЛАМЫ</li>
         </ul>
-        <button class="premium-btn" onclick="buyPremium()">Купить Premium</button>
-        <button class="close-premium" onclick="closePremium()">Закрыть</button>
+        <button class="premium-btn" onclick="buyPremium()">КУПИТЬ PREMIUM</button>
+        <button class="close-premium" onclick="closePremium()">ЗАКРЫТЬ</button>
     </div>
 </div>
 
@@ -480,20 +483,20 @@
     
     // Звуки природы
     const sounds = [
-        { id: 'waves', name: 'Волны', icon: '🌊', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', free: true },
-        { id: 'forest', name: 'Лес', icon: '🌲', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', free: false },
-        { id: 'rain', name: 'Дождь', icon: '🌧️', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', free: false },
-        { id: 'birds', name: 'Птицы', icon: '🐦', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', free: false },
-        { id: 'fire', name: 'Костер', icon: '🔥', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', free: false }
+        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', free: true },
+        { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', free: false },
+        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', free: false },
+        { id: 'birds', name: 'ПТИЦЫ', icon: '§', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', free: false },
+        { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', free: false }
     ];
     
     // === ТЕМЫ ===
     function setTheme(theme) {
         if (theme === 'dark') {
-            document.body.style.background = 'radial-gradient(ellipse at 30% 40%, #1a1a2e, #0a0a15)';
+            document.body.style.background = 'linear-gradient(57deg, #000000 0%, #1a1a1a 45%, #000000 100%)';
             document.body.style.color = '#ffffff';
         } else {
-            document.body.style.background = 'radial-gradient(ellipse at 30% 40%, #e8e8e0, #d0d0c8)';
+            document.body.style.background = 'linear-gradient(57deg, #c0c0c0 0%, #e0e0e0 45%, #c0c0c0 100%)';
             document.body.style.color = '#1a1a2e';
         }
         localStorage.setItem('quran_theme', theme);
@@ -515,7 +518,7 @@
         localStorage.setItem('quran_premium', 'true');
         closePremium();
         renderSounds();
-        showNotif('✨ Premium активирован! Все звуки разблокированы! ✨');
+        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
     }
     
     // === ЗВУКИ ===
@@ -538,7 +541,7 @@
         currentSoundId = soundId;
         
         renderSounds();
-        showNotif(`🎵 Играет: ${sound.name}`);
+        showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
     }
     
     function stopSound() {
@@ -570,17 +573,16 @@
                 <div class="sound-card ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}" onclick="${isUnlocked ? `playSound('${sound.id}')` : 'openPremium()'}">
                     <div class="sound-icon">${sound.icon}</div>
                     <div class="sound-name">${sound.name}</div>
-                    ${!isUnlocked ? '<div class="lock-icon">🔒</div>' : ''}
-                    ${isActive ? '<div style="font-size:0.6em; margin-top:5px;">▶️</div>' : ''}
+                    ${!isUnlocked ? '<div class="lock-icon">⌘</div>' : ''}
+                    ${isActive ? '<div style="font-size:0.6em; margin-top:5px;">▶</div>' : ''}
                 </div>
             `;
         });
         
-        // Кнопка остановки
         container.innerHTML += `
             <div class="sound-card" onclick="stopSound()">
-                <div class="sound-icon">⏹️</div>
-                <div class="sound-name">Остановить</div>
+                <div class="sound-icon">■</div>
+                <div class="sound-name">СТОП</div>
             </div>
         `;
     }
@@ -623,7 +625,7 @@
         const titleSpan = document.getElementById('suraTitle');
         
         panel.style.display = 'block';
-        textDiv.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">🌙 Загрузка...</div>';
+        textDiv.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div>';
         titleSpan.innerHTML = `${num}. ${suraNames[num]}`;
         panel.scrollIntoView({ behavior: 'smooth' });
         
@@ -648,10 +650,10 @@
                 textDiv.innerHTML = html;
                 localStorage.setItem('quran_last_sura', num);
             } else {
-                textDiv.innerHTML = '<div class="loading">⚠️ Ошибка загрузки</div>';
+                textDiv.innerHTML = '<div class="loading">⚠️ ОШИБКА ЗАГРУЗКИ</div>';
             }
         } catch(e) {
-            textDiv.innerHTML = '<div class="loading">🔌 Ошибка соединения</div>';
+            textDiv.innerHTML = '<div class="loading">🔌 ОШИБКА СОЕДИНЕНИЯ</div>';
         }
     }
     
@@ -663,7 +665,7 @@
     function showNotif(msg, dur = 2000) {
         const n = document.createElement('div');
         n.innerText = msg;
-        n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;';
+        n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#d4af37;color:#000;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;font-weight:bold;';
         document.body.appendChild(n);
         setTimeout(() => n.remove(), dur);
     }
