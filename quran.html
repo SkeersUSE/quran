@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Электронный Коран — iOS Glass</title>
+    <style>
+        /* Подключаем Noto Naskh Arabic */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, 'SF Pro Text', 'Segoe UI', Helvetica, sans-serif;
+            background: radial-gradient(ellipse at 30% 40%, #0a1628, #030712);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Заголовок */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            padding: 20px;
+            font-size: 2.2em;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 55px;
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 15px;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+        
+        /* Кнопка поддержки */
+        .support-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 100, 50, 0.2));
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 50px;
+            padding: 12px 28px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-align: center;
+            border: 0.5px solid rgba(255, 215, 0, 0.5);
+            font-weight: 600;
+            font-size: 1em;
+            color: #ffd966;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+        
+        .support-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(255, 100, 50, 0.35));
+            transform: scale(1.02);
+            border-color: rgba(255, 215, 0, 0.8);
+            color: #ffe08a;
+        }
+        
+        .support-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .sura-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .sura-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 22px;
+            padding: 16px 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-align: center;
+            border: 0.5px solid rgba(255, 255, 255, 0.25);
+            font-weight: 500;
+        }
+        
+        .sura-card:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .sura-card:active {
+            transform: scale(0.98);
+        }
+        
+        .sura-number {
+            color: #8ab4f8;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        
+        .sura-name {
+            font-size: 0.95em;
+        }
+        
+        .sura-content {
+            background: rgba(18, 28, 40, 0.65);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border-radius: 44px;
+            padding: 28px 24px;
+            margin-top: 20px;
+            display: none;
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .sura-header {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1.5px solid rgba(138, 180, 248, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .close-btn {
+            background: rgba(255, 85, 85, 0.2);
+            backdrop-filter: blur(20px);
+            border: 0.5px solid rgba(255, 100, 100, 0.4);
+            border-radius: 40px;
+            padding: 8px 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 85, 85, 0.5);
+            border-color: rgba(255, 150, 150, 0.7);
+        }
+        
+        .ayah {
+            margin-bottom: 24px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 28px;
+            transition: all 0.2s;
+        }
+        
+        .ayah:hover {
+            background: rgba(255, 255, 255, 0.09);
+        }
+        
+        .arabic {
+            font-family: 'Noto Naskh Arabic', 'Amiri', 'Traditional Arabic', serif;
+            font-size: 1.5em;
+            font-weight: 500;
+            text-align: right;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            color: #eef4ff;
+            letter-spacing: 0.3px;
+            word-spacing: 2px;
+        }
+        
+        .translation {
+            font-size: 0.95em;
+            color: #cbd5e6;
+            line-height: 1.45;
+            padding-left: 14px;
+            border-left: 3px solid #8ab4f8;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.1em;
+            color: #8ab4f8;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 0.75em;
+            color: #6a7c9e;
+            margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 40px;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f1a2c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a5a8c;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 550px) {
+            .sura-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 10px;
+            }
+            .sura-card {
+                padding: 12px 6px;
+            }
+            .arabic {
+                font-size: 1.2em;
+            }
+            .sura-content {
+                padding: 20px;
+            }
+            .support-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📖 Электронный Коран</h1>
+        <div>
+            <a href="https://www.donationalerts.com/r/skeerstm" target="_blank" class="support-btn">
+                🤝 Поддержать нас
+            </a>
+        </div>
+    </div>
+
+    <div id="suraList" class="sura-list">
+        <div class="loading">✨ Загрузка сур...</div>
+    </div>
+
+    <div id="suraContent" class="sura-content">
+        <div class="sura-header">
+            <span id="suraTitle"></span>
+            <button class="close-btn" onclick="closeSura()">✕ Закрыть</button>
+        </div>
+        <div id="suraText"></div>
+    </div>
+
+    <div class="footer">
+        Священный Коран | Перевод Э. Кулиева<br>
+        Шрифт: Noto Naskh Arabic | iOS Glass стиль
+    </div>
+</div>
+
+<script>
+    const suraNames = {
+        1: "Аль-Фатиха (Открывающая)",
+        2: "Аль-Бакара (Корова)",
+        3: "Аль Имран (Семейство Имрана)",
+        4: "Ан-Ниса (Женщины)",
+        5: "Аль-Маида (Трапеза)",
+        6: "Аль-Анам (Скот)",
+        7: "Аль-Араф (Ограды)",
+        8: "Аль-Анфаль (Трофеи)",
+        9: "Ат-Тауба (Покаяние)",
+        10: "Йунус (Иона)",
+        11: "Худ (Худ)",
+        12: "Йусуф (Иосиф)",
+        13: "Ар-Рад (Гром)",
+        14: "Ибрахим (Авраам)",
+        15: "Аль-Хиджр (Аль-Хиджр)",
+        16: "Ан-Нахль (Пчёлы)",
+        17: "Аль-Исра (Ночной перенос)",
+        18: "Аль-Кахф (Пещера)",
+        19: "Марьям (Мария)",
+        20: "Та Ха (Та Ха)",
+        21: "Аль-Анбия (Пророки)",
+        22: "Аль-Хаджж (Паломничество)",
+        23: "Аль-Муминун (Верующие)",
+        24: "Ан-Нур (Свет)",
+        25: "Аль-Фуркан (Различение)",
+        26: "Аш-Шуара (Поэты)",
+        27: "Ан-Намль (Муравьи)",
+        28: "Аль-Касас (Рассказ)",
+        29: "Аль-Анкабут (Паук)",
+        30: "Ар-Рум (Римляне)",
+        31: "Лукман (Лукман)",
+        32: "Ас-Саджда (Земной поклон)",
+        33: "Аль-Ахзаб (Сонмы)",
+        34: "Саба (Сава)",
+        35: "Фатир (Творец)",
+        36: "Йа Син (Йа Син)",
+        37: "Ас-Саффат (Выстроившиеся в ряды)",
+        38: "Сад (Сад)",
+        39: "Аз-Зумар (Толпы)",
+        40: "Гафир (Прощающий)",
+        41: "Фуссилят (Разъяснены)",
+        42: "Аш-Шура (Совет)",
+        43: "Аз-Зухруф (Украшения)",
+        44: "Ад-Духан (Дым)",
+        45: "Аль-Джасия (Коленопреклоненная)",
+        46: "Аль-Ахкаф (Пески)",
+        47: "Мухаммад (Мухаммад)",
+        48: "Аль-Фатх (Победа)",
+        49: "Аль-Худжурат (Комнаты)",
+        50: "Каф (Каф)",
+        51: "Аз-Зарият (Рассеивающие прах)",
+        52: "Ат-Тур (Гора)",
+        53: "Ан-Наджм (Звезда)",
+        54: "Аль-Камар (Месяц)",
+        55: "Ар-Рахман (Милостивый)",
+        56: "Аль-Вакиа (Событие)",
+        57: "Аль-Хадид (Железо)",
+        58: "Аль-Муджадиля (Препирательство)",
+        59: "Аль-Хашр (Собрание)",
+        60: "Аль-Мумтахана (Испытуемая)",
+        61: "Ас-Сафф (Ряды)",
+        62: "Аль-Джумуа (Собрание)",
+        63: "Аль-Мунафикун (Лицемеры)",
+        64: "Ат-Тагабун (Взаимное обманывание)",
+        65: "Ат-Талак (Развод)",
+        66: "Ат-Тахрим (Запрещение)",
+        67: "Аль-Мульк (Власть)",
+        68: "Аль-Калам (Письменная трость)",
+        69: "Аль-Хакка (Неизбежное)",
+        70: "Аль-Мааридж (Ступени)",
+        71: "Нух (Ной)",
+        72: "Аль-Джинн (Джинны)",
+        73: "Аль-Муззаммиль (Закутавшийся)",
+        74: "Аль-Муддассир (Завернувшийся)",
+        75: "Аль-Кийама (Воскресение)",
+        76: "Аль-Инсан (Человек)",
+        77: "Аль-Мурсалят (Посылаемые)",
+        78: "Ан-Наба (Вести)",
+        79: "Ан-Назиат (Вырывающие)",
+        80: "Абаса (Нахмурился)",
+        81: "Ат-Таквир (Скручивание)",
+        82: "Аль-Инфитар (Раскалывание)",
+        83: "Аль-Мутаффифин (Обвешивающие)",
+        84: "Аль-Иншикак (Раскалывание)",
+        85: "Аль-Бурудж (Созвездия)",
+        86: "Ат-Тарик (Ночной путник)",
+        87: "Аль-Аля (Всевышний)",
+        88: "Аль-Гашия (Покрывающее)",
+        89: "Аль-Фаджр (Заря)",
+        90: "Аль-Балад (Город)",
+        91: "Аш-Шамс (Солнце)",
+        92: "Аль-Лайль (Ночь)",
+        93: "Ад-Духа (Утро)",
+        94: "Аль-Инширах (Не раскрыли ли)",
+        95: "Ат-Тин (Смоковница)",
+        96: "Аль-Аляк (Сгусток)",
+        97: "Аль-Кадр (Могущество)",
+        98: "Аль-Баййина (Ясное знамение)",
+        99: "Аз-Зальзаля (Землетрясение)",
+        100: "Аль-Адият (Скачущие)",
+        101: "Аль-Кариа (Великое бедствие)",
+        102: "Ат-Такасур (Приумножение)",
+        103: "Аль-Аср (Предвечернее время)",
+        104: "Аль-Хумаза (Хулитель)",
+        105: "Аль-Филь (Слон)",
+        106: "Курайш (Курайшиты)",
+        107: "Аль-Маун (Подаяние)",
+        108: "Аль-Каусар (Обильный)",
+        109: "Аль-Кафирун (Неверующие)",
+        110: "Ан-Наср (Помощь)",
+        111: "Аль-Масад (Пальмовые волокна)",
+        112: "Аль-Ихлас (Искренность)",
+        113: "Аль-Фаляк (Рассвет)",
+        114: "Ан-Нас (Люди)"
+    };
+
+    async function loadSuraList() {
+        const container = document.getElementById('suraList');
+        container.innerHTML = '';
+        for (let i = 1; i <= 114; i++) {
+            const card = document.createElement('div');
+            card.className = 'sura-card';
+            card.onclick = () => loadSura(i);
+            card.innerHTML = `<span class="sura-number">${i}.</span> <span class="sura-name">${suraNames[i]}</span>`;
+            container.appendChild(card);
+        }
+    }
+
+    async function loadSura(number) {
+        const contentDiv = document.getElementById('suraContent');
+        const textDiv = document.getElementById('suraText');
+        const titleSpan = document.getElementById('suraTitle');
+
+        contentDiv.style.display = 'block';
+        textDiv.innerHTML = '<div class="loading">🌙 Загрузка суры...</div>';
+        titleSpan.innerHTML = `${number}. ${suraNames[number]}`;
+        contentDiv.scrollIntoView({ behavior: 'smooth' });
+
+        try {
+            const response = await fetch(`https://api.alquran.cloud/v1/surah/${number}/ru.kuliev`);
+            const data = await response.json();
+            if (data.status === 'OK') {
+                const ayahs = data.data.ayahs;
+                let html = '';
+                for (let i = 0; i < ayahs.length; i++) {
+                    html += `
+                        <div class="ayah">
+                            <div class="arabic">${ayahs[i].text}</div>
+                            <div class="translation">${i+1}. ${ayahs[i].translation}</div>
+                        </div>
+                    `;
+                }
+                textDiv.innerHTML = html;
+            } else {
+                textDiv.innerHTML = '<div class="loading">⚠️ Не удалось загрузить суру.</div>';
+            }
+        } catch (err) {
+            textDiv.innerHTML = '<div class="loading">🔌 Ошибка соединения. Проверьте интернет.</div>';
+        }
+    }
+
+    function closeSura() {
+        document.getElementById('suraContent').style.display = 'none';
+    }
+
+    loadSuraList();
+</script>
+</body>
+</html>
