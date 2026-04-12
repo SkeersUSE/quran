@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Электронный Коран — iOS Glass</title>
     <style>
-        /* Подключаем Noto Naskh Arabic */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
         * {
@@ -27,7 +26,6 @@
             padding: 20px;
         }
         
-        /* Заголовок */
         .header {
             text-align: center;
             margin-bottom: 25px;
@@ -39,15 +37,12 @@
             font-weight: 600;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border-radius: 55px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
             color: white;
-            letter-spacing: -0.3px;
         }
         
-        /* Кнопка поддержки */
         .support-btn {
             display: inline-flex;
             align-items: center;
@@ -55,29 +50,59 @@
             gap: 10px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 100, 50, 0.2));
             backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border-radius: 50px;
             padding: 12px 28px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.25s;
             text-align: center;
             border: 0.5px solid rgba(255, 215, 0, 0.5);
             font-weight: 600;
             font-size: 1em;
             color: #ffd966;
             text-decoration: none;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         
         .support-btn:hover {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(255, 100, 50, 0.35));
             transform: scale(1.02);
-            border-color: rgba(255, 215, 0, 0.8);
-            color: #ffe08a;
         }
         
-        .support-btn:active {
-            transform: scale(0.98);
+        /* Новая табличка-совет */
+        .advice-card {
+            background: rgba(138, 180, 248, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 16px 24px;
+            margin: 0 0 25px 0;
+            border: 0.5px solid rgba(138, 180, 248, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            transition: all 0.3s;
+        }
+        
+        .advice-card:hover {
+            background: rgba(138, 180, 248, 0.15);
+            border-color: rgba(138, 180, 248, 0.6);
+        }
+        
+        .advice-icon {
+            font-size: 2em;
+        }
+        
+        .advice-text {
+            font-size: 1em;
+            font-weight: 500;
+            color: #c8e0ff;
+            text-align: center;
+            line-height: 1.4;
+        }
+        
+        .advice-text strong {
+            color: #ffd966;
         }
         
         .sura-list {
@@ -90,11 +115,10 @@
         .sura-card {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
             border-radius: 22px;
             padding: 16px 10px;
             cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.25s;
             text-align: center;
             border: 0.5px solid rgba(255, 255, 255, 0.25);
             font-weight: 500;
@@ -103,11 +127,6 @@
         .sura-card:hover {
             background: rgba(255, 255, 255, 0.18);
             transform: scale(1.02);
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-        
-        .sura-card:active {
-            transform: scale(0.98);
         }
         
         .sura-number {
@@ -116,20 +135,14 @@
             margin-right: 6px;
         }
         
-        .sura-name {
-            font-size: 0.95em;
-        }
-        
         .sura-content {
             background: rgba(18, 28, 40, 0.65);
             backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
             border-radius: 44px;
             padding: 28px 24px;
             margin-top: 20px;
             display: none;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
         
         .sura-header {
@@ -160,7 +173,6 @@
         
         .close-btn:hover {
             background: rgba(255, 85, 85, 0.5);
-            border-color: rgba(255, 150, 150, 0.7);
         }
         
         .ayah {
@@ -168,7 +180,6 @@
             padding: 18px;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 28px;
-            transition: all 0.2s;
         }
         
         .ayah:hover {
@@ -176,15 +187,13 @@
         }
         
         .arabic {
-            font-family: 'Noto Naskh Arabic', 'Amiri', 'Traditional Arabic', serif;
+            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
             font-size: 1.5em;
             font-weight: 500;
             text-align: right;
             line-height: 1.8;
             margin-bottom: 12px;
             color: #eef4ff;
-            letter-spacing: 0.3px;
-            word-spacing: 2px;
         }
         
         .translation {
@@ -212,33 +221,15 @@
             border-radius: 40px;
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f1a2c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3a5a8c;
-            border-radius: 10px;
-        }
-        
         @media (max-width: 550px) {
             .sura-list {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
                 gap: 10px;
             }
-            .sura-card {
-                padding: 12px 6px;
-            }
             .arabic {
                 font-size: 1.2em;
             }
-            .sura-content {
-                padding: 20px;
-            }
-            .support-btn {
-                padding: 10px 20px;
+            .advice-text {
                 font-size: 0.9em;
             }
         }
@@ -247,11 +238,19 @@
 <body>
 <div class="container">
     <div class="header">
-        <h1>📖 Перевод Священного Корана</h1>
-        <div>
-            <a href="https://www.donationalerts.com/r/skeerstm" target="_blank" class="support-btn">
-                🤝 Поддержать нас
-            </a>
+        <h1>📖 Электронный Коран</h1>
+        
+        <a href="https://www.donationalerts.com/r/skeerstm" target="_blank" class="support-btn">
+            🤝 Поддержать нас
+        </a>
+        
+        <!-- Новая табличка-совет -->
+        <div class="advice-card">
+            <div class="advice-icon">⏳</div>
+            <div class="advice-text">
+                <strong>30 минут в день с Кораном</strong><br>
+                Уделяй чтению всего полчаса — и ты увидишь, как изменится твоя жизнь ✨
+            </div>
         </div>
     </div>
 
