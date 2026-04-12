@@ -3,45 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран — Квесты, титулы, магазин и закладки</title>
+    <title>Quran Audio Reader — Чтение Корана со звуками природы</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
         
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
         
         body {
-            font-family: -apple-system, 'SF Pro Text', 'Segoe UI', Helvetica, sans-serif;
-            background: radial-gradient(ellipse at 30% 40%, #0a1628, #030712);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+            background: radial-gradient(ellipse at 30% 40%, #1a1a2e, #0a0a15);
             min-height: 100vh;
             color: #ffffff;
             transition: background 0.3s;
         }
         
-        body.gold-theme { background: radial-gradient(ellipse at 30% 40%, #3d2b1a, #1a0f0a); }
-        body.light-theme { background: #f5f5f0; color: #1a1a2e; }
-        body.light-theme .sura-card, body.light-theme .quest-item, body.light-theme .pass-panel,
-        body.light-theme .sura-content, body.light-theme .profile-panel, body.light-theme .stats-card,
-        body.light-theme .leader-card, body.light-theme .shop-item {
-            background: rgba(0,0,0,0.05);
-            backdrop-filter: blur(10px);
-            color: #1a1a2e;
-        }
-        body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
-        body.light-theme .theme-btn, body.light-theme .support-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
-        
-        .glow-title {
-            text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
-            animation: pulse 1.5s infinite;
+        /* iOS 26 Glass эффект */
+        .glass {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 44px;
+            border: 0.5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         
-        @keyframes pulse {
-            0% { text-shadow: 0 0 5px #fff; }
-            50% { text-shadow: 0 0 20px #fff, 0 0 30px #fff; }
-            100% { text-shadow: 0 0 5px #fff; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 32px;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
         
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 25px; }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Хедер */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
         
         h1 {
             padding: 20px;
@@ -52,8 +67,31 @@
             border-radius: 55px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
+            letter-spacing: -0.5px;
         }
         
+        /* Premium бейдж */
+        .premium-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: #1a1a2e;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .premium-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Профиль */
         .profile-panel {
             display: flex;
             align-items: center;
@@ -62,14 +100,20 @@
             backdrop-filter: blur(20px);
             border-radius: 60px;
             padding: 8px 16px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 10px;
         }
         
-        .profile-info { display: flex; align-items: center; gap: 12px; }
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
         .avatar {
-            width: 45px; height: 45px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             border-radius: 50%;
             display: flex;
@@ -77,403 +121,543 @@
             justify-content: center;
             font-size: 1.5em;
         }
-        .username { font-weight: 600; font-size: 1.1em; }
         
-        .support-btn {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.5);
-            padding: 6px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.8em;
-            text-decoration: none;
-            color: #ffd966;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .support-btn:hover {
-            background: rgba(255,215,0,0.3);
-            transform: scale(1.02);
-        }
-        
-        .theme-buttons { display: flex; gap: 8px; }
-        .theme-btn {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            color: white;
-            font-size: 0.8em;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .action-btn {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.4);
-            padding: 8px 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.8em;
-            transition: all 0.2s;
-        }
-        .action-btn:hover {
-            background: rgba(255,215,0,0.3);
-            transform: scale(1.02);
-        }
-        
-        .stats-card {
-            background: rgba(138, 180, 248, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .prestige-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        .user-title {
+        .username {
+            font-weight: 600;
             font-size: 1.1em;
-            margin: 10px 0;
-            padding: 8px;
-            border-radius: 30px;
-            display: inline-block;
         }
         
-        .pass-panel {
-            background: rgba(138, 180, 248, 0.08);
+        /* Звуки природы */
+        .sounds-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8ab4f8;
+            margin-bottom: 12px;
+            padding-left: 8px;
+        }
+        
+        .sounds-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+        }
+        
+        .sound-card {
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
             border-radius: 28px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-        .pass-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
-        .pass-level {
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #1a1a2e;
-        }
-        .pass-coins { display: flex; align-items: center; gap: 8px; background: rgba(255, 215, 0, 0.15); padding: 6px 16px; border-radius: 40px; }
-        .progress-bar { background: rgba(255,255,255,0.1); border-radius: 20px; height: 12px; overflow: hidden; }
-        .progress-fill { background: linear-gradient(90deg, #ffd700, #ff8c00); width: 0%; height: 100%; transition: width 0.3s; }
-        
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tab-btn {
-            flex: 1;
-            background: rgba(255,255,255,0.08);
-            border: none;
-            padding: 12px;
-            border-radius: 30px;
-            color: white;
+            padding: 14px 8px;
+            text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.85em;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            position: relative;
         }
-        .tab-btn.active { background: rgba(138, 180, 248, 0.4); border-bottom: 2px solid #ffd700; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
         
-        .leader-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 12px 15px;
+        .sound-card.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #ffd700;
+        }
+        
+        .sound-card.locked {
+            opacity: 0.5;
+            cursor: default;
+        }
+        
+        .sound-card.locked:hover {
+            transform: none;
+        }
+        
+        .sound-card:hover:not(.locked) {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
+        
+        .sound-icon {
+            font-size: 2em;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.2s;
         }
-        .leader-rank { width: 50px; font-weight: bold; font-size: 1.2em; }
-        .leader-avatar {
-            width: 40px; height: 40px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-        }
-        .leader-info { flex: 1; }
-        .leader-name { font-weight: 600; }
-        .leader-reads { font-size: 0.8em; opacity: 0.7; }
-        .leader-title { font-size: 0.7em; color: #ffd966; margin-top: 3px; }
         
-        .sura-list, .quest-list, .shop-grid {
+        .sound-name {
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+        
+        .lock-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.7em;
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 2px 6px;
+        }
+        
+        .volume-slider {
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+        
+        .volume-slider input {
+            width: 100%;
+            height: 4px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            -webkit-appearance: none;
+        }
+        
+        .volume-slider input::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffd700;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        
+        /* Суры */
+        .sura-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 12px;
             margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
         }
-        .sura-card, .quest-item, .shop-item {
-            background: rgba(255,255,255,0.08);
+        
+        .sura-card {
+            background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 12px;
+            border-radius: 24px;
+            padding: 14px 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
         }
-        .sura-card:hover, .quest-item:hover, .shop-item:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
-        .sura-number { color: #ffd966; font-weight: bold; }
         
-        .shop-item-icon { font-size: 2.5em; margin-bottom: 8px; }
-        .shop-item-name { font-size: 0.9em; margin-bottom: 5px; }
-        .shop-item-price { color: #ffd966; font-size: 0.8em; }
-        .shop-item.owned { opacity: 0.5; cursor: default; }
+        .sura-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.02);
+        }
         
-        .sura-content {
+        .sura-number {
+            color: #ffd966;
+            font-weight: 600;
+            font-size: 0.8em;
+        }
+        
+        .sura-name {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* Чтение суры */
+        .reading-panel {
             background: rgba(18, 28, 40, 0.65);
             backdrop-filter: blur(32px);
             border-radius: 44px;
-            padding: 20px;
+            padding: 24px;
             margin-top: 20px;
             display: none;
+            max-height: 500px;
+            overflow-y: auto;
         }
-        .sura-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .close-btn { background: rgba(255,85,85,0.3); border: none; padding: 6px 16px; border-radius: 30px; cursor: pointer; }
+        
+        .reading-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .close-btn {
+            background: rgba(255,85,85,0.3);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8em;
+            color: white;
+        }
         
         .ayah {
-            padding: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding: 16px;
             background: rgba(255,255,255,0.04);
-            border-radius: 24px;
-            cursor: pointer;
-            transition: 0.2s;
-            position: relative;
+            border-radius: 28px;
+            transition: all 0.2s;
         }
-        .ayah.read { background: rgba(138,180,248,0.15); border-left: 3px solid #ffd700; }
-        .ayah.reading { background: rgba(255,215,0,0.1); }
-        .timer-bar { position: absolute; bottom: 0; left: 0; height: 3px; background: #ffd700; width: 0%; transition: width 0.1s linear; }
-        .timer-text { position: absolute; top: 5px; right: 10px; font-size: 0.7em; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 20px; }
         
-        .arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 1.3em; text-align: right; line-height: 1.7; margin-bottom: 8px; }
-        .translation { font-size: 0.85em; color: #ccc; padding-left: 12px; border-left: 2px solid #ffd700; }
-        .footer { text-align: center; padding: 20px; font-size: 0.7em; opacity: 0.7; margin-top: 20px; }
-        
-        .quest-badge {
-            display: inline-block;
-            font-size: 0.7em;
-            background: rgba(255,215,0,0.2);
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 5px;
+        .ayah:hover {
+            background: rgba(255,255,255,0.08);
         }
-        .quest-badge.daily { background: rgba(138,180,248,0.3); }
-        .quest-badge.weekly { background: rgba(255,100,100,0.3); }
         
-        .loading { text-align: center; padding: 40px; color: #ffd966; }
-        
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        .arabic {
+            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+            font-size: 1.4em;
+            text-align: right;
+            line-height: 1.8;
+            margin-bottom: 10px;
+            color: #eef4ff;
         }
-        .star {
+        
+        .translation {
+            font-size: 0.9em;
+            color: #cbd5e6;
+            line-height: 1.5;
+            padding-left: 12px;
+            border-left: 3px solid #ffd700;
+        }
+        
+        /* Premium модалка */
+        .premium-overlay {
             position: fixed;
-            top: -20px;
-            font-size: 1.2em;
-            pointer-events: none;
-            z-index: 999;
-            animation: fall linear forwards;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .premium-card {
+            background: rgba(20,30,50,0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 48px;
+            padding: 30px;
+            text-align: center;
+            width: 320px;
+            border: 0.5px solid rgba(255,215,0,0.3);
+        }
+        
+        .premium-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+        
+        .premium-price {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .premium-features {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .premium-features li {
+            list-style: none;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .premium-btn {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+        }
+        
+        .close-premium {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 10px;
+            border-radius: 30px;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.7em;
+            opacity: 0.6;
+            margin-top: 20px;
         }
         
         @media (max-width: 550px) {
-            .sura-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-            .arabic { font-size: 1.1em; }
-            .leader-card { flex-wrap: wrap; }
-            .action-buttons { flex-direction: column; }
-            .profile-panel { flex-direction: column; text-align: center; }
-            .theme-buttons { justify-content: center; }
+            .sura-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .arabic { font-size: 1.2em; }
+            .sounds-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
         }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 10px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>📖 Электронный Коран</h1></div>
-
+    <div class="premium-badge" onclick="openPremium()">👑 PREMIUM</div>
+    
+    <div class="header">
+        <h1>📖 Quran Audio Reader</h1>
+    </div>
+    
     <div class="profile-panel">
         <div class="profile-info">
             <div class="avatar">🕌</div>
             <div class="username">Читатель</div>
         </div>
-        <a href="https://www.donationalerts.com/r/skeerstm" target="_blank" class="support-btn">
-            🤝 Поддержать нас
-        </a>
-        <div class="theme-buttons">
-            <button class="theme-btn" onclick="setTheme('dark')">🌙 Тёмная</button>
-            <button class="theme-btn" onclick="setTheme('gold')">✨ Золотая</button>
-            <button class="theme-btn" onclick="setTheme('light')">☀️ Светлая</button>
+        <div class="theme-buttons" style="display: flex; gap: 8px;">
+            <button class="theme-btn" onclick="setTheme('dark')" style="background:rgba(255,255,255,0.1); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">🌙</button>
+            <button class="theme-btn" onclick="setTheme('light')" style="background:rgba(255,255,255,0.1); border:none; padding:6px 12px; border-radius:30px; cursor:pointer;">☀️</button>
         </div>
     </div>
     
-    <div class="action-buttons">
-        <div class="action-btn" onclick="goToBookmark()">🔖 Продолжить с закладки</div>
-        <div class="action-btn" onclick="resetProgress()">🔄 Сбросить прогресс</div>
-    </div>
-
-    <div class="stats-card">
-        <div style="font-size: 0.8em; opacity: 0.7;">ПРЕСТИЖ</div>
-        <div class="prestige-number" id="prestigeCount">0</div>
-        <div class="user-title" id="userTitle"></div>
-        <div style="margin-top: 10px;">📖 Полных прочтений Корана: <strong id="fullReadsCount">0</strong></div>
-    </div>
-
-    <div class="pass-panel">
-        <div class="pass-header">
-            <div class="pass-level" id="passLevel">Уровень 1</div>
-            <div class="pass-coins"><span>🌙</span> <span id="coinCount">0</span></div>
+    <!-- Звуки природы -->
+    <div class="sounds-section">
+        <div class="section-title">🎵 ФОНОВЫЕ ЗВУКИ</div>
+        <div class="sounds-grid" id="soundsGrid"></div>
+        <div class="volume-slider">
+            <input type="range" id="volumeSlider" min="0" max="100" value="30">
         </div>
-        <div class="progress-bar"><div class="progress-fill" id="passProgress"></div></div>
-        <div style="font-size:0.7em; margin-top:5px;" id="expDisplay">Опыт: 0 / 100</div>
     </div>
-
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('quests')">📋 Квесты</button>
-        <button class="tab-btn" onclick="switchTab('shop')">🛒 Магазин</button>
-        <button class="tab-btn" onclick="switchTab('leaders')">🏆 Лидеры</button>
-        <button class="tab-btn" onclick="switchTab('suras')">📖 Суры</button>
-    </div>
-
-    <div id="questsTab" class="tab-content active"><div id="questList" class="quest-list"><div class="loading">🌟 Загрузка квестов...</div></div></div>
-    <div id="shopTab" class="tab-content"><div id="shopGrid" class="shop-grid"><div class="loading">🛒 Загрузка магазина...</div></div></div>
-    <div id="leadersTab" class="tab-content"><div id="leadersList" class="quest-list"><div class="loading">🏆 Загрузка лидеров...</div></div></div>
-    <div id="surasTab" class="tab-content"><div id="suraList" class="sura-list"><div class="loading">✨ Загрузка сур...</div></div></div>
-
-    <div id="suraContent" class="sura-content">
-        <div class="sura-header"><span id="suraTitle"></span><button class="close-btn" onclick="closeSura()">✕ Закрыть</button></div>
+    
+    <!-- Суры -->
+    <div class="section-title">📖 ВЫБЕРИ СУРУ</div>
+    <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✨ Загрузка...</div></div>
+    
+    <!-- Панель чтения -->
+    <div id="readingPanel" class="reading-panel">
+        <div class="reading-header">
+            <span id="suraTitle"></span>
+            <button class="close-btn" onclick="closeReading()">✕ Закрыть</button>
+        </div>
         <div id="suraText"></div>
     </div>
+    
+    <div class="footer">Читай Коран под звуки природы | Premium — больше звуков 🌊🌧️🐦🔥</div>
+</div>
 
-    <div class="footer">Коран | Перевод Кулиева | Квесты, титулы, магазин и закладки 🌙</div>
+<!-- Premium модалка -->
+<div id="premiumModal" class="premium-overlay" style="display:none;">
+    <div class="premium-card">
+        <h3>👑 PREMIUM</h3>
+        <p>Разблокируй все звуки природы</p>
+        <div class="premium-price">199 ₽ / месяц</div>
+        <ul class="premium-features">
+            <li>🌊 + Звук "Лес"</li>
+            <li>🌧️ + Звук "Дождь"</li>
+            <li>🐦 + Звук "Птицы"</li>
+            <li>🔥 + Звук "Костер"</li>
+            <li>🎚️ Сохранение настроек</li>
+            <li>✨ Без рекламы</li>
+        </ul>
+        <button class="premium-btn" onclick="buyPremium()">Купить Premium</button>
+        <button class="close-premium" onclick="closePremium()">Закрыть</button>
+    </div>
 </div>
 
 <script>
+    // === НАСТРОЙКИ ===
+    let isPremium = localStorage.getItem('quran_premium') === 'true';
+    let currentAudio = null;
+    let currentSoundId = null;
+    let currentSura = null;
+    
+    // Звуки природы
+    const sounds = [
+        { id: 'waves', name: 'Волны', icon: '🌊', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', free: true },
+        { id: 'forest', name: 'Лес', icon: '🌲', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', free: false },
+        { id: 'rain', name: 'Дождь', icon: '🌧️', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', free: false },
+        { id: 'birds', name: 'Птицы', icon: '🐦', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', free: false },
+        { id: 'fire', name: 'Костер', icon: '🔥', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', free: false }
+    ];
+    
     // === ТЕМЫ ===
     function setTheme(theme) {
-        document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
-        if (theme === 'dark') document.body.classList.add('dark-theme');
-        else if (theme === 'gold') document.body.classList.add('gold-theme');
-        else if (theme === 'light') document.body.classList.add('light-theme');
+        if (theme === 'dark') {
+            document.body.style.background = 'radial-gradient(ellipse at 30% 40%, #1a1a2e, #0a0a15)';
+            document.body.style.color = '#ffffff';
+        } else {
+            document.body.style.background = 'radial-gradient(ellipse at 30% 40%, #e8e8e0, #d0d0c8)';
+            document.body.style.color = '#1a1a2e';
+        }
         localStorage.setItem('quran_theme', theme);
     }
     const savedTheme = localStorage.getItem('quran_theme') || 'dark';
     setTheme(savedTheme);
     
-    // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
-    let fullReads = parseInt(localStorage.getItem('quran_full_reads')) || 0;
-    let currentSura = null;
-    let activeTimers = {};
-    let passData = { level: 1, exp: 0, coins: 0, ownedItems: [] };
-    
-    document.getElementById('fullReadsCount').innerText = fullReads;
-    document.getElementById('prestigeCount').innerText = fullReads;
-    
-    // === ТИТУЛЫ ===
-    function getTitle(reads) {
-        if (reads >= 100) return "✨ Великий ✨";
-        if (reads >= 50) return "💎 Хранитель Корана";
-        if (reads >= 25) return "👑 Наставник";
-        if (reads >= 10) return "🔥 Мастер чтения";
-        if (reads >= 5) return "⭐ Лучший из чтецов";
-        if (reads >= 1) return "📖 Чтец";
-        return "";
+    // === PREMIUM ===
+    function openPremium() {
+        document.getElementById('premiumModal').style.display = 'flex';
     }
     
-    function updateTitle() {
-        const title = getTitle(fullReads);
-        const titleDiv = document.getElementById('userTitle');
-        titleDiv.innerText = title;
-        if (title === "✨ Великий ✨") {
-            titleDiv.classList.add('glow-title');
-        } else {
-            titleDiv.classList.remove('glow-title');
+    function closePremium() {
+        document.getElementById('premiumModal').style.display = 'none';
+    }
+    
+    function buyPremium() {
+        isPremium = true;
+        localStorage.setItem('quran_premium', 'true');
+        closePremium();
+        renderSounds();
+        showNotif('✨ Premium активирован! Все звуки разблокированы! ✨');
+    }
+    
+    // === ЗВУКИ ===
+    function playSound(soundId) {
+        const sound = sounds.find(s => s.id === soundId);
+        if (!sound) return;
+        if (!sound.free && !isPremium) {
+            openPremium();
+            return;
         }
-    }
-    updateTitle();
-    
-    function saveFullReads() {
-        localStorage.setItem('quran_full_reads', fullReads);
-        document.getElementById('fullReadsCount').innerText = fullReads;
-        document.getElementById('prestigeCount').innerText = fullReads;
-        updateTitle();
-    }
-    
-    function addFullRead() {
-        fullReads++;
-        saveFullReads();
-        updateLeaders();
-        showNotif(`🎉 Полное прочтение Корана! +1 престиж!`, 3000);
-        if (fullReads === 1) showNotif(`🏅 Получен титул "Чтец"!`, 2000);
-        if (fullReads === 5) showNotif(`🏅 Получен титул "Лучший из чтецов"!`, 2000);
-        if (fullReads === 10) showNotif(`🏅 Получен титул "Мастер чтения"!`, 2000);
-        if (fullReads === 25) showNotif(`🏅 Получен титул "Наставник"!`, 2000);
-        if (fullReads === 50) showNotif(`🏅 Получен титул "Хранитель Корана"!`, 2000);
-        if (fullReads === 100) showNotif(`🏅 Получен титул "Великий"! ✨`, 3000);
+        
+        if (currentAudio) {
+            currentAudio.pause();
+        }
+        
+        currentAudio = new Audio(sound.url);
+        currentAudio.loop = true;
+        currentAudio.volume = document.getElementById('volumeSlider').value / 100;
+        currentAudio.play();
+        currentSoundId = soundId;
+        
+        renderSounds();
+        showNotif(`🎵 Играет: ${sound.name}`);
     }
     
-    // === ЗАКЛАДКИ ===
-    function saveBookmark() {
-        if (currentSura) {
-            localStorage.setItem('quran_bookmark_sura', currentSura);
-            showNotif('🔖 Закладка сохранена', 1000);
+    function stopSound() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+            currentSoundId = null;
+            renderSounds();
         }
     }
     
-    function goToBookmark() {
-        const saved = localStorage.getItem('quran_bookmark_sura');
-        if (saved) {
-            loadSura(parseInt(saved));
-        } else {
-            showNotif('Нет сохранённой закладки');
+    function updateVolume() {
+        const volume = document.getElementById('volumeSlider').value / 100;
+        if (currentAudio) {
+            currentAudio.volume = volume;
         }
     }
     
-    function resetProgress() {
-        if (confirm('⚠️ Ты уверен? Весь прогресс (прочтения, монеты, уровень) будет сброшен!')) {
-            localStorage.clear();
-            location.reload();
+    function renderSounds() {
+        const container = document.getElementById('soundsGrid');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        sounds.forEach(sound => {
+            const isUnlocked = sound.free || isPremium;
+            const isActive = currentSoundId === sound.id;
+            
+            container.innerHTML += `
+                <div class="sound-card ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}" onclick="${isUnlocked ? `playSound('${sound.id}')` : 'openPremium()'}">
+                    <div class="sound-icon">${sound.icon}</div>
+                    <div class="sound-name">${sound.name}</div>
+                    ${!isUnlocked ? '<div class="lock-icon">🔒</div>' : ''}
+                    ${isActive ? '<div style="font-size:0.6em; margin-top:5px;">▶️</div>' : ''}
+                </div>
+            `;
+        });
+        
+        // Кнопка остановки
+        container.innerHTML += `
+            <div class="sound-card" onclick="stopSound()">
+                <div class="sound-icon">⏹️</div>
+                <div class="sound-name">Остановить</div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('volumeSlider').addEventListener('input', updateVolume);
+    
+    // === СУРЫ ===
+    const suraNames = {
+        1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",
+        11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",
+        21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",
+        31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",
+        41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",
+        51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",
+        61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",
+        71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",
+        81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",
+        91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",
+        101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",
+        111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"
+    };
+    
+    async function loadSuraList() {
+        const c = document.getElementById('suraList');
+        if (!c) return;
+        c.innerHTML = '';
+        for (let i = 1; i <= 114; i++) {
+            const card = document.createElement('div');
+            card.className = 'sura-card';
+            card.onclick = () => loadSura(i);
+            card.innerHTML = `<div class="sura-number">${i}</div><div class="sura-name">${suraNames[i]}</div>`;
+            c.appendChild(card);
         }
     }
     
-    // === PASS СИСТЕМА ===
-    function loadPassData() {
-        const saved = localStorage.getItem('quran_pass');
-        if (saved) passData = JSON.parse(saved);
-        if (passData.ownedItems.includes('effect_stars')) startStars();
-        updatePassUI();
-    }
-    function savePassData() { localStorage.setItem('quran_pass', JSON.stringify(passData)); }
-    
-    function addExp(amount) {
-        passData.exp += amount;
-        while (passData.exp >= 100 && passData.level < 20) {
-            passData.exp -= 100;
-            passData.level++;
-            showNotif(`🎉 Уровень ${passData.level}!`);
+    async function loadSura(num) {
+        currentSura = num;
+        const panel = document.getElementById('readingPanel');
+        const textDiv = document.getElementById('suraText');
+        const titleSpan = document.getElementById('suraTitle');
+        
+        panel.style.display = 'block';
+        textDiv.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">🌙 Загрузка...</div>';
+        titleSpan.innerHTML = `${num}. ${suraNames[num]}`;
+        panel.scrollIntoView({ behavior: 'smooth' });
+        
+        try {
+            const [arabicRes, russianRes] = await Promise.all([
+                fetch(`https://api.alquran.cloud/v1/surah/${num}`),
+                fetch(`https://api.alquran.cloud/v1/surah/${num}/ru.kuliev`)
+            ]);
+            const arabicData = await arabicRes.json();
+            const russianData = await russianRes.json();
+            
+            if (arabicData.status === 'OK' && russianData.status === 'OK') {
+                let html = '';
+                for (let i = 0; i < arabicData.data.ayahs.length; i++) {
+                    html += `
+                        <div class="ayah">
+                            <div class="arabic">${arabicData.data.ayahs[i].text}</div>
+                            <div class="translation">${i+1}. ${russianData.data.ayahs[i].text}</div>
+                        </div>
+                    `;
+                }
+                textDiv.innerHTML = html;
+                localStorage.setItem('quran_last_sura', num);
+            } else {
+                textDiv.innerHTML = '<div class="loading">⚠️ Ошибка загрузки</div>';
+            }
+        } catch(e) {
+            textDiv.innerHTML = '<div class="loading">🔌 Ошибка соединения</div>';
         }
-        if (passData.level >= 20) passData.exp = 0;
-        updatePassUI();
-        savePassData();
     }
     
-    function addCoins(amount) { passData.coins += amount; updatePassUI(); savePassData(); showNotif(`+${amount} 🌙`, 1000); }
-    function updatePassUI() {
-        document.getElementById('passLevel').innerHTML = (passData.ownedItems.includes('icon_crown') ? '👑 ' : '') + 'Уровень ' + passData.level;
-        document.getElementById('coinCount').innerText = passData.coins;
-        document.getElementById('passProgress').style.width = `${(passData.exp / 100) * 100}%`;
-        document.getElementById('expDisplay').innerText = `Опыт: ${passData.exp} / 100`;
+    function closeReading() {
+        document.getElementById('readingPanel').style.display = 'none';
+        currentSura = null;
     }
     
     function showNotif(msg, dur = 2000) {
@@ -484,434 +668,24 @@
         setTimeout(() => n.remove(), dur);
     }
     
-    // === МАГАЗИН ===
-    const shopItems = [
-        { id: 'effect_stars', name: 'Звёздный эффект', icon: '⭐', price: 75, type: 'effect', apply: () => startStars() },
-        { id: 'icon_crown', name: 'Корона', icon: '👑', price: 50, type: 'icon', apply: () => updatePassUI() }
-    ];
-    
-    let starInterval = null;
-    function startStars() {
-        if (starInterval) return;
-        starInterval = setInterval(() => {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.innerHTML = ['⭐','✨','🌟','💫'][Math.floor(Math.random()*4)];
-            star.style.left = Math.random() * 100 + '%';
-            document.body.appendChild(star);
-            setTimeout(() => star.remove(), 5000);
-        }, 3000);
-    }
-    
-    function renderShop() {
-        const c = document.getElementById('shopGrid');
-        if (!c) return;
-        c.innerHTML = '';
-        shopItems.forEach(item => {
-            const owned = passData.ownedItems.includes(item.id);
-            c.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}" onclick="buyItem('${item.id}')">
-                <div class="shop-item-icon">${item.icon}</div>
-                <div class="shop-item-name">${item.name}</div>
-                <div class="shop-item-price">🌙 ${item.price}</div>
-                ${owned ? '<div style="font-size:0.7em;">✅ Куплено</div>' : ''}
-            </div>`;
-        });
-    }
-    
-    function buyItem(id) {
-        const item = shopItems.find(i => i.id === id);
-        if (!item) return;
-        if (passData.ownedItems.includes(id)) { showNotif('Уже куплено'); return; }
-        if (passData.coins >= item.price) {
-            passData.coins -= item.price;
-            passData.ownedItems.push(id);
-            savePassData();
-            if (item.apply) item.apply();
-            renderShop();
-            updatePassUI();
-            showNotif(`🎉 Куплено: ${item.name}`);
-        } else showNotif(`❌ Нужно ${item.price} 🌙`);
-    }
-    
-    // === КВЕСТЫ ===
-    function getDailyResetKey() { return 'quran_daily_reset_' + new Date().toISOString().slice(0,10); }
-    function getWeeklyResetKey() { 
-        const now = new Date();
-        const startOfWeek = new Date(now.getFullYear(), 0, now.getDate() - now.getDay());
-        return 'quran_weekly_reset_' + startOfWeek.toISOString().slice(0,10);
-    }
-    
-    let dailyQuests = [
-        { id: 'daily_ayat10', name: '📖 Прочитай 10 аятов', target: 10, current: 0, reward: 30, completed: false, type: 'ayat', badge: 'daily' },
-        { id: 'daily_ayat30', name: '📚 Прочитай 30 аятов', target: 30, current: 0, reward: 50, completed: false, type: 'ayat', badge: 'daily' },
-        { id: 'daily_sura', name: '🌟 Прочитай любую суру полностью', target: 1, current: 0, reward: 40, completed: false, type: 'sura_complete', badge: 'daily' }
-    ];
-    
-    let weeklyQuests = [
-        { id: 'weekly_ayat100', name: '📖 Прочитай 100 аятов за неделю', target: 100, current: 0, reward: 150, completed: false, type: 'ayat', badge: 'weekly' },
-        { id: 'weekly_ayat300', name: '📚 Прочитай 300 аятов за неделю', target: 300, current: 0, reward: 300, completed: false, type: 'ayat', badge: 'weekly' },
-        { id: 'weekly_suras3', name: '🌟 Прочитай 3 суры полностью', target: 3, current: 0, reward: 200, completed: false, type: 'sura_complete_count', badge: 'weekly' },
-        { id: 'weekly_sura112', name: '🤲 Прочитай суру Аль-Ихлас', target: 1, current: 0, reward: 50, completed: false, type: 'sura', suraId: 112, badge: 'weekly' },
-        { id: 'weekly_sura36', name: '💚 Прочитай суру Йа Син', target: 1, current: 0, reward: 100, completed: false, type: 'sura', suraId: 36, badge: 'weekly' }
-    ];
-    
-    let completedSurasCount = 0;
-    
-    function checkAndResetQuests() {
-        const dailyKey = getDailyResetKey();
-        const savedDailyReset = localStorage.getItem('quran_daily_reset_key');
-        if (savedDailyReset !== dailyKey) {
-            dailyQuests.forEach(q => { q.current = 0; q.completed = false; });
-            localStorage.setItem('quran_daily_reset_key', dailyKey);
-            localStorage.removeItem('quran_daily_quests');
-            showNotif('📅 Ежедневные квесты обновлены!', 2000);
-        }
-        
-        const weeklyKey = getWeeklyResetKey();
-        const savedWeeklyReset = localStorage.getItem('quran_weekly_reset_key');
-        if (savedWeeklyReset !== weeklyKey) {
-            weeklyQuests.forEach(q => { q.current = 0; q.completed = false; });
-            completedSurasCount = 0;
-            localStorage.setItem('quran_weekly_reset_key', weeklyKey);
-            localStorage.removeItem('quran_weekly_quests');
-            localStorage.removeItem('quran_weekly_sura_count');
-            showNotif('📅 Еженедельные квесты обновлены!', 2000);
-        }
-        
-        const savedDaily = localStorage.getItem('quran_daily_quests');
-        if (savedDaily) {
-            const sd = JSON.parse(savedDaily);
-            dailyQuests.forEach(q => { const f = sd.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
-        }
-        
-        const savedWeekly = localStorage.getItem('quran_weekly_quests');
-        if (savedWeekly) {
-            const sw = JSON.parse(savedWeekly);
-            weeklyQuests.forEach(q => { const f = sw.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
-        }
-        
-        completedSurasCount = parseInt(localStorage.getItem('quran_weekly_sura_count')) || 0;
-    }
-    
-    function saveQuests() {
-        localStorage.setItem('quran_daily_quests', JSON.stringify(dailyQuests.map(q => ({ id: q.id, current: q.current, completed: q.completed }))));
-        localStorage.setItem('quran_weekly_quests', JSON.stringify(weeklyQuests.map(q => ({ id: q.id, current: q.current, completed: q.completed }))));
-        localStorage.setItem('quran_weekly_sura_count', completedSurasCount);
-    }
-    
-    function updateQuestProgress(type, value, suraId = null) {
-        let updated = false;
-        
-        dailyQuests.forEach(q => {
-            if (q.completed) return;
-            if (type === 'ayat' && q.type === 'ayat') {
-                q.current = Math.min(q.current + value, q.target);
-                if (q.current >= q.target && !q.completed) {
-                    q.completed = true;
-                    addCoins(q.reward);
-                    addExp(15);
-                    showNotif(`✅ Ежедневный квест выполнен! +${q.reward} 🌙`);
-                }
-                updated = true;
-            }
-            if (type === 'sura_complete' && q.type === 'sura_complete') {
-                q.current = Math.min(q.current + 1, q.target);
-                if (q.current >= q.target && !q.completed) {
-                    q.completed = true;
-                    addCoins(q.reward);
-                    addExp(15);
-                    showNotif(`✅ Ежедневный квест выполнен! +${q.reward} 🌙`);
-                }
-                updated = true;
-            }
-        });
-        
-        weeklyQuests.forEach(q => {
-            if (q.completed) return;
-            if (type === 'ayat' && q.type === 'ayat') {
-                q.current = Math.min(q.current + value, q.target);
-                if (q.current >= q.target && !q.completed) {
-                    q.completed = true;
-                    addCoins(q.reward);
-                    addExp(20);
-                    showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
-                }
-                updated = true;
-            }
-            if (type === 'sura' && q.type === 'sura' && q.suraId === suraId && !q.completed) {
-                q.completed = true;
-                addCoins(q.reward);
-                addExp(20);
-                showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
-                updated = true;
-            }
-            if (type === 'sura_complete_count' && q.type === 'sura_complete_count') {
-                q.current = Math.min(q.current + 1, q.target);
-                if (q.current >= q.target && !q.completed) {
-                    q.completed = true;
-                    addCoins(q.reward);
-                    addExp(20);
-                    showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
-                }
-                updated = true;
-            }
-        });
-        
-        if (updated) {
-            renderQuests();
-            saveQuests();
-        }
-    }
-    
-    function renderQuests() {
-        const c = document.getElementById('questList');
-        if (!c) return;
-        c.innerHTML = '';
-        
-        c.innerHTML += `<div style="margin: 10px 0 5px; color:#8ab4f8;">📅 ЕЖЕДНЕВНЫЕ</div>`;
-        dailyQuests.forEach(q => {
-            const percent = (q.current / q.target) * 100;
-            c.innerHTML += `<div class="quest-item">
-                <div style="flex:2">
-                    <div>${q.name} <span class="quest-badge daily">день</span></div>
-                    <div style="font-size:0.8em;">${q.current}/${q.target}</div>
-                    <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" style="width:${percent}%;background:#ffd700;"></div></div>
-                </div>
-                <div>🌙 ${q.reward}</div>
-                <div class="${q.completed ? 'quest-btn completed' : 'quest-btn'}" ${q.completed ? '' : 'onclick="claimQuest(\''+q.id+'\', true)"'}>${q.completed ? '✅ Выполнен' : '🏆 Забрать'}</div>
-            </div>`;
-        });
-        
-        c.innerHTML += `<div style="margin: 20px 0 5px; color:#ffd966;">📅 ЕЖЕНЕДЕЛЬНЫЕ</div>`;
-        weeklyQuests.forEach(q => {
-            const percent = (q.current / q.target) * 100;
-            c.innerHTML += `<div class="quest-item">
-                <div style="flex:2">
-                    <div>${q.name} <span class="quest-badge weekly">неделя</span></div>
-                    <div style="font-size:0.8em;">${q.current}/${q.target}</div>
-                    <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" style="width:${percent}%;background:#ffd700;"></div></div>
-                </div>
-                <div>🌙 ${q.reward}</div>
-                <div class="${q.completed ? 'quest-btn completed' : 'quest-btn'}" ${q.completed ? '' : 'onclick="claimQuest(\''+q.id+'\', false)"'}>${q.completed ? '✅ Выполнен' : '🏆 Забрать'}</div>
-            </div>`;
-        });
-    }
-    
-    function claimQuest(id, isDaily) {
-        const questsList = isDaily ? dailyQuests : weeklyQuests;
-        const q = questsList.find(q => q.id === id);
-        if (q && q.current >= q.target && !q.completed) {
-            q.completed = true;
-            addCoins(q.reward);
-            addExp(isDaily ? 15 : 20);
-            renderQuests();
-            saveQuests();
-            showNotif(`✅ +${q.reward} 🌙`);
-        } else showNotif('📖 Сначала выполни квест');
-    }
-    
-    // === ЛИДЕРЫ ===
-    let leaders = [
-        { username: "Читатель", avatar: "🕌", reads: 0, title: "" }
-    ];
-    
-    function loadLeaders() {
-        const saved = localStorage.getItem('quran_leaders');
-        if (saved) {
-            leaders = JSON.parse(saved);
-        }
-        renderLeaders();
-    }
-    
-    function saveLeaders() {
-        localStorage.setItem('quran_leaders', JSON.stringify(leaders));
-    }
-    
-    function updateLeaders() {
-        const existing = leaders.find(l => l.username === "Читатель");
-        if (existing) {
-            existing.reads = fullReads;
-            existing.title = getTitle(fullReads);
-        } else {
-            leaders.push({ username: "Читатель", avatar: "🕌", reads: fullReads, title: getTitle(fullReads) });
-        }
-        leaders.sort((a, b) => b.reads - a.reads);
-        leaders = leaders.slice(0, 50);
-        saveLeaders();
-        renderLeaders();
-    }
-    
-    function renderLeaders() {
-        const container = document.getElementById('leadersList');
-        if (!container) return;
-        if (leaders.length === 0 || (leaders.length === 1 && leaders[0].reads === 0)) {
-            container.innerHTML = '<div class="loading">🏆 Пока нет лидеров. Стань первым, читая Коран!</div>';
-            return;
-        }
-        container.innerHTML = '';
-        leaders.forEach((leader, idx) => {
-            const rank = idx + 1;
-            let medal = rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '📌';
-            const titleHtml = leader.title ? `<div class="leader-title">${leader.title}</div>` : '';
-            container.innerHTML += `
-                <div class="leader-card">
-                    <div class="leader-rank">${medal} ${rank}</div>
-                    <div class="leader-avatar">${leader.avatar}</div>
-                    <div class="leader-info">
-                        <div class="leader-name">${escapeHtml(leader.username)}</div>
-                        <div class="leader-reads">📖 ${leader.reads} прочтений</div>
-                        ${titleHtml}
-                    </div>
-                </div>
-            `;
-        });
-    }
-    
-    // === ЧТЕНИЕ СУР ===
-    const suraNames = {1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"};
-    
-    async function loadSuraList() {
-        const c = document.getElementById('suraList');
-        if (!c) return;
-        c.innerHTML = '';
-        for (let i = 1; i <= 114; i++) {
-            const card = document.createElement('div');
-            card.className = 'sura-card';
-            card.onclick = () => loadSura(i);
-            card.innerHTML = `<span class="sura-number">${i}.</span> <span>${suraNames[i]}</span>`;
-            c.appendChild(card);
-        }
-    }
-    
-    function startAyahTimer(ayahDiv, idx) {
-        if (activeTimers[idx]) return;
-        let timeLeft = 8;
-        ayahDiv.classList.add('reading');
-        let tb = ayahDiv.querySelector('.timer-bar');
-        let tt = ayahDiv.querySelector('.timer-text');
-        if (!tb) { tb = document.createElement('div'); tb.className = 'timer-bar'; tt = document.createElement('div'); tt.className = 'timer-text'; ayahDiv.appendChild(tb); ayahDiv.appendChild(tt); }
-        const interval = setInterval(() => {
-            timeLeft -= 0.1;
-            const percent = ((8 - timeLeft) / 8) * 100;
-            tb.style.width = `${percent}%`;
-            tt.innerText = `${Math.ceil(timeLeft)}с`;
-            if (timeLeft <= 0) {
-                clearInterval(interval);
-                delete activeTimers[idx];
-                ayahDiv.classList.remove('reading');
-                if (tb) tb.remove();
-                if (tt) tt.remove();
-                if (!ayahDiv.classList.contains('read')) {
-                    ayahDiv.classList.add('read');
-                    const key = `quran_sura_${currentSura}_ayahs`;
-                    let read = JSON.parse(localStorage.getItem(key)) || [];
-                    if (!read.includes(idx)) {
-                        read.push(idx);
-                        localStorage.setItem(key, JSON.stringify(read));
-                        updateQuestProgress('ayat', 1);
-                        addExp(2);
-                        const total = document.querySelectorAll('.ayah').length;
-                        if (read.length === total) {
-                            completedSurasCount++;
-                            localStorage.setItem('quran_weekly_sura_count', completedSurasCount);
-                            updateQuestProgress('sura_complete', 1);
-                            updateQuestProgress('sura_complete_count', 1);
-                            updateQuestProgress('sura', null, currentSura);
-                            addFullRead();
-                            updateLeaders();
-                        }
-                        saveBookmark();
-                    }
-                }
-            }
-        }, 100);
-        activeTimers[idx] = interval;
-    }
-    
-    function stopAyahTimer(idx) {
-        if (activeTimers[idx]) {
-            clearInterval(activeTimers[idx]);
-            delete activeTimers[idx];
-            const div = document.querySelector(`.ayah[data-ayah="${idx}"]`);
-            if (div) {
-                div.classList.remove('reading');
-                const tb = div.querySelector('.timer-bar');
-                const tt = div.querySelector('.timer-text');
-                if (tb) tb.remove();
-                if (tt) tt.remove();
-            }
-        }
-    }
-    
-    function initAyahs() {
-        document.querySelectorAll('.ayah').forEach((a, idx) => {
-            const i = idx + 1;
-            a.setAttribute('data-ayah', i);
-            a.onmouseenter = () => startAyahTimer(a, i);
-            a.onmouseleave = () => stopAyahTimer(i);
-            a.ontouchstart = (e) => { e.preventDefault(); startAyahTimer(a, i); };
-            a.ontouchend = () => stopAyahTimer(i);
-        });
-    }
-    
-    function loadReadAyahs() {
-        const key = `quran_sura_${currentSura}_ayahs`;
-        const read = JSON.parse(localStorage.getItem(key)) || [];
-        document.querySelectorAll('.ayah').forEach((a, idx) => { if (read.includes(idx + 1)) a.classList.add('read'); });
-    }
-    
-    async function loadSura(num) {
-        currentSura = num;
-        const cont = document.getElementById('suraContent');
-        const textDiv = document.getElementById('suraText');
-        const titleSpan = document.getElementById('suraTitle');
-        cont.style.display = 'block';
-        textDiv.innerHTML = '<div class="loading">🌙 Загрузка...</div>';
-        titleSpan.innerHTML = `${num}. ${suraNames[num]}`;
-        cont.scrollIntoView({ behavior: 'smooth' });
-        try {
-            const res = await fetch(`https://api.alquran.cloud/v1/surah/${num}/ru.kuliev`);
-            const data = await res.json();
-            if (data.status === 'OK') {
-                let html = '';
-                data.data.ayahs.forEach((a, i) => { html += `<div class="ayah"><div class="arabic">${a.text}</div><div class="translation">${i+1}. ${a.translation}</div></div>`; });
-                textDiv.innerHTML = html;
-                loadReadAyahs();
-                initAyahs();
-                saveBookmark();
-            } else textDiv.innerHTML = '<div class="loading">⚠️ Ошибка</div>';
-        } catch(e) { textDiv.innerHTML = '<div class="loading">🔌 Ошибка соединения</div>'; }
-    }
-    
-    function closeSura() { document.getElementById('suraContent').style.display = 'none'; currentSura = null; }
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-    
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tab + 'Tab').classList.add('active');
-        const btns = document.querySelectorAll('.tab-btn');
-        if (tab === 'quests') btns[0].classList.add('active');
-        else if (tab === 'shop') { btns[1].classList.add('active'); renderShop(); }
-        else if (tab === 'leaders') { btns[2].classList.add('active'); loadLeaders(); }
-        else if (tab === 'suras') { btns[3].classList.add('active'); loadSuraList(); }
+    // Восстановление последней суры
+    const lastSura = localStorage.getItem('quran_last_sura');
+    if (lastSura) {
+        setTimeout(() => loadSura(parseInt(lastSura)), 500);
     }
     
     // Запуск
-    checkAndResetQuests();
-    loadPassData();
-    loadLeaders();
+    renderSounds();
     loadSuraList();
-    renderQuests();
     
     window.setTheme = setTheme;
-    window.switchTab = switchTab;
-    window.claimQuest = claimQuest;
-    window.buyItem = buyItem;
-    window.goToBookmark = goToBookmark;
-    window.resetProgress = resetProgress;
+    window.openPremium = openPremium;
+    window.closePremium = closePremium;
+    window.buyPremium = buyPremium;
+    window.playSound = playSound;
+    window.stopSound = stopSound;
     window.loadSura = loadSura;
-    window.closeSura = closeSura;
+    window.closeReading = closeReading;
 </script>
 </body>
 </html>
