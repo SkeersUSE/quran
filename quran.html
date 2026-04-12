@@ -19,7 +19,6 @@
             color: #ffffff;
         }
 
-        /* iOS 26 Glass эффект */
         .glass-card {
             background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
@@ -426,6 +425,7 @@
         </div>
     </div>
     
+    <!-- Звуки природы -->
     <div class="sounds-section">
         <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
         <div class="sounds-grid" id="soundsGrid"></div>
@@ -434,9 +434,11 @@
         </div>
     </div>
     
+    <!-- Суры -->
     <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
     <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
     
+    <!-- Панель чтения -->
     <div id="readingPanel" class="reading-panel">
         <div class="reading-header">
             <span id="suraTitle"></span>
@@ -448,6 +450,7 @@
     <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
 </div>
 
+<!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
@@ -475,25 +478,22 @@
     let currentSource = null;
     let currentGain = null;
     
-    // === ГЕНЕРАТОРЫ ЗВУКОВ ПРИРОДЫ ===
+    // === ГЕНЕРАТОРЫ ЗВУКОВ ===
     function createWavesSound(ctx, gainNode) {
         const source = ctx.createBufferSource();
         const duration = 30;
         const sampleRate = ctx.sampleRate;
         const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        
         for (let channel = 0; channel < 2; channel++) {
             const data = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
                 const t = i / sampleRate;
-                // Шум океана + низкочастотные колебания
                 const noise = Math.random() * 2 - 1;
                 const wave = Math.sin(t * 0.5) * 0.3 + Math.sin(t * 1.2) * 0.2;
                 const envelope = Math.exp(-t * 0.1);
                 data[i] = (noise * 0.4 + wave * 0.6) * envelope;
             }
         }
-        
         source.buffer = buffer;
         source.loop = true;
         source.connect(gainNode);
@@ -505,12 +505,10 @@
         const duration = 30;
         const sampleRate = ctx.sampleRate;
         const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        
         for (let channel = 0; channel < 2; channel++) {
             const data = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
                 const t = i / sampleRate;
-                // Капли дождя
                 let value = 0;
                 for (let j = 0; j < 50; j++) {
                     const freq = 100 + Math.random() * 200;
@@ -521,7 +519,6 @@
                 data[i] = value * envelope;
             }
         }
-        
         source.buffer = buffer;
         source.loop = true;
         source.connect(gainNode);
@@ -533,18 +530,15 @@
         const duration = 30;
         const sampleRate = ctx.sampleRate;
         const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        
         for (let channel = 0; channel < 2; channel++) {
             const data = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
                 const t = i / sampleRate;
-                // Птицы и ветер
                 const wind = Math.sin(t * 0.3) * 0.2 + Math.sin(t * 0.7) * 0.1;
                 const birds = Math.sin(t * 120) * Math.exp(-((t % 2) - 1) ** 2 * 50) * 0.15;
                 data[i] = wind + birds + (Math.random() - 0.5) * 0.1;
             }
         }
-        
         source.buffer = buffer;
         source.loop = true;
         source.connect(gainNode);
@@ -556,7 +550,6 @@
         const duration = 30;
         const sampleRate = ctx.sampleRate;
         const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        
         for (let channel = 0; channel < 2; channel++) {
             const data = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
@@ -571,7 +564,6 @@
                 data[i] = value * (0.5 + Math.sin(t * 0.5) * 0.3);
             }
         }
-        
         source.buffer = buffer;
         source.loop = true;
         source.connect(gainNode);
@@ -583,18 +575,15 @@
         const duration = 30;
         const sampleRate = ctx.sampleRate;
         const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        
         for (let channel = 0; channel < 2; channel++) {
             const data = buffer.getChannelData(channel);
             for (let i = 0; i < buffer.length; i++) {
                 const t = i / sampleRate;
-                // Треск костра
                 const crackle = (Math.random() - 0.5) * 0.5;
                 const low = Math.sin(t * 2) * 0.1;
                 data[i] = crackle + low;
             }
         }
-        
         source.buffer = buffer;
         source.loop = true;
         source.connect(gainNode);
@@ -619,9 +608,7 @@
     
     function stopSound() {
         if (currentSource) {
-            try {
-                currentSource.stop();
-            } catch(e) {}
+            try { currentSource.stop(); } catch(e) {}
             currentSource = null;
         }
         if (currentGain) {
@@ -660,7 +647,6 @@
             renderSounds();
             showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
         } catch(e) {
-            console.error('Audio error:', e);
             showNotif('⚠️ Ошибка воспроизведения');
         }
     }
@@ -811,11 +797,13 @@
         setTimeout(() => n.remove(), dur);
     }
     
+    // Восстановление последней суры
     const lastSura = localStorage.getItem('quran_last_sura');
     if (lastSura) {
         setTimeout(() => loadSura(parseInt(lastSura)), 500);
     }
     
+    // Запуск
     renderSounds();
     loadSuraList();
     
