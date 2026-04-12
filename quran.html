@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран Battle Pass — Общий чат</title>
+    <title>Коран Battle Pass — Гардероб</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -20,12 +20,11 @@
         body.gold-theme { background: radial-gradient(ellipse at 30% 40%, #3d2b1a, #1a0f0a); }
         body.light-theme { background: #f5f5f0; color: #1a1a2e; }
         body.light-theme .sura-card, body.light-theme .quest-item, body.light-theme .shop-item,
-        body.light-theme .pass-panel, body.light-theme .sura-content, body.light-theme .chat-container {
+        body.light-theme .pass-panel, body.light-theme .sura-content, body.light-theme .character-panel {
             background: rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             color: #1a1a2e;
         }
-        body.light-theme .chat-input { color: #1a1a2e; background: rgba(0,0,0,0.1); }
         body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
         body.light-theme .theme-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
         
@@ -41,6 +40,61 @@
             border-radius: 55px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
+        }
+        
+        /* Панель персонажа */
+        .character-panel {
+            background: rgba(138, 180, 248, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .character-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .character-avatar .hat {
+            position: absolute;
+            top: -15px;
+            font-size: 0.6em;
+        }
+        
+        .character-avatar .glasses {
+            position: absolute;
+            font-size: 0.7em;
+        }
+        
+        .character-info {
+            flex: 1;
+        }
+        
+        .character-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .character-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.8em;
+            opacity: 0.8;
         }
         
         .profile-panel {
@@ -114,36 +168,14 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .chat-container {
-            background: rgba(0,0,0,0.3);
-            border-radius: 28px;
-            height: 450px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .chat-message {
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 10px 15px;
-            max-width: 80%;
-            align-self: flex-start;
-        }
-        .chat-message.own { align-self: flex-end; background: rgba(255,215,0,0.2); }
-        .chat-name { font-size: 0.7em; color: #ffd966; margin-bottom: 4px; }
-        .chat-text { font-size: 0.9em; word-break: break-word; }
-        .chat-input-area { display: flex; gap: 10px; padding: 15px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
-        .chat-input { flex: 1; background: rgba(255,255,255,0.1); border: none; padding: 12px; border-radius: 30px; color: white; font-size: 0.9em; }
-        .chat-send { background: #ffd700; border: none; padding: 0 20px; border-radius: 30px; cursor: pointer; font-weight: bold; color: #1a1a2e; }
-        
-        .sura-list, .quest-list, .shop-grid {
+        /* Магазин одежды */
+        .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 12px;
             margin-top: 15px;
         }
-        .sura-card, .quest-item, .shop-item {
+        .shop-item {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
             border-radius: 20px;
@@ -152,7 +184,29 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .sura-card:hover, .quest-item:hover, .shop-item:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
+        .shop-item:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
+        .shop-item-icon { font-size: 2.5em; margin-bottom: 8px; }
+        .shop-item-name { font-size: 0.85em; margin-bottom: 5px; }
+        .shop-item-price { color: #ffd966; font-size: 0.8em; }
+        .shop-item.owned { opacity: 0.5; cursor: default; }
+        .shop-item.equipped { border: 2px solid #ffd700; background: rgba(255,215,0,0.2); }
+        
+        .sura-list, .quest-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .sura-card, .quest-item {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sura-card:hover, .quest-item:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
         .sura-number { color: #ffd966; font-weight: bold; }
         
         .sura-content {
@@ -215,7 +269,7 @@
         @media (max-width: 550px) {
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
             .arabic { font-size: 1.1em; }
-            .profile-panel { flex-direction: column; text-align: center; }
+            .character-panel { justify-content: center; text-align: center; }
         }
     </style>
 </head>
@@ -235,6 +289,21 @@
         </div>
     </div>
 
+    <!-- Панель персонажа -->
+    <div class="character-panel">
+        <div class="character-avatar" id="characterAvatar">
+            <span id="charBase">🕌</span>
+            <span class="hat" id="charHat"></span>
+            <span class="glasses" id="charGlasses"></span>
+        </div>
+        <div class="character-info">
+            <div class="character-name" id="characterName">Путник</div>
+            <div class="character-stats">
+                <span>🎽 <span id="charShirt">Футболка</span></span>
+            </div>
+        </div>
+    </div>
+
     <div class="pass-panel">
         <div class="pass-header">
             <div class="pass-level" id="passLevel">Уровень 1</div>
@@ -247,13 +316,16 @@
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('quests')">📋 Квесты</button>
         <button class="tab-btn" onclick="switchTab('shop')">🛒 Магазин</button>
-        <button class="tab-btn" onclick="switchTab('chat')">💬 Чат</button>
+        <button class="tab-btn" onclick="switchTab('wardrobe')">👗 Гардероб</button>
         <button class="tab-btn" onclick="switchTab('suras')">📖 Суры</button>
     </div>
 
     <div id="questsTab" class="tab-content active"><div id="questList" class="quest-list"><div class="loading">🌟 Загрузка квестов...</div></div></div>
+    
     <div id="shopTab" class="tab-content"><div id="shopGrid" class="shop-grid"><div class="loading">🛍️ Загрузка магазина...</div></div></div>
-    <div id="chatTab" class="tab-content"><div class="chat-container"><div class="chat-messages" id="chatMessages"><div class="loading">💬 Загрузка чата...</div></div><div class="chat-input-area"><input type="text" class="chat-input" id="chatInput" placeholder="Напиши сообщение..." maxlength="200"><button class="chat-send" onclick="sendMessage()">➤</button></div></div></div>
+    
+    <div id="wardrobeTab" class="tab-content"><div id="wardrobeGrid" class="shop-grid"><div class="loading">👗 Загрузка гардероба...</div></div></div>
+    
     <div id="surasTab" class="tab-content"><div id="suraList" class="sura-list"><div class="loading">✨ Загрузка сур...</div></div></div>
 
     <div id="suraContent" class="sura-content">
@@ -261,7 +333,7 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Общий чат для всех</div>
+    <div class="footer">Коран | Перевод Кулиева | Одевай персонажа за 🌙</div>
 </div>
 
 <div id="registerOverlay" class="register-overlay" style="display:none;">
@@ -275,11 +347,6 @@
 </div>
 
 <script>
-    // ========== НАСТРОЙКИ ЧАТА — ЗАМЕНИ НА СВОИ ССЫЛКИ! ==========
-    const CHAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9eyGXKyHDXQtUkFiGfyP8PH4OEGxTXSwlhUWzCZI3Bxr8oYm_lLKKMmkv64q6t25oE29irFTg-qj5/pubhtml";
-    const CHAT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzI_7HbTAiQa779fsUIDho_w7-218-PboKtqvvByxvhL0Xgbo-yPqLGA2YM9abkbUWcqw/exec";
-    // ===============================================================
-    
     // === ТЕМЫ ===
     function setTheme(theme) {
         document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
@@ -301,6 +368,8 @@
             userProfile = JSON.parse(saved);
             document.getElementById('usernameDisplay').innerText = userProfile.name;
             document.getElementById('avatar').innerText = userProfile.avatar;
+            document.getElementById('characterName').innerText = userProfile.name;
+            document.getElementById('charBase').innerText = userProfile.avatar;
         }
         if (!userProfile.userId) userProfile.userId = 'user_' + Math.random().toString(36).substr(2, 9);
     }
@@ -335,12 +404,156 @@
         localStorage.setItem('quran_profile', JSON.stringify(userProfile));
         document.getElementById('usernameDisplay').innerText = name;
         document.getElementById('avatar').innerText = avatar;
+        document.getElementById('characterName').innerText = name;
+        document.getElementById('charBase').innerText = avatar;
         closeRegister();
+        renderShop();
+        renderWardrobe();
+    }
+    
+    // === ГАРДЕРОБ И ОДЕЖДА ===
+    let wardrobe = {
+        equipped: { hat: null, glasses: null, shirt: 'Футболка' },
+        owned: []
+    };
+    
+    // Предметы одежды
+    const clothingItems = [
+        { id: 'hat1', type: 'hat', name: 'Кепка', icon: '🧢', price: 30, displayIcon: '🧢' },
+        { id: 'hat2', type: 'hat', name: 'Тюбетейка', icon: '🎩', price: 50, displayIcon: '🎩' },
+        { id: 'hat3', type: 'hat', name: 'Панама', icon: '👒', price: 40, displayIcon: '👒' },
+        { id: 'glasses1', type: 'glasses', name: 'Солнцезащитные', icon: '🕶️', price: 35, displayIcon: '🕶️' },
+        { id: 'glasses2', type: 'glasses', name: 'Очки', icon: '👓', price: 25, displayIcon: '👓' },
+        { id: 'shirt1', type: 'shirt', name: 'Рубашка', icon: '👔', price: 45, displayIcon: '👔' },
+        { id: 'shirt2', type: 'shirt', name: 'Толстовка', icon: '🧥', price: 60, displayIcon: '🧥' },
+        { id: 'shirt3', type: 'shirt', name: 'Бандана', icon: '🧣', price: 35, displayIcon: '🧣' }
+    ];
+    
+    function loadWardrobe() {
+        const saved = localStorage.getItem('quran_wardrobe');
+        if (saved) {
+            wardrobe = JSON.parse(saved);
+        }
+        updateCharacterAppearance();
+    }
+    
+    function saveWardrobe() {
+        localStorage.setItem('quran_wardrobe', JSON.stringify(wardrobe));
+    }
+    
+    function updateCharacterAppearance() {
+        const hatSpan = document.getElementById('charHat');
+        const glassesSpan = document.getElementById('charGlasses');
+        const shirtSpan = document.getElementById('charShirt');
+        
+        if (wardrobe.equipped.hat) {
+            const hatItem = clothingItems.find(i => i.id === wardrobe.equipped.hat);
+            hatSpan.innerText = hatItem ? hatItem.displayIcon : '';
+            hatSpan.style.display = 'inline';
+        } else {
+            hatSpan.innerText = '';
+        }
+        
+        if (wardrobe.equipped.glasses) {
+            const glassesItem = clothingItems.find(i => i.id === wardrobe.equipped.glasses);
+            glassesSpan.innerText = glassesItem ? glassesItem.displayIcon : '';
+            glassesSpan.style.display = 'inline';
+        } else {
+            glassesSpan.innerText = '';
+        }
+        
+        if (wardrobe.equipped.shirt) {
+            const shirtItem = clothingItems.find(i => i.id === wardrobe.equipped.shirt);
+            shirtSpan.innerText = shirtItem ? shirtItem.name : 'Футболка';
+        } else {
+            shirtSpan.innerText = 'Футболка';
+        }
+    }
+    
+    function buyClothing(itemId) {
+        const item = clothingItems.find(i => i.id === itemId);
+        if (!item) return;
+        if (wardrobe.owned.includes(itemId)) {
+            showNotif('У тебя уже есть это!');
+            return;
+        }
+        if (passData.coins >= item.price) {
+            passData.coins -= item.price;
+            wardrobe.owned.push(itemId);
+            savePassData();
+            saveWardrobe();
+            renderShop();
+            renderWardrobe();
+            updatePassUI();
+            showNotif(`🎉 Куплено: ${item.name}!`);
+        } else {
+            showNotif(`❌ Нужно ${item.price} 🌙`);
+        }
+    }
+    
+    function equipItem(itemId) {
+        const item = clothingItems.find(i => i.id === itemId);
+        if (!item) return;
+        if (!wardrobe.owned.includes(itemId)) {
+            showNotif('Сначала купи этот предмет!');
+            return;
+        }
+        
+        if (item.type === 'hat') {
+            if (wardrobe.equipped.hat === itemId) {
+                wardrobe.equipped.hat = null;
+                showNotif(`🎩 ${item.name} снят`);
+            } else {
+                wardrobe.equipped.hat = itemId;
+                showNotif(`🎩 ${item.name} надет`);
+            }
+        } else if (item.type === 'glasses') {
+            if (wardrobe.equipped.glasses === itemId) {
+                wardrobe.equipped.glasses = null;
+                showNotif(`👓 ${item.name} сняты`);
+            } else {
+                wardrobe.equipped.glasses = itemId;
+                showNotif(`👓 ${item.name} надеты`);
+            }
+        } else if (item.type === 'shirt') {
+            if (wardrobe.equipped.shirt === itemId) {
+                wardrobe.equipped.shirt = null;
+                showNotif(`👕 ${item.name} снята`);
+            } else {
+                wardrobe.equipped.shirt = itemId;
+                showNotif(`👕 ${item.name} надета`);
+            }
+        }
+        
+        saveWardrobe();
+        updateCharacterAppearance();
+        renderWardrobe();
         renderShop();
     }
     
+    function renderWardrobe() {
+        const c = document.getElementById('wardrobeGrid');
+        if (!c) return;
+        c.innerHTML = '';
+        clothingItems.forEach(item => {
+            const owned = wardrobe.owned.includes(item.id);
+            const isEquipped = (item.type === 'hat' && wardrobe.equipped.hat === item.id) ||
+                              (item.type === 'glasses' && wardrobe.equipped.glasses === item.id) ||
+                              (item.type === 'shirt' && wardrobe.equipped.shirt === item.id);
+            if (!owned) return;
+            c.innerHTML += `
+                <div class="shop-item ${isEquipped ? 'equipped' : ''}" onclick="equipItem('${item.id}')">
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <div class="shop-item-name">${item.name}</div>
+                    <div style="font-size:0.7em;">${isEquipped ? '✅ Надето' : '👆 Надеть'}</div>
+                </div>
+            `;
+        });
+        if (c.innerHTML === '') c.innerHTML = '<div class="loading">👗 Пока нет купленной одежды. Зайди в магазин!</div>';
+    }
+    
     // === PASS СИСТЕМА ===
-    let passData = { level: 1, exp: 0, coins: 0, ownedItems: [] };
+    let passData = { level: 1, exp: 0, coins: 50, ownedItems: [] };
     const EXP_PER_LEVEL = 100;
     const MAX_LEVEL = 20;
     const levelRewards = { 5: 50, 10: 100, 15: 150, 20: 200 };
@@ -480,12 +693,23 @@
         const c = document.getElementById('shopGrid');
         if (!c) return;
         c.innerHTML = '';
+        // Предметы одежды
+        clothingItems.forEach(item => {
+            const owned = wardrobe.owned.includes(item.id);
+            c.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}" onclick="buyClothing('${item.id}')">
+                <div class="shop-item-icon">${item.icon}</div>
+                <div>${item.name}</div>
+                <div class="shop-item-price">🌙 ${item.price}</div>
+                ${owned ? '<div style="font-size:0.7em;">✅ В гардеробе</div>' : ''}
+            </div>`;
+        });
+        // Прочие предметы
         shopItems.forEach(item => {
             const owned = passData.ownedItems.includes(item.id);
             c.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}" onclick="buyItem('${item.id}')">
-                <div>${item.icon}</div>
+                <div class="shop-item-icon">${item.icon}</div>
                 <div>${item.name}</div>
-                <div>🌙 ${item.price}</div>
+                <div class="shop-item-price">🌙 ${item.price}</div>
                 ${owned ? '<div style="font-size:0.7em;">✅</div>' : ''}
             </div>`;
         });
@@ -505,78 +729,6 @@
             showNotif(`🎉 Куплено: ${item.name}`);
         } else showNotif(`❌ Нужно ${item.price} 🌙`);
     }
-    
-    // === ФИЛЬТР МАТА ===
-    const badWords = ['дурак', 'идиот', 'тупой', 'хер', 'редиска', 'заткнись', 'пошел', 'урод', 'тупая', 'идиотина'];
-    function filterMessage(text) {
-        let filtered = text;
-        badWords.forEach(word => { filtered = filtered.replace(new RegExp(word, 'gi'), '***'); });
-        return filtered;
-    }
-    
-    // === ОБЩИЙ ЧАТ ===
-    async function loadMessages() {
-        try {
-            const response = await fetch(CHAT_CSV_URL + '?t=' + Date.now());
-            const csvText = await response.text();
-            const rows = csvText.split('\n').slice(1);
-            const messages = [];
-            for (let i = rows.length - 1; i >= 0; i--) {
-                const row = rows[i];
-                if (!row.trim()) continue;
-                const parts = row.split(',');
-                if (parts.length >= 4) {
-                    messages.push({
-                        time: parts[0],
-                        name: parts[1]?.replace(/^"|"$/g, '') || 'Аноним',
-                        avatar: parts[2]?.replace(/^"|"$/g, '') || '🕌',
-                        text: parts[3]?.replace(/^"|"$/g, '') || '',
-                        userId: parts[4]?.replace(/^"|"$/g, '') || ''
-                    });
-                }
-            }
-            renderChatMessages(messages.slice(-50).reverse());
-        } catch(e) {
-            console.error('Ошибка загрузки чата:', e);
-            document.getElementById('chatMessages').innerHTML = '<div class="loading">⚠️ Ошибка загрузки чата</div>';
-        }
-    }
-    
-    function renderChatMessages(messages) {
-        const container = document.getElementById('chatMessages');
-        if (!container) return;
-        if (messages.length === 0) {
-            container.innerHTML = '<div class="loading">💬 Пока нет сообщений. Напиши что-нибудь!</div>';
-            return;
-        }
-        container.innerHTML = '';
-        messages.forEach(msg => {
-            const isOwn = msg.userId === userProfile.userId;
-            container.innerHTML += `<div class="chat-message ${isOwn ? 'own' : ''}">
-                <div class="chat-name">${msg.avatar} ${msg.name}</div>
-                <div class="chat-text">${escapeHtml(msg.text)}</div>
-            </div>`;
-        });
-        container.scrollTop = container.scrollHeight;
-    }
-    
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        let text = input.value.trim();
-        if (!text) return;
-        if (!userProfile.name || userProfile.name === 'Гость') { showNotif('Сначала зарегистрируйся!'); openRegister(); return; }
-        text = filterMessage(text);
-        if (text.length > 200) text = text.slice(0,200);
-        
-        const msgData = { name: userProfile.name, avatar: userProfile.avatar, text: text, userId: userProfile.userId };
-        try {
-            await fetch(CHAT_WEBAPP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(msgData) });
-            input.value = '';
-            setTimeout(() => loadMessages(), 500);
-        } catch(e) { console.error('Ошибка отправки:', e); showNotif('❌ Ошибка отправки'); }
-    }
-    
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
     
     // === ЧТЕНИЕ СУР ===
     let currentSura = null;
@@ -722,7 +874,7 @@
         const btns = document.querySelectorAll('.tab-btn');
         if (tab === 'quests') btns[0].classList.add('active');
         else if (tab === 'shop') { btns[1].classList.add('active'); renderShop(); }
-        else if (tab === 'chat') { btns[2].classList.add('active'); loadMessages(); setInterval(loadMessages, 5000); }
+        else if (tab === 'wardrobe') { btns[2].classList.add('active'); renderWardrobe(); }
         else if (tab === 'suras') { btns[3].classList.add('active'); loadSuraList(); }
     }
     
@@ -730,16 +882,18 @@
     loadProfile();
     loadPassData();
     loadQuests();
+    loadWardrobe();
     loadSuraList();
     
     window.setTheme = setTheme;
     window.switchTab = switchTab;
     window.claimQuest = claimQuest;
     window.buyItem = buyItem;
+    window.buyClothing = buyClothing;
+    window.equipItem = equipItem;
     window.openRegister = openRegister;
     window.closeRegister = closeRegister;
     window.registerUser = registerUser;
-    window.sendMessage = sendMessage;
     window.loadSura = loadSura;
     window.closeSura = closeSura;
 </script>
