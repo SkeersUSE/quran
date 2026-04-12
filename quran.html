@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран Battle Pass — Гардероб</title>
+    <title>Коран — Престиж и титулы</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -19,14 +19,27 @@
         
         body.gold-theme { background: radial-gradient(ellipse at 30% 40%, #3d2b1a, #1a0f0a); }
         body.light-theme { background: #f5f5f0; color: #1a1a2e; }
-        body.light-theme .sura-card, body.light-theme .quest-item, body.light-theme .shop-item,
-        body.light-theme .pass-panel, body.light-theme .sura-content, body.light-theme .character-panel {
+        body.light-theme .sura-card, body.light-theme .quest-item, body.light-theme .pass-panel,
+        body.light-theme .sura-content, body.light-theme .profile-panel, body.light-theme .stats-card,
+        body.light-theme .leader-card {
             background: rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             color: #1a1a2e;
         }
         body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
         body.light-theme .theme-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
+        body.light-theme .ayah .translation { color: #555; }
+        
+        .glow-title {
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 5px #fff; }
+            50% { text-shadow: 0 0 20px #fff, 0 0 30px #fff; }
+            100% { text-shadow: 0 0 5px #fff; }
+        }
         
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .header { text-align: center; margin-bottom: 25px; }
@@ -40,61 +53,6 @@
             border-radius: 55px;
             border: 0.5px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 15px;
-        }
-        
-        /* Панель персонажа */
-        .character-panel {
-            background: rgba(138, 180, 248, 0.08);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .character-avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3.5em;
-            position: relative;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        
-        .character-avatar .hat {
-            position: absolute;
-            top: -15px;
-            font-size: 0.6em;
-        }
-        
-        .character-avatar .glasses {
-            position: absolute;
-            font-size: 0.7em;
-        }
-        
-        .character-info {
-            flex: 1;
-        }
-        
-        .character-name {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .character-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            font-size: 0.8em;
-            opacity: 0.8;
         }
         
         .profile-panel {
@@ -133,6 +91,37 @@
             font-size: 0.8em;
         }
         
+        .stats-card {
+            background: rgba(138, 180, 248, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .prestige-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .user-title {
+            font-size: 1.1em;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .rank-badge {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7em;
+        }
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #1a1a2e; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #b87333); color: #1a1a2e; }
+        
         .pass-panel {
             background: rgba(138, 180, 248, 0.08);
             backdrop-filter: blur(20px);
@@ -168,28 +157,41 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        /* Магазин одежды */
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
-        .shop-item {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(20px);
+        .leader-card {
+            background: rgba(255,255,255,0.05);
             border-radius: 20px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             transition: all 0.2s;
         }
-        .shop-item:hover { background: rgba(255,255,255,0.15); transform: scale(1.02); }
-        .shop-item-icon { font-size: 2.5em; margin-bottom: 8px; }
-        .shop-item-name { font-size: 0.85em; margin-bottom: 5px; }
-        .shop-item-price { color: #ffd966; font-size: 0.8em; }
-        .shop-item.owned { opacity: 0.5; cursor: default; }
-        .shop-item.equipped { border: 2px solid #ffd700; background: rgba(255,215,0,0.2); }
+        .leader-rank {
+            width: 50px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .leader-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .leader-info {
+            flex: 1;
+        }
+        .leader-name {
+            font-weight: 600;
+        }
+        .leader-reads {
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
         
         .sura-list, .quest-list {
             display: grid;
@@ -263,13 +265,10 @@
         
         .loading { text-align: center; padding: 40px; color: #ffd966; }
         
-        @keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
-        .star { position: fixed; top: -20px; font-size: 1.2em; pointer-events: none; z-index: 999; animation: fall linear forwards; }
-        
         @media (max-width: 550px) {
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
             .arabic { font-size: 1.1em; }
-            .character-panel { justify-content: center; text-align: center; }
+            .leader-card { flex-wrap: wrap; }
         }
     </style>
 </head>
@@ -289,18 +288,13 @@
         </div>
     </div>
 
-    <!-- Панель персонажа -->
-    <div class="character-panel">
-        <div class="character-avatar" id="characterAvatar">
-            <span id="charBase">🕌</span>
-            <span class="hat" id="charHat"></span>
-            <span class="glasses" id="charGlasses"></span>
-        </div>
-        <div class="character-info">
-            <div class="character-name" id="characterName">Путник</div>
-            <div class="character-stats">
-                <span>🎽 <span id="charShirt">Футболка</span></span>
-            </div>
+    <div class="stats-card" id="statsCard">
+        <div style="font-size: 0.8em; opacity: 0.7;">ПРЕСТИЖ</div>
+        <div class="prestige-number" id="prestigeCount">0</div>
+        <div class="user-title" id="userTitle"></div>
+        <div id="rankBadge"></div>
+        <div style="margin-top: 10px; font-size: 0.8em;">
+            📖 Полных прочтений Корана: <strong id="fullReadsCount">0</strong>
         </div>
     </div>
 
@@ -315,17 +309,12 @@
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('quests')">📋 Квесты</button>
-        <button class="tab-btn" onclick="switchTab('shop')">🛒 Магазин</button>
-        <button class="tab-btn" onclick="switchTab('wardrobe')">👗 Гардероб</button>
+        <button class="tab-btn" onclick="switchTab('leaders')">🏆 Лидеры</button>
         <button class="tab-btn" onclick="switchTab('suras')">📖 Суры</button>
     </div>
 
     <div id="questsTab" class="tab-content active"><div id="questList" class="quest-list"><div class="loading">🌟 Загрузка квестов...</div></div></div>
-    
-    <div id="shopTab" class="tab-content"><div id="shopGrid" class="shop-grid"><div class="loading">🛍️ Загрузка магазина...</div></div></div>
-    
-    <div id="wardrobeTab" class="tab-content"><div id="wardrobeGrid" class="shop-grid"><div class="loading">👗 Загрузка гардероба...</div></div></div>
-    
+    <div id="leadersTab" class="tab-content"><div id="leadersList" class="quest-list"><div class="loading">🏆 Загрузка лидеров...</div></div></div>
     <div id="surasTab" class="tab-content"><div id="suraList" class="sura-list"><div class="loading">✨ Загрузка сур...</div></div></div>
 
     <div id="suraContent" class="sura-content">
@@ -333,20 +322,25 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Одевай персонажа за 🌙</div>
+    <div class="footer">Коран | Перевод Кулиева | Престиж и титулы</div>
 </div>
 
 <div id="registerOverlay" class="register-overlay" style="display:none;">
     <div class="register-card">
-        <h3>📝 Создай профиль</h3>
+        <h3>📝 Регистрация</h3>
         <input type="text" id="regName" placeholder="Твой никнейм" maxlength="20">
         <div class="avatar-options" id="avatarOptions"></div>
-        <button onclick="registerUser()">✅ Начать</button>
+        <button onclick="registerUser()">✅ Зарегистрироваться</button>
         <button onclick="closeRegister()" style="background:#555;">❌ Закрыть</button>
     </div>
 </div>
 
 <script>
+    // ========== НАСТРОЙКИ ==========
+    // ⚠️ ЗАМЕНИ НА СВОЙ URL ИЗ APPS SCRIPT! ⚠️
+    const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPcQLlOac9BfHwPIm3DrwhFkO8roPCSbagah3I6y89Rwnf7mlD4pT-TiOkDj7wlvKaUw/exec";
+    // ==================================
+    
     // === ТЕМЫ ===
     function setTheme(theme) {
         document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
@@ -358,21 +352,84 @@
     const savedTheme = localStorage.getItem('quran_theme') || 'dark';
     setTheme(savedTheme);
     
-    // === ПРОФИЛЬ ===
-    let userProfile = { name: 'Гость', avatar: '🕌', userId: null };
-    const avatars = ['🕌', '🌟', '🕋', '🌙', '📖', '🤲', '⭐', '💚', '🕊️', '👑'];
+    // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+    let currentUser = null;
+    let currentSura = null;
+    let activeTimers = {};
+    let passData = { level: 1, exp: 0, coins: 0, ownedItems: [] };
+    let quests = [
+        { id: 'read10', name: '📖 10 аятов', target: 10, current: 0, reward: 20, completed: false, type: 'ayat' },
+        { id: 'read50', name: '📚 50 аятов', target: 50, current: 0, reward: 50, completed: false, type: 'ayat' },
+        { id: 'sura1', name: '🌟 Аль-Фатиха', target: 1, current: 0, reward: 30, completed: false, type: 'sura', suraId: 1 },
+        { id: 'sura112', name: '🤲 Аль-Ихлас', target: 1, current: 0, reward: 25, completed: false, type: 'sura', suraId: 112 }
+    ];
     
-    function loadProfile() {
-        const saved = localStorage.getItem('quran_profile');
-        if (saved) {
-            userProfile = JSON.parse(saved);
-            document.getElementById('usernameDisplay').innerText = userProfile.name;
-            document.getElementById('avatar').innerText = userProfile.avatar;
-            document.getElementById('characterName').innerText = userProfile.name;
-            document.getElementById('charBase').innerText = userProfile.avatar;
+    // === РАБОТА С API ===
+    async function apiRequest(action, data = {}) {
+        const params = new URLSearchParams({ action: action, ...data });
+        try {
+            const response = await fetch(`${APP_SCRIPT_URL}?${params.toString()}`);
+            const result = await response.json();
+            return result;
+        } catch(e) {
+            console.error('API ошибка:', e);
+            return { success: false, error: e.message };
         }
-        if (!userProfile.userId) userProfile.userId = 'user_' + Math.random().toString(36).substr(2, 9);
     }
+    
+    // === ПРОВЕРКА АВТОРИЗАЦИИ ===
+    async function checkAuth() {
+        const savedUserId = localStorage.getItem('quran_user_id');
+        if (savedUserId) {
+            const result = await apiRequest('getProfile', { userId: savedUserId });
+            if (result.success) {
+                currentUser = result.user;
+                currentUser.userId = savedUserId;
+                updateProfileUI();
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    function updateProfileUI() {
+        if (!currentUser) return;
+        document.getElementById('usernameDisplay').innerText = currentUser.username;
+        document.getElementById('avatar').innerText = currentUser.avatar;
+        document.getElementById('prestigeCount').innerText = currentUser.prestige || 0;
+        document.getElementById('fullReadsCount').innerText = currentUser.full_reads || 0;
+        
+        const title = currentUser.title || "";
+        const titleDiv = document.getElementById('userTitle');
+        titleDiv.innerText = title;
+        if (title === "✨ Великий ✨") {
+            titleDiv.classList.add('glow-title');
+        } else {
+            titleDiv.classList.remove('glow-title');
+        }
+        
+        checkUserRank();
+    }
+    
+    async function checkUserRank() {
+        const result = await apiRequest('getTop');
+        if (result.success && result.leaders) {
+            const rank = result.leaders.findIndex(l => l.username === currentUser.username) + 1;
+            const rankDiv = document.getElementById('rankBadge');
+            if (rank === 1) {
+                rankDiv.innerHTML = '<span class="rank-badge rank-1">👑 Топ-1 мира</span>';
+            } else if (rank === 2) {
+                rankDiv.innerHTML = '<span class="rank-badge rank-2">🥈 Топ-2 мира</span>';
+            } else if (rank === 3) {
+                rankDiv.innerHTML = '<span class="rank-badge rank-3">🥉 Топ-3 мира</span>';
+            } else {
+                rankDiv.innerHTML = '';
+            }
+        }
+    }
+    
+    // === РЕГИСТРАЦИЯ ===
+    const avatars = ['🕌', '🌟', '🕋', '🌙', '📖', '🤲', '⭐', '💚', '🕊️', '👑'];
     
     function openRegister() {
         const overlay = document.getElementById('registerOverlay');
@@ -385,231 +442,119 @@
             div.onclick = () => {
                 document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
                 div.classList.add('selected');
-                document.getElementById('regName').dataset.selectedAvatar = ava;
             };
             optionsDiv.appendChild(div);
         });
-        document.getElementById('regName').value = userProfile.name !== 'Гость' ? userProfile.name : '';
         overlay.style.display = 'flex';
     }
     
     function closeRegister() { document.getElementById('registerOverlay').style.display = 'none'; }
     
-    function registerUser() {
-        let name = document.getElementById('regName').value.trim();
-        if (!name) name = 'Путник';
-        if (name.length > 20) name = name.slice(0,20);
-        let avatar = document.querySelector('.avatar-option.selected')?.innerText || avatars[0];
-        userProfile = { name: name, avatar: avatar, userId: userProfile.userId };
-        localStorage.setItem('quran_profile', JSON.stringify(userProfile));
-        document.getElementById('usernameDisplay').innerText = name;
-        document.getElementById('avatar').innerText = avatar;
-        document.getElementById('characterName').innerText = name;
-        document.getElementById('charBase').innerText = avatar;
-        closeRegister();
-        renderShop();
-        renderWardrobe();
-    }
-    
-    // === ГАРДЕРОБ И ОДЕЖДА ===
-    let wardrobe = {
-        equipped: { hat: null, glasses: null, shirt: 'Футболка' },
-        owned: []
-    };
-    
-    // Предметы одежды
-    const clothingItems = [
-        { id: 'hat1', type: 'hat', name: 'Кепка', icon: '🧢', price: 30, displayIcon: '🧢' },
-        { id: 'hat2', type: 'hat', name: 'Тюбетейка', icon: '🎩', price: 50, displayIcon: '🎩' },
-        { id: 'hat3', type: 'hat', name: 'Панама', icon: '👒', price: 40, displayIcon: '👒' },
-        { id: 'glasses1', type: 'glasses', name: 'Солнцезащитные', icon: '🕶️', price: 35, displayIcon: '🕶️' },
-        { id: 'glasses2', type: 'glasses', name: 'Очки', icon: '👓', price: 25, displayIcon: '👓' },
-        { id: 'shirt1', type: 'shirt', name: 'Рубашка', icon: '👔', price: 45, displayIcon: '👔' },
-        { id: 'shirt2', type: 'shirt', name: 'Толстовка', icon: '🧥', price: 60, displayIcon: '🧥' },
-        { id: 'shirt3', type: 'shirt', name: 'Бандана', icon: '🧣', price: 35, displayIcon: '🧣' }
-    ];
-    
-    function loadWardrobe() {
-        const saved = localStorage.getItem('quran_wardrobe');
-        if (saved) {
-            wardrobe = JSON.parse(saved);
-        }
-        updateCharacterAppearance();
-    }
-    
-    function saveWardrobe() {
-        localStorage.setItem('quran_wardrobe', JSON.stringify(wardrobe));
-    }
-    
-    function updateCharacterAppearance() {
-        const hatSpan = document.getElementById('charHat');
-        const glassesSpan = document.getElementById('charGlasses');
-        const shirtSpan = document.getElementById('charShirt');
-        
-        if (wardrobe.equipped.hat) {
-            const hatItem = clothingItems.find(i => i.id === wardrobe.equipped.hat);
-            hatSpan.innerText = hatItem ? hatItem.displayIcon : '';
-            hatSpan.style.display = 'inline';
-        } else {
-            hatSpan.innerText = '';
-        }
-        
-        if (wardrobe.equipped.glasses) {
-            const glassesItem = clothingItems.find(i => i.id === wardrobe.equipped.glasses);
-            glassesSpan.innerText = glassesItem ? glassesItem.displayIcon : '';
-            glassesSpan.style.display = 'inline';
-        } else {
-            glassesSpan.innerText = '';
-        }
-        
-        if (wardrobe.equipped.shirt) {
-            const shirtItem = clothingItems.find(i => i.id === wardrobe.equipped.shirt);
-            shirtSpan.innerText = shirtItem ? shirtItem.name : 'Футболка';
-        } else {
-            shirtSpan.innerText = 'Футболка';
-        }
-    }
-    
-    function buyClothing(itemId) {
-        const item = clothingItems.find(i => i.id === itemId);
-        if (!item) return;
-        if (wardrobe.owned.includes(itemId)) {
-            showNotif('У тебя уже есть это!');
+    async function registerUser() {
+        const name = document.getElementById('regName').value.trim();
+        if (!name) {
+            showNotif('Введи никнейм!');
             return;
         }
-        if (passData.coins >= item.price) {
-            passData.coins -= item.price;
-            wardrobe.owned.push(itemId);
-            savePassData();
-            saveWardrobe();
-            renderShop();
-            renderWardrobe();
-            updatePassUI();
-            showNotif(`🎉 Куплено: ${item.name}!`);
-        } else {
-            showNotif(`❌ Нужно ${item.price} 🌙`);
-        }
-    }
-    
-    function equipItem(itemId) {
-        const item = clothingItems.find(i => i.id === itemId);
-        if (!item) return;
-        if (!wardrobe.owned.includes(itemId)) {
-            showNotif('Сначала купи этот предмет!');
+        if (name.length > 20) {
+            showNotif('Никнейм не длиннее 20 символов');
             return;
         }
+        const avatar = document.querySelector('.avatar-option.selected')?.innerText || avatars[0];
+        const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
         
-        if (item.type === 'hat') {
-            if (wardrobe.equipped.hat === itemId) {
-                wardrobe.equipped.hat = null;
-                showNotif(`🎩 ${item.name} снят`);
-            } else {
-                wardrobe.equipped.hat = itemId;
-                showNotif(`🎩 ${item.name} надет`);
-            }
-        } else if (item.type === 'glasses') {
-            if (wardrobe.equipped.glasses === itemId) {
-                wardrobe.equipped.glasses = null;
-                showNotif(`👓 ${item.name} сняты`);
-            } else {
-                wardrobe.equipped.glasses = itemId;
-                showNotif(`👓 ${item.name} надеты`);
-            }
-        } else if (item.type === 'shirt') {
-            if (wardrobe.equipped.shirt === itemId) {
-                wardrobe.equipped.shirt = null;
-                showNotif(`👕 ${item.name} снята`);
-            } else {
-                wardrobe.equipped.shirt = itemId;
-                showNotif(`👕 ${item.name} надета`);
-            }
+        const result = await apiRequest('register', { data: JSON.stringify({ userId, username: name, avatar }) });
+        if (result.success) {
+            currentUser = { username: name, avatar: avatar, full_reads: 0, prestige: 0, title: "", userId: userId };
+            localStorage.setItem('quran_user_id', userId);
+            updateProfileUI();
+            closeRegister();
+            showNotif(`✅ Добро пожаловать, ${name}!`);
+        } else {
+            showNotif(result.error || 'Ошибка регистрации');
         }
-        
-        saveWardrobe();
-        updateCharacterAppearance();
-        renderWardrobe();
-        renderShop();
     }
     
-    function renderWardrobe() {
-        const c = document.getElementById('wardrobeGrid');
-        if (!c) return;
-        c.innerHTML = '';
-        clothingItems.forEach(item => {
-            const owned = wardrobe.owned.includes(item.id);
-            const isEquipped = (item.type === 'hat' && wardrobe.equipped.hat === item.id) ||
-                              (item.type === 'glasses' && wardrobe.equipped.glasses === item.id) ||
-                              (item.type === 'shirt' && wardrobe.equipped.shirt === item.id);
-            if (!owned) return;
-            c.innerHTML += `
-                <div class="shop-item ${isEquipped ? 'equipped' : ''}" onclick="equipItem('${item.id}')">
-                    <div class="shop-item-icon">${item.icon}</div>
-                    <div class="shop-item-name">${item.name}</div>
-                    <div style="font-size:0.7em;">${isEquipped ? '✅ Надето' : '👆 Надеть'}</div>
-                </div>
-            `;
-        });
-        if (c.innerHTML === '') c.innerHTML = '<div class="loading">👗 Пока нет купленной одежды. Зайди в магазин!</div>';
+    // === ОБНОВЛЕНИЕ ПРОЧТЕНИЙ ===
+    async function addFullRead() {
+        if (!currentUser) return;
+        const result = await apiRequest('addRead', { userId: currentUser.userId });
+        if (result.success) {
+            currentUser.full_reads = result.full_reads;
+            currentUser.prestige = result.prestige;
+            currentUser.title = result.title;
+            updateProfileUI();
+            showNotif(`🎉 Полное прочтение Корана! +1 престиж!`, 3000);
+            if (result.title === "✨ Великий ✨") {
+                showNotif(`✨ Ты достиг величия! Титул "Великий" получен! ✨`, 5000);
+            }
+        }
+    }
+    
+    // === ЗАГРУЗКА ЛИДЕРОВ ===
+    async function loadLeaders() {
+        const container = document.getElementById('leadersList');
+        if (!container) return;
+        container.innerHTML = '<div class="loading">🏆 Загрузка лидеров...</div>';
+        const result = await apiRequest('getTop');
+        if (result.success && result.leaders) {
+            if (result.leaders.length === 0) {
+                container.innerHTML = '<div class="loading">🏆 Пока нет лидеров. Стань первым!</div>';
+                return;
+            }
+            container.innerHTML = '';
+            result.leaders.forEach(leader => {
+                let medal = '';
+                if (leader.rank === 1) medal = '👑';
+                else if (leader.rank === 2) medal = '🥈';
+                else if (leader.rank === 3) medal = '🥉';
+                else medal = '📌';
+                
+                container.innerHTML += `
+                    <div class="leader-card">
+                        <div class="leader-rank">${medal} ${leader.rank}</div>
+                        <div class="leader-avatar">${leader.avatar || '🕌'}</div>
+                        <div class="leader-info">
+                            <div class="leader-name">${escapeHtml(leader.username)}</div>
+                            <div class="leader-reads">📖 ${leader.reads} прочтений</div>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            container.innerHTML = '<div class="loading">⚠️ Ошибка загрузки лидеров</div>';
+        }
     }
     
     // === PASS СИСТЕМА ===
-    let passData = { level: 1, exp: 0, coins: 50, ownedItems: [] };
-    const EXP_PER_LEVEL = 100;
-    const MAX_LEVEL = 20;
-    const levelRewards = { 5: 50, 10: 100, 15: 150, 20: 200 };
-    
-    const shopItems = [
-        { id: 'theme_gold', name: 'Золотая тема', icon: '✨', price: 100, apply: () => setTheme('gold') },
-        { id: 'icon_crown', name: 'Корона', icon: '👑', price: 50, apply: () => {} },
-        { id: 'effect_stars', name: 'Звёзды', icon: '⭐', price: 75, apply: () => startStars() },
-        { id: 'border_glow', name: 'Свечение', icon: '🌟', price: 120, apply: () => document.body.classList.add('glow-effect') }
-    ];
-    
-    let starInterval = null;
-    function startStars() {
-        if (starInterval) return;
-        starInterval = setInterval(() => {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.innerHTML = ['⭐','✨','🌟','💫'][Math.floor(Math.random()*4)];
-            star.style.left = Math.random() * 100 + '%';
-            document.body.appendChild(star);
-            setTimeout(() => star.remove(), 5000);
-        }, 3000);
-    }
-    
     function loadPassData() {
         const saved = localStorage.getItem('quran_pass');
         if (saved) passData = JSON.parse(saved);
-        if (passData.ownedItems.includes('effect_stars')) startStars();
         updatePassUI();
     }
     function savePassData() { localStorage.setItem('quran_pass', JSON.stringify(passData)); }
     
     function addExp(amount) {
         passData.exp += amount;
-        while (passData.exp >= EXP_PER_LEVEL && passData.level < MAX_LEVEL) {
-            passData.exp -= EXP_PER_LEVEL;
+        while (passData.exp >= 100 && passData.level < 20) {
+            passData.exp -= 100;
             passData.level++;
-            if (levelRewards[passData.level]) {
-                passData.coins += levelRewards[passData.level];
-                showNotif(`🎉 Уровень ${passData.level}! +${levelRewards[passData.level]} 🌙`);
-            } else showNotif(`🎉 Уровень ${passData.level}!`);
+            showNotif(`🎉 Уровень ${passData.level}!`);
         }
-        if (passData.level >= MAX_LEVEL) passData.exp = 0;
+        if (passData.level >= 20) passData.exp = 0;
         updatePassUI();
         savePassData();
-        renderShop();
     }
     
-    function addCoins(amount) { passData.coins += amount; updatePassUI(); savePassData(); renderShop(); showNotif(`+${amount} 🌙`, 1000); }
+    function addCoins(amount) { passData.coins += amount; updatePassUI(); savePassData(); showNotif(`+${amount} 🌙`, 1000); }
     function updatePassUI() {
-        document.getElementById('passLevel').innerHTML = (passData.ownedItems.includes('icon_crown') ? '👑 ' : '') + 'Уровень ' + passData.level;
+        document.getElementById('passLevel').innerText = 'Уровень ' + passData.level;
         document.getElementById('coinCount').innerText = passData.coins;
-        document.getElementById('passProgress').style.width = `${(passData.exp/EXP_PER_LEVEL)*100}%`;
-        document.getElementById('expDisplay').innerText = `Опыт: ${passData.exp} / ${EXP_PER_LEVEL}`;
+        document.getElementById('passProgress').style.width = `${(passData.exp / 100) * 100}%`;
+        document.getElementById('expDisplay').innerText = `Опыт: ${passData.exp} / 100`;
     }
-    function showNotif(msg, dur=2000) {
+    
+    function showNotif(msg, dur = 2000) {
         const n = document.createElement('div');
         n.innerText = msg;
         n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;';
@@ -618,18 +563,11 @@
     }
     
     // === КВЕСТЫ ===
-    let quests = [
-        { id: 'read10', name: '📖 10 аятов', target: 10, current: 0, reward: 20, completed: false, type: 'ayat' },
-        { id: 'read50', name: '📚 50 аятов', target: 50, current: 0, reward: 50, completed: false, type: 'ayat' },
-        { id: 'sura1', name: '🌟 Аль-Фатиха', target: 1, current: 0, reward: 30, completed: false, type: 'sura', suraId: 1 },
-        { id: 'sura112', name: '🤲 Аль-Ихлас', target: 1, current: 0, reward: 25, completed: false, type: 'sura', suraId: 112 }
-    ];
-    
     function loadQuests() {
         const saved = localStorage.getItem('quran_quests');
         if (saved) {
             const sq = JSON.parse(saved);
-            quests.forEach(q => { const f = sq.find(s => s.id === q.id); if(f) { q.current = f.current; q.completed = f.completed; } });
+            quests.forEach(q => { const f = sq.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
         }
         renderQuests();
     }
@@ -688,52 +626,7 @@
         } else showNotif('📖 Сначала выполни квест');
     }
     
-    // === МАГАЗИН ===
-    function renderShop() {
-        const c = document.getElementById('shopGrid');
-        if (!c) return;
-        c.innerHTML = '';
-        // Предметы одежды
-        clothingItems.forEach(item => {
-            const owned = wardrobe.owned.includes(item.id);
-            c.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}" onclick="buyClothing('${item.id}')">
-                <div class="shop-item-icon">${item.icon}</div>
-                <div>${item.name}</div>
-                <div class="shop-item-price">🌙 ${item.price}</div>
-                ${owned ? '<div style="font-size:0.7em;">✅ В гардеробе</div>' : ''}
-            </div>`;
-        });
-        // Прочие предметы
-        shopItems.forEach(item => {
-            const owned = passData.ownedItems.includes(item.id);
-            c.innerHTML += `<div class="shop-item ${owned ? 'owned' : ''}" onclick="buyItem('${item.id}')">
-                <div class="shop-item-icon">${item.icon}</div>
-                <div>${item.name}</div>
-                <div class="shop-item-price">🌙 ${item.price}</div>
-                ${owned ? '<div style="font-size:0.7em;">✅</div>' : ''}
-            </div>`;
-        });
-    }
-    
-    function buyItem(id) {
-        const item = shopItems.find(i => i.id === id);
-        if (!item) return;
-        if (passData.ownedItems.includes(id)) { showNotif('Уже куплено'); return; }
-        if (passData.coins >= item.price) {
-            passData.coins -= item.price;
-            passData.ownedItems.push(id);
-            savePassData();
-            if (item.apply) item.apply();
-            renderShop();
-            updatePassUI();
-            showNotif(`🎉 Куплено: ${item.name}`);
-        } else showNotif(`❌ Нужно ${item.price} 🌙`);
-    }
-    
     // === ЧТЕНИЕ СУР ===
-    let currentSura = null;
-    let activeTimers = {};
-    
     const suraNames = {
         1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",
         6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",
@@ -800,9 +693,13 @@
                         localStorage.setItem(key, JSON.stringify(read));
                         updateQuestProgress('ayat', 1);
                         addExp(2);
-                        showNotif(`📖 Аят ${idx} прочитан! +2 опыта`, 1000);
                         const total = document.querySelectorAll('.ayah').length;
-                        if (read.length === total) updateQuestProgress('sura', currentSura);
+                        if (read.length === total) {
+                            updateQuestProgress('sura', currentSura);
+                            if (currentUser) {
+                                addFullRead();
+                            }
+                        }
                     }
                 }
             }
@@ -867,30 +764,34 @@
     
     function closeSura() { document.getElementById('suraContent').style.display = 'none'; currentSura = null; }
     
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
     function switchTab(tab) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tab + 'Tab').classList.add('active');
         const btns = document.querySelectorAll('.tab-btn');
         if (tab === 'quests') btns[0].classList.add('active');
-        else if (tab === 'shop') { btns[1].classList.add('active'); renderShop(); }
-        else if (tab === 'wardrobe') { btns[2].classList.add('active'); renderWardrobe(); }
-        else if (tab === 'suras') { btns[3].classList.add('active'); loadSuraList(); }
+        else if (tab === 'leaders') { btns[1].classList.add('active'); loadLeaders(); }
+        else if (tab === 'suras') { btns[2].classList.add('active'); loadSuraList(); }
     }
     
-    // Запуск
-    loadProfile();
+    // === ЗАПУСК ===
+    checkAuth();
     loadPassData();
     loadQuests();
-    loadWardrobe();
     loadSuraList();
     
     window.setTheme = setTheme;
     window.switchTab = switchTab;
     window.claimQuest = claimQuest;
-    window.buyItem = buyItem;
-    window.buyClothing = buyClothing;
-    window.equipItem = equipItem;
     window.openRegister = openRegister;
     window.closeRegister = closeRegister;
     window.registerUser = registerUser;
