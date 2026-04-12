@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран Battle Pass — Чат и темы</title>
+    <title>Коран Battle Pass — Общий чат</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -13,7 +13,6 @@
             box-sizing: border-box;
         }
         
-        /* Темы */
         body {
             font-family: -apple-system, 'SF Pro Text', 'Segoe UI', Helvetica, sans-serif;
             background: radial-gradient(ellipse at 30% 40%, #0a1628, #030712);
@@ -24,7 +23,6 @@
         
         body.dark-theme {
             background: radial-gradient(ellipse at 30% 40%, #0a1628, #030712);
-            color: #fff;
         }
         
         body.gold-theme {
@@ -40,22 +38,18 @@
         body.light-theme .quest-item,
         body.light-theme .shop-item,
         body.light-theme .pass-panel,
-        body.light-theme .sura-content {
+        body.light-theme .sura-content,
+        body.light-theme .chat-container {
             background: rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             color: #1a1a2e;
         }
         
-        body.light-theme .pass-level {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
+        body.light-theme .chat-input {
             color: #1a1a2e;
+            background: rgba(0,0,0,0.1);
         }
         
-        body.light-theme h1 {
-            color: #1a1a2e;
-        }
-        
-        /* Общие стили */
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -78,7 +72,6 @@
             margin-bottom: 15px;
         }
         
-        /* Панель профиля */
         .profile-panel {
             display: flex;
             align-items: center;
@@ -183,7 +176,6 @@
             transition: width 0.3s;
         }
         
-        /* Вкладки */
         .tabs {
             display: flex;
             gap: 8px;
@@ -221,11 +213,10 @@
             display: block;
         }
         
-        /* Чат */
         .chat-container {
             background: rgba(0,0,0,0.3);
             border-radius: 28px;
-            height: 400px;
+            height: 450px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -282,11 +273,6 @@
             font-size: 0.9em;
         }
         
-        body.light-theme .chat-input {
-            color: #1a1a2e;
-            background: rgba(0,0,0,0.1);
-        }
-        
         .chat-send {
             background: #ffd700;
             border: none;
@@ -295,70 +281,6 @@
             cursor: pointer;
             font-weight: bold;
             color: #1a1a2e;
-        }
-        
-        /* Регистрация */
-        .register-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        
-        .register-card {
-            background: rgba(20,30,50,0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 44px;
-            padding: 30px;
-            text-align: center;
-            width: 300px;
-        }
-        
-        .register-card input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 30px;
-            border: none;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            text-align: center;
-        }
-        
-        .register-card button {
-            background: #ffd700;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 30px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .avatar-options {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        
-        .avatar-option {
-            font-size: 2em;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: 0.2s;
-        }
-        
-        .avatar-option.selected {
-            background: rgba(255,215,0,0.3);
-            transform: scale(1.1);
         }
         
         .sura-list, .quest-list, .shop-grid {
@@ -473,10 +395,88 @@
             margin-top: 20px;
         }
         
+        .register-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .register-card {
+            background: rgba(20,30,50,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 44px;
+            padding: 30px;
+            text-align: center;
+            width: 300px;
+        }
+        
+        .register-card input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+        }
+        
+        .register-card button {
+            background: #ffd700;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .avatar-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .avatar-option {
+            font-size: 2em;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
+        
+        .avatar-option.selected {
+            background: rgba(255,215,0,0.3);
+            transform: scale(1.1);
+        }
+        
         @media (max-width: 550px) {
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
             .arabic { font-size: 1.1em; }
             .profile-panel { flex-direction: column; text-align: center; }
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        .star {
+            position: fixed;
+            top: -20px;
+            font-size: 1.2em;
+            pointer-events: none;
+            z-index: 999;
+            animation: fall linear forwards;
         }
     </style>
 </head>
@@ -486,7 +486,6 @@
         <h1>📖 Электронный Коран</h1>
     </div>
 
-    <!-- Профиль и темы -->
     <div class="profile-panel" id="profilePanel">
         <div class="profile-info">
             <div class="avatar" id="avatar" onclick="openRegister()">🕌</div>
@@ -499,7 +498,6 @@
         </div>
     </div>
 
-    <!-- Pass панель -->
     <div class="pass-panel">
         <div class="pass-header">
             <div class="pass-level" id="passLevel">Уровень 1</div>
@@ -509,7 +507,6 @@
         <div style="font-size:0.7em; margin-top:5px;" id="expDisplay">Опыт: 0 / 100</div>
     </div>
 
-    <!-- Вкладки -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('quests')">📋 Квесты</button>
         <button class="tab-btn" onclick="switchTab('shop')">🛒 Магазин</button>
@@ -522,7 +519,7 @@
     
     <div id="chatTab" class="tab-content">
         <div class="chat-container">
-            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-messages" id="chatMessages"><div class="loading">💬 Загрузка чата...</div></div>
             <div class="chat-input-area">
                 <input type="text" class="chat-input" id="chatInput" placeholder="Напиши сообщение..." maxlength="200">
                 <button class="chat-send" onclick="sendMessage()">➤</button>
@@ -537,10 +534,9 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Чат с фильтром</div>
+    <div class="footer">Коран | Перевод Кулиева | Общий чат для всех 🌍</div>
 </div>
 
-<!-- Окно регистрации -->
 <div id="registerOverlay" class="register-overlay" style="display:none;">
     <div class="register-card">
         <h3>📝 Создай профиль</h3>
@@ -552,6 +548,12 @@
 </div>
 
 <script>
+    // ========== НАСТРОЙКИ ЧАТА ==========
+    // ⚠️ ЗАМЕНИ НА СВОИ ССЫЛКИ! ⚠️
+    const CHAT_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9eyGXKyHDXQtUkFiGfyP8PH4OEGxTXSwlhUWzCZI3Bxr8oYm_lLKKMmkv64q6t25oE29irFTg-qj5/pubhtml";  // Ссылка из Шага 2
+    const CHAT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzI_7HbTAiQa779fsUIDho_w7-218-PboKtqvvByxvhL0Xgbo-yPqLGA2YM9abkbUWcqw/exec";               // Ссылка из Шага 3
+    // ====================================
+    
     // === ТЕМЫ ===
     function setTheme(theme) {
         document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
@@ -603,7 +605,7 @@
         if (!name) name = 'Путник';
         if (name.length > 20) name = name.slice(0,20);
         let avatar = document.querySelector('.avatar-option.selected')?.innerText || avatars[0];
-        userProfile = { name: name, avatar: avatar, userId: userProfile.userId || 'user_' + Math.random().toString(36).substr(2,9) };
+        userProfile = { name: name, avatar: avatar, userId: userProfile.userId };
         localStorage.setItem('quran_profile', JSON.stringify(userProfile));
         document.getElementById('usernameDisplay').innerText = name;
         document.getElementById('avatar').innerText = avatar;
@@ -631,7 +633,7 @@
             const star = document.createElement('div');
             star.className = 'star';
             star.innerHTML = ['⭐','✨','🌟','💫'][Math.floor(Math.random()*4)];
-            star.style.cssText = `position:fixed;top:-20px;left:${Math.random()*100}%;font-size:1.2em;pointer-events:none;z-index:999;animation:fall ${2+Math.random()*3}s linear forwards;`;
+            star.style.left = Math.random() * 100 + '%';
             document.body.appendChild(star);
             setTimeout(() => star.remove(), 5000);
         }, 3000);
@@ -711,7 +713,7 @@
         c.innerHTML = '';
         shopItems.forEach(item=>{
             const owned = passData.ownedItems.includes(item.id);
-            c.innerHTML += `<div class="shop-item ${owned?'owned':''}" onclick="buyItem('${item.id}')"><div class="shop-item-icon">${item.icon}</div><div>${item.name}</div><div>🌙 ${item.price}</div>${owned?'<div style="font-size:0.7em;">✅</div>':''}</div>`;
+            c.innerHTML += `<div class="shop-item ${owned?'owned':''}" onclick="buyItem('${item.id}')"><div>${item.icon}</div><div>${item.name}</div><div>🌙 ${item.price}</div>${owned?'<div style="font-size:0.7em;">✅</div>':''}</div>`;
         });
     }
     function buyItem(id) {
@@ -729,8 +731,8 @@
         } else showNotif(`❌ Нужно ${item.price} 🌙`);
     }
     
-    // === ЧАТ С ФИЛЬТРОМ ===
-    let badWords = ['мат1', 'мат2', 'хер', 'дурак', 'идиот', 'тупой', 'редиска', 'заткнись', 'пошел', 'урод']; // Добавь свои
+    // === ОБЩИЙ ЧАТ ===
+    let badWords = ['мат1', 'мат2', 'хер', 'дурак', 'идиот', 'тупой', 'редиска', 'заткнись', 'пошел', 'урод', 'тупая', 'идиотина'];
     function filterMessage(text) {
         let filtered = text;
         badWords.forEach(word => {
@@ -740,144 +742,41 @@
         return filtered;
     }
     
-    let messages = [];
-    function loadMessages() {
-        const saved = localStorage.getItem('quran_chat');
-        if(saved) messages = JSON.parse(saved);
-        renderChat();
-    }
-    function saveMessages() { localStorage.setItem('quran_chat', JSON.stringify(messages.slice(-100))); }
-    
-    function sendMessage() {
-        const input = document.getElementById('chatInput');
-        let text = input.value.trim();
-        if(!text) return;
-        if(!userProfile.name || userProfile.name === 'Гость') { showNotif('Сначала зарегистрируйся!'); openRegister(); return; }
-        text = filterMessage(text);
-        if(text.length > 200) text = text.slice(0,200);
-        const msg = { name: userProfile.name, avatar: userProfile.avatar, text: text, time: Date.now(), userId: userProfile.userId };
-        messages.push(msg);
-        saveMessages();
-        renderChat();
-        input.value = '';
-        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-    }
-    
-    function renderChat() {
-        const container = document.getElementById('chatMessages');
-        if(!container) return;
-        container.innerHTML = '';
-        messages.slice(-50).forEach(msg => {
-            const isOwn = msg.userId === userProfile.userId;
-            container.innerHTML += `<div class="chat-message ${isOwn ? 'own' : ''}"><div class="chat-name">${msg.avatar} ${msg.name}</div><div class="chat-text">${escapeHtml(msg.text)}</div></div>`;
-        });
-        container.scrollTop = container.scrollHeight;
-    }
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-    
-    // === ЧТЕНИЕ СУР ===
-    let currentSura = null;
-    let activeTimers = {};
-    function startAyahTimer(ayahDiv, idx) {
-        if(activeTimers[idx]) return;
-        let timeLeft = 8;
-        ayahDiv.classList.add('reading');
-        let tb = ayahDiv.querySelector('.timer-bar');
-        let tt = ayahDiv.querySelector('.timer-text');
-        if(!tb){ tb=document.createElement('div'); tb.className='timer-bar'; tt=document.createElement('div'); tt.className='timer-text'; ayahDiv.appendChild(tb); ayahDiv.appendChild(tt); }
-        const interval = setInterval(()=>{
-            timeLeft -= 0.1;
-            const percent = ((8-timeLeft)/8)*100;
-            tb.style.width = `${percent}%`;
-            tt.innerText = `${Math.ceil(timeLeft)}с`;
-            if(timeLeft <= 0){
-                clearInterval(interval);
-                delete activeTimers[idx];
-                ayahDiv.classList.remove('reading');
-                if(tb) tb.remove();
-                if(tt) tt.remove();
-                if(!ayahDiv.classList.contains('read')){
-                    ayahDiv.classList.add('read');
-                    const key = `quran_sura_${currentSura}_ayahs`;
-                    let read = JSON.parse(localStorage.getItem(key)) || [];
-                    if(!read.includes(idx)){ read.push(idx); localStorage.setItem(key, JSON.stringify(read)); updateQuestProgress('ayat', 1); addExp(2); showNotif(`📖 Аят ${idx} прочитан! +2 опыта`, 1000); }
-                    const total = document.querySelectorAll('.ayah').length;
-                    if(read.length === total) updateQuestProgress('sura', currentSura);
+    async function loadMessages() {
+        try {
+            const response = await fetch(CHAT_CSV_URL + '?t=' + Date.now());
+            const csvText = await response.text();
+            const rows = csvText.split('\n').slice(1);
+            const messages = [];
+            for (let i = rows.length - 1; i >= 0; i--) {
+                const row = rows[i];
+                if (!row.trim()) continue;
+                const parts = row.split(',');
+                if (parts.length >= 4) {
+                    messages.push({
+                        time: parts[0],
+                        name: parts[1]?.replace(/^"|"$/g, '') || 'Аноним',
+                        avatar: parts[2]?.replace(/^"|"$/g, '') || '🕌',
+                        text: parts[3]?.replace(/^"|"$/g, '') || '',
+                        userId: parts[4]?.replace(/^"|"$/g, '') || ''
+                    });
                 }
             }
-        },100);
-        activeTimers[idx] = interval;
-    }
-    function stopAyahTimer(idx) { if(activeTimers[idx]){ clearInterval(activeTimers[idx]); delete activeTimers[idx]; const div=document.querySelector(`.ayah[data-ayah="${idx}"]`); if(div){ div.classList.remove('reading'); const tb=div.querySelector('.timer-bar'); const tt=div.querySelector('.timer-text'); if(tb) tb.remove(); if(tt) tt.remove(); } } }
-    function initAyahs(){ document.querySelectorAll('.ayah').forEach((a,idx)=>{ const i=idx+1; a.setAttribute('data-ayah',i); a.onmouseenter=()=>startAyahTimer(a,i); a.onmouseleave=()=>stopAyahTimer(i); }); }
-    function loadReadAyahs(){ const key=`quran_sura_${currentSura}_ayahs`; const read=JSON.parse(localStorage.getItem(key))||[]; document.querySelectorAll('.ayah').forEach((a,idx)=>{ if(read.includes(idx+1)) a.classList.add('read'); }); }
-    function saveBookmark(){ if(currentSura) localStorage.setItem('quran_bookmark_sura', currentSura); showNotif('🔖 Закладка сохранена',1000); }
-    function goToBookmark(){ const s=localStorage.getItem('quran_bookmark_sura'); if(s) loadSura(parseInt(s)); else showNotif('Нет закладки'); }
-    
-    const suraNames = {1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"};
-    async function loadSuraList() {
-        const c = document.getElementById('suraList');
-        if(!c) return;
-        c.innerHTML = '';
-        for(let i=1;i<=114;i++){
-            const card = document.createElement('div');
-            card.className = 'sura-card';
-            card.onclick = () => loadSura(i);
-            card.innerHTML = `<span class="sura-number">${i}.</span> <span>${suraNames[i]}</span>`;
-            c.appendChild(card);
+            renderChatMessages(messages.slice(-50).reverse());
+        } catch(e) {
+            console.error('Ошибка загрузки чата:', e);
+            document.getElementById('chatMessages').innerHTML = '<div class="loading">⚠️ Ошибка загрузки чата</div>';
         }
     }
-    async function loadSura(num) {
-        currentSura = num;
-        const cont = document.getElementById('suraContent');
-        const textDiv = document.getElementById('suraText');
-        const titleSpan = document.getElementById('suraTitle');
-        cont.style.display = 'block';
-        textDiv.innerHTML = '<div class="loading">🌙 Загрузка...</div>';
-        titleSpan.innerHTML = `${num}. ${suraNames[num]}`;
-        cont.scrollIntoView({ behavior: 'smooth' });
-        try{
-            const res = await fetch(`https://api.alquran.cloud/v1/surah/${num}/ru.kuliev`);
-            const data = await res.json();
-            if(data.status === 'OK'){
-                let html = '';
-                data.data.ayahs.forEach((a,i)=>{ html += `<div class="ayah"><div class="arabic">${a.text}</div><div class="translation">${i+1}. ${a.translation}</div></div>`; });
-                textDiv.innerHTML = html;
-                loadReadAyahs();
-                initAyahs();
-                saveBookmark();
-            } else textDiv.innerHTML = '<div class="loading">⚠️ Ошибка</div>';
-        } catch(e){ textDiv.innerHTML = '<div class="loading">🔌 Ошибка</div>'; }
-    }
-    function closeSura(){ document.getElementById('suraContent').style.display = 'none'; currentSura = null; }
     
-    function switchTab(tab){
-        ['quests','shop','chat','suras'].forEach(t=>document.getElementById(t+'Tab').classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        document.getElementById(tab+'Tab').classList.add('active');
-        if(tab==='quests') document.querySelector('.tab-btn').classList.add('active');
-        else if(tab==='shop'){ document.querySelectorAll('.tab-btn')[1].classList.add('active'); renderShop(); }
-        else if(tab==='chat'){ document.querySelectorAll('.tab-btn')[2].classList.add('active'); renderChat(); }
-        else if(tab==='suras'){ document.querySelectorAll('.tab-btn')[3].classList.add('active'); loadSuraList(); }
-    }
-    
-    // Инициализация
-    loadProfile();
-    loadPassData();
-    loadQuests();
-    loadMessages();
-    loadSuraList();
-    window.setTheme = setTheme;
-    window.switchTab = switchTab;
-    window.claimQuest = claimQuest;
-    window.buyItem = buyItem;
-    window.goToBookmark = goToBookmark;
-    window.openRegister = openRegister;
-    window.closeRegister = closeRegister;
-    window.registerUser = registerUser;
-    window.sendMessage = sendMessage;
-    window.loadSura = loadSura;
-    window.closeSura = closeSura;
-</script>
-</body>
-</html>
+    function renderChatMessages(messages) {
+        const container = document.getElementById('chatMessages');
+        if (!container) return;
+        if (messages.length === 0) {
+            container.innerHTML = '<div class="loading">💬 Пока нет сообщений. Напиши что-нибудь!</div>';
+            return;
+        }
+        container.innerHTML = '';
+        messages.forEach(msg => {
+            const isOwn = msg.userId === userProfile.userId;
+            container.innerHTML += `<div class="chat-message ${isOwn
