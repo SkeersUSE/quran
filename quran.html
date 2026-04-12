@@ -17,19 +17,9 @@
             background: #000000;
             min-height: 100vh;
             color: #ffffff;
-            transition: background 0.3s;
         }
 
-        /* iOS 26 Glass эффект — белый полупрозрачный блюр */
-        .glass {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 44px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-
+        /* iOS 26 Glass эффект */
         .glass-card {
             background: rgba(255, 255, 255, 0.06);
             backdrop-filter: blur(20px);
@@ -64,11 +54,9 @@
             border-radius: 55px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             margin-bottom: 15px;
-            letter-spacing: -0.5px;
             color: #ffffff;
         }
 
-        /* Premium бейдж */
         .premium-badge {
             position: fixed;
             top: 20px;
@@ -84,7 +72,6 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.2s;
-            font-family: monospace;
         }
 
         .premium-badge:hover {
@@ -92,7 +79,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Профиль */
         .profile-panel {
             display: flex;
             align-items: center;
@@ -140,7 +126,6 @@
             color: white;
         }
 
-        /* Звуки природы */
         .sounds-section {
             margin-bottom: 25px;
         }
@@ -180,10 +165,6 @@
         .sound-card.locked {
             opacity: 0.5;
             cursor: default;
-        }
-
-        .sound-card.locked:hover {
-            transform: none;
         }
 
         .sound-card:hover:not(.locked) {
@@ -234,7 +215,6 @@
             cursor: pointer;
         }
 
-        /* Суры */
         .sura-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -273,7 +253,6 @@
             color: #ffffff;
         }
 
-        /* Чтение суры */
         .reading-panel {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(35px);
@@ -334,7 +313,6 @@
             border-left: 3px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* Premium модалка */
         .premium-overlay {
             position: fixed;
             top: 0;
@@ -448,7 +426,6 @@
         </div>
     </div>
     
-    <!-- Звуки природы -->
     <div class="sounds-section">
         <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
         <div class="sounds-grid" id="soundsGrid"></div>
@@ -457,11 +434,9 @@
         </div>
     </div>
     
-    <!-- Суры -->
     <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
     <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
     
-    <!-- Панель чтения -->
     <div id="readingPanel" class="reading-panel">
         <div class="reading-header">
             <span id="suraTitle"></span>
@@ -473,7 +448,6 @@
     <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
 </div>
 
-<!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
@@ -495,51 +469,173 @@
 <script>
     // === НАСТРОЙКИ ===
     let isPremium = localStorage.getItem('quran_premium') === 'true';
-    let currentAudio = null;
     let currentSoundId = null;
     let currentSura = null;
+    let audioContext = null;
+    let currentSource = null;
+    let currentGain = null;
     
-    // === РЕАЛЬНЫЕ ЗВУКИ ПРИРОДЫ (рабочие ссылки из открытых источников) ===
+    // === ГЕНЕРАТОРЫ ЗВУКОВ ПРИРОДЫ ===
+    function createWavesSound(ctx, gainNode) {
+        const source = ctx.createBufferSource();
+        const duration = 30;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
+        
+        for (let channel = 0; channel < 2; channel++) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                // Шум океана + низкочастотные колебания
+                const noise = Math.random() * 2 - 1;
+                const wave = Math.sin(t * 0.5) * 0.3 + Math.sin(t * 1.2) * 0.2;
+                const envelope = Math.exp(-t * 0.1);
+                data[i] = (noise * 0.4 + wave * 0.6) * envelope;
+            }
+        }
+        
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(gainNode);
+        return source;
+    }
+    
+    function createRainSound(ctx, gainNode) {
+        const source = ctx.createBufferSource();
+        const duration = 30;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
+        
+        for (let channel = 0; channel < 2; channel++) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                // Капли дождя
+                let value = 0;
+                for (let j = 0; j < 50; j++) {
+                    const freq = 100 + Math.random() * 200;
+                    const amp = Math.random() * 0.02;
+                    value += Math.sin(t * freq) * amp;
+                }
+                const envelope = Math.exp(-t * 0.05);
+                data[i] = value * envelope;
+            }
+        }
+        
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(gainNode);
+        return source;
+    }
+    
+    function createForestSound(ctx, gainNode) {
+        const source = ctx.createBufferSource();
+        const duration = 30;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
+        
+        for (let channel = 0; channel < 2; channel++) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                // Птицы и ветер
+                const wind = Math.sin(t * 0.3) * 0.2 + Math.sin(t * 0.7) * 0.1;
+                const birds = Math.sin(t * 120) * Math.exp(-((t % 2) - 1) ** 2 * 50) * 0.15;
+                data[i] = wind + birds + (Math.random() - 0.5) * 0.1;
+            }
+        }
+        
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(gainNode);
+        return source;
+    }
+    
+    function createBirdsSound(ctx, gainNode) {
+        const source = ctx.createBufferSource();
+        const duration = 30;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
+        
+        for (let channel = 0; channel < 2; channel++) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                let value = 0;
+                for (let j = 0; j < 30; j++) {
+                    const freq = 800 + Math.random() * 400;
+                    const amp = Math.random() * 0.03;
+                    const timeMod = Math.sin(t * 3) * 0.5;
+                    value += Math.sin(t * (freq + timeMod * 100)) * amp;
+                }
+                data[i] = value * (0.5 + Math.sin(t * 0.5) * 0.3);
+            }
+        }
+        
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(gainNode);
+        return source;
+    }
+    
+    function createFireSound(ctx, gainNode) {
+        const source = ctx.createBufferSource();
+        const duration = 30;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
+        
+        for (let channel = 0; channel < 2; channel++) {
+            const data = buffer.getChannelData(channel);
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                // Треск костра
+                const crackle = (Math.random() - 0.5) * 0.5;
+                const low = Math.sin(t * 2) * 0.1;
+                data[i] = crackle + low;
+            }
+        }
+        
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(gainNode);
+        return source;
+    }
+    
+    const soundGenerators = {
+        waves: createWavesSound,
+        rain: createRainSound,
+        forest: createForestSound,
+        birds: createBirdsSound,
+        fire: createFireSound
+    };
+    
     const sounds = [
-        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3?filename=ocean-waves-112656.mp3', free: true },
-        { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_1c1c1c1c1c.mp3?filename=forest-birds-103441.mp3', free: false },
-        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_1f1f1f1f1f.mp3?filename=rain-112643.mp3', free: false },
-        { id: 'birds', name: 'ПТИЦЫ', icon: '§', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_2e2e2e2e2e.mp3?filename=bird-singing-104223.mp3', free: false },
-        { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_3d3d3d3d3d.mp3?filename=fire-112661.mp3', free: false }
+        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', free: true, generator: 'waves' },
+        { id: 'forest', name: 'ЛЕС', icon: '⌘', free: false, generator: 'forest' },
+        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', free: false, generator: 'rain' },
+        { id: 'birds', name: 'ПТИЦЫ', icon: '§', free: false, generator: 'birds' },
+        { id: 'fire', name: 'КОСТЕР', icon: '⌂', free: false, generator: 'fire' }
     ];
     
-    // === ТЕМЫ ===
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.style.background = '#000000';
-            document.body.style.color = '#ffffff';
-        } else {
-            document.body.style.background = '#1a1a1a';
-            document.body.style.color = '#ffffff';
+    function stopSound() {
+        if (currentSource) {
+            try {
+                currentSource.stop();
+            } catch(e) {}
+            currentSource = null;
         }
-        localStorage.setItem('quran_theme', theme);
-    }
-    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
-    setTheme(savedTheme);
-    
-    // === PREMIUM ===
-    function openPremium() {
-        document.getElementById('premiumModal').style.display = 'flex';
-    }
-    
-    function closePremium() {
-        document.getElementById('premiumModal').style.display = 'none';
-    }
-    
-    function buyPremium() {
-        isPremium = true;
-        localStorage.setItem('quran_premium', 'true');
-        closePremium();
+        if (currentGain) {
+            currentGain.disconnect();
+            currentGain = null;
+        }
+        if (audioContext) {
+            audioContext.close();
+            audioContext = null;
+        }
+        currentSoundId = null;
         renderSounds();
-        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
     }
     
-    // === ЗВУКИ ===
     function playSound(soundId) {
         const sound = sounds.find(s => s.id === soundId);
         if (!sound) return;
@@ -548,33 +644,31 @@
             return;
         }
         
-        if (currentAudio) {
-            currentAudio.pause();
-        }
+        stopSound();
         
-        currentAudio = new Audio(sound.url);
-        currentAudio.loop = true;
-        currentAudio.volume = document.getElementById('volumeSlider').value / 100;
-        currentAudio.play();
-        currentSoundId = soundId;
-        
-        renderSounds();
-        showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
-    }
-    
-    function stopSound() {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio = null;
-            currentSoundId = null;
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            currentGain = audioContext.createGain();
+            currentGain.gain.value = document.getElementById('volumeSlider').value / 100;
+            currentGain.connect(audioContext.destination);
+            
+            const generator = soundGenerators[sound.generator];
+            currentSource = generator(audioContext, currentGain);
+            currentSource.start();
+            
+            currentSoundId = soundId;
             renderSounds();
+            showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
+        } catch(e) {
+            console.error('Audio error:', e);
+            showNotif('⚠️ Ошибка воспроизведения');
         }
     }
     
     function updateVolume() {
         const volume = document.getElementById('volumeSlider').value / 100;
-        if (currentAudio) {
-            currentAudio.volume = volume;
+        if (currentGain) {
+            currentGain.gain.value = volume;
         }
     }
     
@@ -606,6 +700,35 @@
     }
     
     document.getElementById('volumeSlider').addEventListener('input', updateVolume);
+    
+    // === ТЕМЫ ===
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.style.background = '#000000';
+        } else {
+            document.body.style.background = '#1a1a1a';
+        }
+        localStorage.setItem('quran_theme', theme);
+    }
+    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
+    setTheme(savedTheme);
+    
+    // === PREMIUM ===
+    function openPremium() {
+        document.getElementById('premiumModal').style.display = 'flex';
+    }
+    
+    function closePremium() {
+        document.getElementById('premiumModal').style.display = 'none';
+    }
+    
+    function buyPremium() {
+        isPremium = true;
+        localStorage.setItem('quran_premium', 'true');
+        closePremium();
+        renderSounds();
+        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
+    }
     
     // === СУРЫ ===
     const suraNames = {
@@ -688,13 +811,11 @@
         setTimeout(() => n.remove(), dur);
     }
     
-    // Восстановление последней суры
     const lastSura = localStorage.getItem('quran_last_sura');
     if (lastSura) {
         setTimeout(() => loadSura(parseInt(lastSura)), 500);
     }
     
-    // Запуск
     renderSounds();
     loadSuraList();
     
