@@ -61,6 +61,7 @@
             color: #ffd966;
             text-decoration: none;
             margin-bottom: 20px;
+            display: inline-block;
         }
         
         .support-btn:hover {
@@ -68,37 +69,89 @@
             transform: scale(1.02);
         }
         
-        /* Новая табличка-совет */
-        .advice-card {
+        /* Статистика и закладки */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .today-stats {
             background: rgba(138, 180, 248, 0.1);
             backdrop-filter: blur(20px);
             border-radius: 28px;
-            padding: 16px 24px;
-            margin: 0 0 25px 0;
+            padding: 12px 20px;
             border: 0.5px solid rgba(138, 180, 248, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            transition: all 0.3s;
+            flex: 2;
+            min-width: 150px;
         }
         
-        .advice-card:hover {
-            background: rgba(138, 180, 248, 0.15);
-            border-color: rgba(138, 180, 248, 0.6);
+        .today-stats span {
+            font-size: 0.85em;
+            color: #8ab4f8;
+            display: block;
+        }
+        
+        .today-stats .count {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #ffd966;
+        }
+        
+        .bookmark-btn {
+            background: rgba(138, 180, 248, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 12px 20px;
+            border: 0.5px solid rgba(138, 180, 248, 0.4);
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .bookmark-btn:hover {
+            background: rgba(138, 180, 248, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .reset-stats {
+            background: rgba(255, 100, 100, 0.1);
+            border: 0.5px solid rgba(255, 100, 100, 0.3);
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .reset-stats:hover {
+            background: rgba(255, 100, 100, 0.2);
+        }
+        
+        .advice-card {
+            background: rgba(138, 180, 248, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 14px 20px;
+            margin-bottom: 25px;
+            border: 0.5px solid rgba(138, 180, 248, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
         .advice-icon {
-            font-size: 2em;
+            font-size: 1.5em;
         }
         
         .advice-text {
-            font-size: 1em;
-            font-weight: 500;
+            font-size: 0.9em;
             color: #c8e0ff;
             text-align: center;
-            line-height: 1.4;
         }
         
         .advice-text strong {
@@ -180,10 +233,17 @@
             padding: 18px;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
         .ayah:hover {
             background: rgba(255, 255, 255, 0.09);
+        }
+        
+        .ayah.read {
+            background: rgba(138, 180, 248, 0.15);
+            border-left: 3px solid #ffd966;
         }
         
         .arabic {
@@ -229,8 +289,11 @@
             .arabic {
                 font-size: 1.2em;
             }
-            .advice-text {
-                font-size: 0.9em;
+            .stats-row {
+                flex-direction: column;
+            }
+            .today-stats, .bookmark-btn, .reset-stats {
+                width: 100%;
             }
         }
     </style>
@@ -244,7 +307,21 @@
             🤝 Поддержать нас
         </a>
         
-        <!-- Новая табличка-совет -->
+        <!-- Статистика и закладки -->
+        <div class="stats-row">
+            <div class="today-stats">
+                <span>📊 Сегодня прочитано</span>
+                <div class="count" id="todayCount">0</div>
+                <span>аятов</span>
+            </div>
+            <div class="bookmark-btn" onclick="goToBookmark()">
+                🔖 Продолжить<br>с закладки
+            </div>
+            <div class="bookmark-btn reset-stats" onclick="resetTodayStats()">
+                🔄 Сбросить<br>статистику
+            </div>
+        </div>
+        
         <div class="advice-card">
             <div class="advice-icon">⏳</div>
             <div class="advice-text">
@@ -273,6 +350,103 @@
 </div>
 
 <script>
+    // === ХРАНЕНИЕ ДАННЫХ ===
+    function getTodayKey() {
+        const today = new Date().toISOString().slice(0,10);
+        return `quran_read_${today}`;
+    }
+    
+    function getTodayCount() {
+        const key = getTodayKey();
+        return parseInt(localStorage.getItem(key)) || 0;
+    }
+    
+    function addToTodayCount(amount) {
+        const key = getTodayKey();
+        const current = getTodayCount();
+        const newCount = current + amount;
+        localStorage.setItem(key, newCount);
+        updateTodayDisplay();
+        return newCount;
+    }
+    
+    function updateTodayDisplay() {
+        document.getElementById('todayCount').innerText = getTodayCount();
+    }
+    
+    function resetTodayStats() {
+        const key = getTodayKey();
+        localStorage.setItem(key, 0);
+        updateTodayDisplay();
+        // Небольшое уведомление
+        const btn = event.target.closest('.reset-stats');
+        const originalText = btn.innerText;
+        btn.innerText = '✅ Сброшено!';
+        setTimeout(() => {
+            btn.innerText = originalText;
+        }, 1500);
+    }
+    
+    // Закладки
+    let currentSuraNumber = null;
+    let readAyahsInCurrentSura = new Set();
+    
+    function saveBookmark() {
+        if (currentSuraNumber) {
+            localStorage.setItem('quran_bookmark_sura', currentSuraNumber);
+            // Уведомление
+            const btn = document.querySelector('.bookmark-btn:not(.reset-stats)');
+            const originalText = btn.innerText;
+            btn.innerText = '✅ Сохранено!';
+            setTimeout(() => {
+                btn.innerText = originalText;
+            }, 1500);
+        }
+    }
+    
+    function goToBookmark() {
+        const savedSura = localStorage.getItem('quran_bookmark_sura');
+        if (savedSura) {
+            loadSura(parseInt(savedSura));
+        } else {
+            const btn = document.querySelector('.bookmark-btn:not(.reset-stats)');
+            const originalText = btn.innerText;
+            btn.innerText = '❌ Нет закладок';
+            setTimeout(() => {
+                btn.innerText = originalText;
+            }, 1500);
+        }
+    }
+    
+    // Отмечаем аят как прочитанный
+    function markAyahAsRead(ayahIndex) {
+        const key = `quran_sura_${currentSuraNumber}_ayahs`;
+        let readAyahs = JSON.parse(localStorage.getItem(key)) || [];
+        if (!readAyahs.includes(ayahIndex)) {
+            readAyahs.push(ayahIndex);
+            localStorage.setItem(key, JSON.stringify(readAyahs));
+            addToTodayCount(1);
+        }
+        // Обновляем визуально
+        const ayahDiv = document.querySelector(`.ayah[data-ayah="${ayahIndex}"]`);
+        if (ayahDiv) {
+            ayahDiv.classList.add('read');
+        }
+    }
+    
+    // Загружаем прочитанные аяты для текущей суры
+    function loadReadAyahsForCurrentSura() {
+        const key = `quran_sura_${currentSuraNumber}_ayahs`;
+        const readAyahs = JSON.parse(localStorage.getItem(key)) || [];
+        readAyahs.forEach(ayahIndex => {
+            const ayahDiv = document.querySelector(`.ayah[data-ayah="${ayahIndex}"]`);
+            if (ayahDiv) {
+                ayahDiv.classList.add('read');
+            }
+        });
+    }
+    
+    // === НАЗВАНИЯ СУР ===
     const suraNames = {
         1: "Аль-Фатиха (Открывающая)",
         2: "Аль-Бакара (Корова)",
@@ -403,6 +577,7 @@
     }
 
     async function loadSura(number) {
+        currentSuraNumber = number;
         const contentDiv = document.getElementById('suraContent');
         const textDiv = document.getElementById('suraText');
         const titleSpan = document.getElementById('suraTitle');
@@ -420,13 +595,17 @@
                 let html = '';
                 for (let i = 0; i < ayahs.length; i++) {
                     html += `
-                        <div class="ayah">
+                        <div class="ayah" data-ayah="${i+1}" onclick="markAyahAsRead(${i+1})">
                             <div class="arabic">${ayahs[i].text}</div>
                             <div class="translation">${i+1}. ${ayahs[i].translation}</div>
                         </div>
                     `;
                 }
                 textDiv.innerHTML = html;
+                // Загружаем ранее прочитанные аяты
+                loadReadAyahsForCurrentSura();
+                // Автосохранение закладки при загрузке суры
+                saveBookmark();
             } else {
                 textDiv.innerHTML = '<div class="loading">⚠️ Не удалось загрузить суру.</div>';
             }
@@ -437,8 +616,11 @@
 
     function closeSura() {
         document.getElementById('suraContent').style.display = 'none';
+        currentSuraNumber = null;
     }
 
+    // Инициализация
+    updateTodayDisplay();
     loadSuraList();
 </script>
 </body>
