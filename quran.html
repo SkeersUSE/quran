@@ -17,6 +17,7 @@
             background: #000000;
             min-height: 100vh;
             color: #ffffff;
+            transition: background 0.3s;
         }
 
         .glass-card {
@@ -164,6 +165,10 @@
         .sound-card.locked {
             opacity: 0.5;
             cursor: default;
+        }
+
+        .sound-card.locked:hover {
+            transform: none;
         }
 
         .sound-card:hover:not(.locked) {
@@ -425,7 +430,6 @@
         </div>
     </div>
     
-    <!-- Звуки природы -->
     <div class="sounds-section">
         <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
         <div class="sounds-grid" id="soundsGrid"></div>
@@ -434,11 +438,9 @@
         </div>
     </div>
     
-    <!-- Суры -->
     <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
     <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
     
-    <!-- Панель чтения -->
     <div id="readingPanel" class="reading-panel">
         <div class="reading-header">
             <span id="suraTitle"></span>
@@ -450,7 +452,6 @@
     <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
 </div>
 
-<!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
@@ -472,157 +473,49 @@
 <script>
     // === НАСТРОЙКИ ===
     let isPremium = localStorage.getItem('quran_premium') === 'true';
+    let currentAudio = null;
     let currentSoundId = null;
     let currentSura = null;
-    let audioContext = null;
-    let currentSource = null;
-    let currentGain = null;
     
-    // === ГЕНЕРАТОРЫ ЗВУКОВ ===
-    function createWavesSound(ctx, gainNode) {
-        const source = ctx.createBufferSource();
-        const duration = 30;
-        const sampleRate = ctx.sampleRate;
-        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        for (let channel = 0; channel < 2; channel++) {
-            const data = buffer.getChannelData(channel);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                const noise = Math.random() * 2 - 1;
-                const wave = Math.sin(t * 0.5) * 0.3 + Math.sin(t * 1.2) * 0.2;
-                const envelope = Math.exp(-t * 0.1);
-                data[i] = (noise * 0.4 + wave * 0.6) * envelope;
-            }
-        }
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(gainNode);
-        return source;
-    }
-    
-    function createRainSound(ctx, gainNode) {
-        const source = ctx.createBufferSource();
-        const duration = 30;
-        const sampleRate = ctx.sampleRate;
-        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        for (let channel = 0; channel < 2; channel++) {
-            const data = buffer.getChannelData(channel);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                let value = 0;
-                for (let j = 0; j < 50; j++) {
-                    const freq = 100 + Math.random() * 200;
-                    const amp = Math.random() * 0.02;
-                    value += Math.sin(t * freq) * amp;
-                }
-                const envelope = Math.exp(-t * 0.05);
-                data[i] = value * envelope;
-            }
-        }
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(gainNode);
-        return source;
-    }
-    
-    function createForestSound(ctx, gainNode) {
-        const source = ctx.createBufferSource();
-        const duration = 30;
-        const sampleRate = ctx.sampleRate;
-        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        for (let channel = 0; channel < 2; channel++) {
-            const data = buffer.getChannelData(channel);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                const wind = Math.sin(t * 0.3) * 0.2 + Math.sin(t * 0.7) * 0.1;
-                const birds = Math.sin(t * 120) * Math.exp(-((t % 2) - 1) ** 2 * 50) * 0.15;
-                data[i] = wind + birds + (Math.random() - 0.5) * 0.1;
-            }
-        }
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(gainNode);
-        return source;
-    }
-    
-    function createBirdsSound(ctx, gainNode) {
-        const source = ctx.createBufferSource();
-        const duration = 30;
-        const sampleRate = ctx.sampleRate;
-        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        for (let channel = 0; channel < 2; channel++) {
-            const data = buffer.getChannelData(channel);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                let value = 0;
-                for (let j = 0; j < 30; j++) {
-                    const freq = 800 + Math.random() * 400;
-                    const amp = Math.random() * 0.03;
-                    const timeMod = Math.sin(t * 3) * 0.5;
-                    value += Math.sin(t * (freq + timeMod * 100)) * amp;
-                }
-                data[i] = value * (0.5 + Math.sin(t * 0.5) * 0.3);
-            }
-        }
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(gainNode);
-        return source;
-    }
-    
-    function createFireSound(ctx, gainNode) {
-        const source = ctx.createBufferSource();
-        const duration = 30;
-        const sampleRate = ctx.sampleRate;
-        const buffer = ctx.createBuffer(2, sampleRate * duration, sampleRate);
-        for (let channel = 0; channel < 2; channel++) {
-            const data = buffer.getChannelData(channel);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                const crackle = (Math.random() - 0.5) * 0.5;
-                const low = Math.sin(t * 2) * 0.1;
-                data[i] = crackle + low;
-            }
-        }
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(gainNode);
-        return source;
-    }
-    
-    const soundGenerators = {
-        waves: createWavesSound,
-        rain: createRainSound,
-        forest: createForestSound,
-        birds: createBirdsSound,
-        fire: createFireSound
-    };
-    
+    // Звуки природы (рабочие ссылки)
     const sounds = [
-        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', free: true, generator: 'waves' },
-        { id: 'forest', name: 'ЛЕС', icon: '⌘', free: false, generator: 'forest' },
-        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', free: false, generator: 'rain' },
-        { id: 'birds', name: 'ПТИЦЫ', icon: '§', free: false, generator: 'birds' },
-        { id: 'fire', name: 'КОСТЕР', icon: '⌂', free: false, generator: 'fire' }
+        { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3?filename=ocean-waves-112656.mp3', free: true },
+        { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_1c1c1c1c1c.mp3?filename=forest-birds-103441.mp3', free: false },
+        { id: 'rain', name: 'ДОЖДЬ', icon: '〰', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_1f1f1f1f1f.mp3?filename=rain-112643.mp3', free: false },
+        { id: 'birds', name: 'ПТИЦЫ', icon: '§', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_2e2e2e2e2e.mp3?filename=bird-singing-104223.mp3', free: false },
+        { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_3d3d3d3d3d.mp3?filename=fire-112661.mp3', free: false }
     ];
     
-    function stopSound() {
-        if (currentSource) {
-            try { currentSource.stop(); } catch(e) {}
-            currentSource = null;
+    // === ТЕМЫ ===
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            document.body.style.background = '#000000';
+        } else {
+            document.body.style.background = '#1a1a1a';
         }
-        if (currentGain) {
-            currentGain.disconnect();
-            currentGain = null;
-        }
-        if (audioContext) {
-            audioContext.close();
-            audioContext = null;
-        }
-        currentSoundId = null;
-        renderSounds();
+        localStorage.setItem('quran_theme', theme);
+    }
+    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
+    setTheme(savedTheme);
+    
+    // === PREMIUM ===
+    function openPremium() {
+        document.getElementById('premiumModal').style.display = 'flex';
     }
     
+    function closePremium() {
+        document.getElementById('premiumModal').style.display = 'none';
+    }
+    
+    function buyPremium() {
+        isPremium = true;
+        localStorage.setItem('quran_premium', 'true');
+        closePremium();
+        renderSounds();
+        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
+    }
+    
+    // === ЗВУКИ ===
     function playSound(soundId) {
         const sound = sounds.find(s => s.id === soundId);
         if (!sound) return;
@@ -631,30 +524,33 @@
             return;
         }
         
-        stopSound();
+        if (currentAudio) {
+            currentAudio.pause();
+        }
         
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            currentGain = audioContext.createGain();
-            currentGain.gain.value = document.getElementById('volumeSlider').value / 100;
-            currentGain.connect(audioContext.destination);
-            
-            const generator = soundGenerators[sound.generator];
-            currentSource = generator(audioContext, currentGain);
-            currentSource.start();
-            
-            currentSoundId = soundId;
+        currentAudio = new Audio(sound.url);
+        currentAudio.loop = true;
+        currentAudio.volume = document.getElementById('volumeSlider').value / 100;
+        currentAudio.play().catch(e => console.log('Audio play error:', e));
+        currentSoundId = soundId;
+        
+        renderSounds();
+        showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
+    }
+    
+    function stopSound() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+            currentSoundId = null;
             renderSounds();
-            showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
-        } catch(e) {
-            showNotif('⚠️ Ошибка воспроизведения');
         }
     }
     
     function updateVolume() {
         const volume = document.getElementById('volumeSlider').value / 100;
-        if (currentGain) {
-            currentGain.gain.value = volume;
+        if (currentAudio) {
+            currentAudio.volume = volume;
         }
     }
     
@@ -686,35 +582,6 @@
     }
     
     document.getElementById('volumeSlider').addEventListener('input', updateVolume);
-    
-    // === ТЕМЫ ===
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.style.background = '#000000';
-        } else {
-            document.body.style.background = '#1a1a1a';
-        }
-        localStorage.setItem('quran_theme', theme);
-    }
-    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
-    setTheme(savedTheme);
-    
-    // === PREMIUM ===
-    function openPremium() {
-        document.getElementById('premiumModal').style.display = 'flex';
-    }
-    
-    function closePremium() {
-        document.getElementById('premiumModal').style.display = 'none';
-    }
-    
-    function buyPremium() {
-        isPremium = true;
-        localStorage.setItem('quran_premium', 'true');
-        closePremium();
-        renderSounds();
-        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
-    }
     
     // === СУРЫ ===
     const suraNames = {
@@ -797,13 +664,11 @@
         setTimeout(() => n.remove(), dur);
     }
     
-    // Восстановление последней суры
     const lastSura = localStorage.getItem('quran_last_sura');
     if (lastSura) {
         setTimeout(() => loadSura(parseInt(lastSura)), 500);
     }
     
-    // Запуск
     renderSounds();
     loadSuraList();
     
