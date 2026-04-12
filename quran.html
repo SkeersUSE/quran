@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран — Лидеры и квесты</title>
+    <title>Коран — Квесты и титулы</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -28,6 +28,17 @@
         }
         body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
         body.light-theme .theme-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
+        
+        .glow-title {
+            text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 5px #fff; }
+            50% { text-shadow: 0 0 20px #fff, 0 0 30px #fff; }
+            100% { text-shadow: 0 0 5px #fff; }
+        }
         
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .header { text-align: center; margin-bottom: 25px; }
@@ -91,6 +102,13 @@
             font-weight: bold;
             color: #ffd700;
         }
+        .user-title {
+            font-size: 1.1em;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 30px;
+            display: inline-block;
+        }
         
         .pass-panel {
             background: rgba(138, 180, 248, 0.08);
@@ -150,6 +168,7 @@
         .leader-info { flex: 1; }
         .leader-name { font-weight: 600; }
         .leader-reads { font-size: 0.8em; opacity: 0.7; }
+        .leader-title { font-size: 0.7em; color: #ffd966; margin-top: 3px; }
         
         .sura-list, .quest-list {
             display: grid;
@@ -198,6 +217,17 @@
         .translation { font-size: 0.85em; color: #ccc; padding-left: 12px; border-left: 2px solid #ffd700; }
         .footer { text-align: center; padding: 20px; font-size: 0.7em; opacity: 0.7; margin-top: 20px; }
         
+        .quest-badge {
+            display: inline-block;
+            font-size: 0.7em;
+            background: rgba(255,215,0,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 5px;
+        }
+        .quest-badge.daily { background: rgba(138,180,248,0.3); }
+        .quest-badge.weekly { background: rgba(255,100,100,0.3); }
+        
         .loading { text-align: center; padding: 40px; color: #ffd966; }
         
         @media (max-width: 550px) {
@@ -224,9 +254,10 @@
     </div>
 
     <div class="stats-card">
-        <div style="font-size: 0.8em; opacity: 0.7;">ТВОЙ ПРОГРЕСС</div>
-        <div class="prestige-number" id="fullReadsCount">0</div>
-        <div style="margin-top: 5px;">📖 полных прочтений Корана</div>
+        <div style="font-size: 0.8em; opacity: 0.7;">ПРЕСТИЖ</div>
+        <div class="prestige-number" id="prestigeCount">0</div>
+        <div class="user-title" id="userTitle"></div>
+        <div style="margin-top: 10px;">📖 Полных прочтений Корана: <strong id="fullReadsCount">0</strong></div>
     </div>
 
     <div class="pass-panel">
@@ -253,7 +284,7 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Читай и зарабатывай опыт 🌙</div>
+    <div class="footer">Коран | Перевод Кулиева | Ежедневные и еженедельные квесты</div>
 </div>
 
 <script>
@@ -274,18 +305,50 @@
     let activeTimers = {};
     let passData = { level: 1, exp: 0, coins: 0 };
     
-    // Обновляем отображение прочтений
     document.getElementById('fullReadsCount').innerText = fullReads;
+    document.getElementById('prestigeCount').innerText = fullReads;
+    
+    // === ТИТУЛЫ ===
+    function getTitle(reads) {
+        if (reads >= 100) return "✨ Великий ✨";
+        if (reads >= 50) return "💎 Хранитель Корана";
+        if (reads >= 25) return "👑 Наставник";
+        if (reads >= 10) return "🔥 Мастер чтения";
+        if (reads >= 5) return "⭐ Лучший из чтецов";
+        if (reads >= 1) return "📖 Чтец";
+        return "";
+    }
+    
+    function updateTitle() {
+        const title = getTitle(fullReads);
+        const titleDiv = document.getElementById('userTitle');
+        titleDiv.innerText = title;
+        if (title === "✨ Великий ✨") {
+            titleDiv.classList.add('glow-title');
+        } else {
+            titleDiv.classList.remove('glow-title');
+        }
+    }
+    updateTitle();
     
     function saveFullReads() {
         localStorage.setItem('quran_full_reads', fullReads);
         document.getElementById('fullReadsCount').innerText = fullReads;
+        document.getElementById('prestigeCount').innerText = fullReads;
+        updateTitle();
     }
     
     function addFullRead() {
         fullReads++;
         saveFullReads();
-        showNotif(`🎉 Полное прочтение Корана! Всего: ${fullReads}`, 3000);
+        updateLeaders();
+        showNotif(`🎉 Полное прочтение Корана! +1 престиж!`, 3000);
+        if (fullReads === 1) showNotif(`🏅 Получен титул "Чтец"!`, 2000);
+        if (fullReads === 5) showNotif(`🏅 Получен титул "Лучший из чтецов"!`, 2000);
+        if (fullReads === 10) showNotif(`🏅 Получен титул "Мастер чтения"!`, 2000);
+        if (fullReads === 25) showNotif(`🏅 Получен титул "Наставник"!`, 2000);
+        if (fullReads === 50) showNotif(`🏅 Получен титул "Хранитель Корана"!`, 2000);
+        if (fullReads === 100) showNotif(`🏅 Получен титул "Великий"! ✨`, 3000);
     }
     
     // === PASS СИСТЕМА ===
@@ -324,81 +387,193 @@
         setTimeout(() => n.remove(), dur);
     }
     
-    // === КВЕСТЫ (локальные, без сервера) ===
-    let quests = [
-        { id: 'read10', name: '📖 10 аятов', target: 10, current: 0, reward: 20, completed: false, type: 'ayat' },
-        { id: 'read50', name: '📚 50 аятов', target: 50, current: 0, reward: 50, completed: false, type: 'ayat' },
-        { id: 'sura1', name: '🌟 Аль-Фатиха', target: 1, current: 0, reward: 30, completed: false, type: 'sura', suraId: 1 },
-        { id: 'sura112', name: '🤲 Аль-Ихлас', target: 1, current: 0, reward: 25, completed: false, type: 'sura', suraId: 112 },
-        { id: 'sura36', name: '💚 Йа Син', target: 1, current: 0, reward: 50, completed: false, type: 'sura', suraId: 36 }
+    // === ЕЖЕДНЕВНЫЕ И ЕЖЕНЕДЕЛЬНЫЕ КВЕСТЫ ===
+    function getDailyResetKey() { return 'quran_daily_reset_' + new Date().toISOString().slice(0,10); }
+    function getWeeklyResetKey() { 
+        const now = new Date();
+        const startOfWeek = new Date(now.getFullYear(), 0, now.getDate() - now.getDay());
+        return 'quran_weekly_reset_' + startOfWeek.toISOString().slice(0,10);
+    }
+    
+    let dailyQuests = [
+        { id: 'daily_ayat10', name: '📖 Прочитай 10 аятов', target: 10, current: 0, reward: 30, completed: false, type: 'ayat', badge: 'daily' },
+        { id: 'daily_ayat30', name: '📚 Прочитай 30 аятов', target: 30, current: 0, reward: 50, completed: false, type: 'ayat', badge: 'daily' },
+        { id: 'daily_sura', name: '🌟 Прочитай любую суру полностью', target: 1, current: 0, reward: 40, completed: false, type: 'sura_complete', badge: 'daily' }
     ];
     
-    function loadQuests() {
-        const saved = localStorage.getItem('quran_quests');
-        if (saved) {
-            const sq = JSON.parse(saved);
-            quests.forEach(q => { const f = sq.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
-        }
-        renderQuests();
-    }
-    function saveQuests() { localStorage.setItem('quran_quests', JSON.stringify(quests.map(q => ({ id: q.id, current: q.current, completed: q.completed })))); }
+    let weeklyQuests = [
+        { id: 'weekly_ayat100', name: '📖 Прочитай 100 аятов за неделю', target: 100, current: 0, reward: 150, completed: false, type: 'ayat', badge: 'weekly' },
+        { id: 'weekly_ayat300', name: '📚 Прочитай 300 аятов за неделю', target: 300, current: 0, reward: 300, completed: false, type: 'ayat', badge: 'weekly' },
+        { id: 'weekly_suras3', name: '🌟 Прочитай 3 суры полностью', target: 3, current: 0, reward: 200, completed: false, type: 'sura_complete_count', badge: 'weekly' },
+        { id: 'weekly_sura112', name: '🤲 Прочитай суру Аль-Ихлас', target: 1, current: 0, reward: 50, completed: false, type: 'sura', suraId: 112, badge: 'weekly' },
+        { id: 'weekly_sura36', name: '💚 Прочитай суру Йа Син', target: 1, current: 0, reward: 100, completed: false, type: 'sura', suraId: 36, badge: 'weekly' }
+    ];
     
-    function updateQuestProgress(type, val) {
-        quests.forEach(q => {
+    let completedSurasCount = 0;
+    
+    function checkAndResetQuests() {
+        // Ежедневные квесты
+        const dailyKey = getDailyResetKey();
+        const savedDailyReset = localStorage.getItem('quran_daily_reset_key');
+        if (savedDailyReset !== dailyKey) {
+            dailyQuests.forEach(q => { q.current = 0; q.completed = false; });
+            localStorage.setItem('quran_daily_reset_key', dailyKey);
+            localStorage.removeItem('quran_daily_quests');
+            showNotif('📅 Ежедневные квесты обновлены!', 2000);
+        }
+        
+        // Еженедельные квесты
+        const weeklyKey = getWeeklyResetKey();
+        const savedWeeklyReset = localStorage.getItem('quran_weekly_reset_key');
+        if (savedWeeklyReset !== weeklyKey) {
+            weeklyQuests.forEach(q => { q.current = 0; q.completed = false; });
+            completedSurasCount = 0;
+            localStorage.setItem('quran_weekly_reset_key', weeklyKey);
+            localStorage.removeItem('quran_weekly_quests');
+            localStorage.removeItem('quran_weekly_sura_count');
+            showNotif('📅 Еженедельные квесты обновлены!', 2000);
+        }
+        
+        // Загружаем сохранённые прогрессы
+        const savedDaily = localStorage.getItem('quran_daily_quests');
+        if (savedDaily) {
+            const sd = JSON.parse(savedDaily);
+            dailyQuests.forEach(q => { const f = sd.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
+        }
+        
+        const savedWeekly = localStorage.getItem('quran_weekly_quests');
+        if (savedWeekly) {
+            const sw = JSON.parse(savedWeekly);
+            weeklyQuests.forEach(q => { const f = sw.find(s => s.id === q.id); if (f) { q.current = f.current; q.completed = f.completed; } });
+        }
+        
+        completedSurasCount = parseInt(localStorage.getItem('quran_weekly_sura_count')) || 0;
+    }
+    
+    function saveQuests() {
+        localStorage.setItem('quran_daily_quests', JSON.stringify(dailyQuests.map(q => ({ id: q.id, current: q.current, completed: q.completed }))));
+        localStorage.setItem('quran_weekly_quests', JSON.stringify(weeklyQuests.map(q => ({ id: q.id, current: q.current, completed: q.completed }))));
+        localStorage.setItem('quran_weekly_sura_count', completedSurasCount);
+    }
+    
+    function updateQuestProgress(type, value, suraId = null) {
+        let updated = false;
+        
+        // Ежедневные квесты
+        dailyQuests.forEach(q => {
             if (q.completed) return;
             if (type === 'ayat' && q.type === 'ayat') {
-                q.current = Math.min(q.current + val, q.target);
+                q.current = Math.min(q.current + value, q.target);
                 if (q.current >= q.target && !q.completed) {
                     q.completed = true;
                     addCoins(q.reward);
                     addExp(15);
-                    showNotif(`✅ Квест: +${q.reward} 🌙`);
+                    showNotif(`✅ Ежедневный квест выполнен! +${q.reward} 🌙`);
                 }
+                updated = true;
             }
-            if (type === 'sura' && q.type === 'sura' && q.suraId === val && !q.completed) {
+            if (type === 'sura_complete' && q.type === 'sura_complete') {
+                q.current = Math.min(q.current + 1, q.target);
+                if (q.current >= q.target && !q.completed) {
+                    q.completed = true;
+                    addCoins(q.reward);
+                    addExp(15);
+                    showNotif(`✅ Ежедневный квест выполнен! +${q.reward} 🌙`);
+                }
+                updated = true;
+            }
+        });
+        
+        // Еженедельные квесты
+        weeklyQuests.forEach(q => {
+            if (q.completed) return;
+            if (type === 'ayat' && q.type === 'ayat') {
+                q.current = Math.min(q.current + value, q.target);
+                if (q.current >= q.target && !q.completed) {
+                    q.completed = true;
+                    addCoins(q.reward);
+                    addExp(20);
+                    showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
+                }
+                updated = true;
+            }
+            if (type === 'sura' && q.type === 'sura' && q.suraId === suraId && !q.completed) {
                 q.completed = true;
                 addCoins(q.reward);
                 addExp(20);
-                showNotif(`✅ Квест: +${q.reward} 🌙`);
+                showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
+                updated = true;
+            }
+            if (type === 'sura_complete_count' && q.type === 'sura_complete_count') {
+                q.current = Math.min(q.current + 1, q.target);
+                if (q.current >= q.target && !q.completed) {
+                    q.completed = true;
+                    addCoins(q.reward);
+                    addExp(20);
+                    showNotif(`✅ Еженедельный квест выполнен! +${q.reward} 🌙`);
+                }
+                updated = true;
             }
         });
-        renderQuests();
-        saveQuests();
+        
+        if (updated) {
+            renderQuests();
+            saveQuests();
+        }
     }
     
     function renderQuests() {
         const c = document.getElementById('questList');
         if (!c) return;
         c.innerHTML = '';
-        quests.forEach(q => {
+        
+        // Заголовок ежедневных
+        c.innerHTML += `<div style="margin: 10px 0 5px; color:#8ab4f8;">📅 ЕЖЕДНЕВНЫЕ</div>`;
+        dailyQuests.forEach(q => {
             const percent = (q.current / q.target) * 100;
             c.innerHTML += `<div class="quest-item">
                 <div style="flex:2">
-                    <div>${q.name}</div>
+                    <div>${q.name} <span class="quest-badge daily">день</span></div>
                     <div style="font-size:0.8em;">${q.current}/${q.target}</div>
                     <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" style="width:${percent}%;background:#ffd700;"></div></div>
                 </div>
                 <div>🌙 ${q.reward}</div>
-                <div class="${q.completed ? 'quest-btn completed' : 'quest-btn'}" ${q.completed ? '' : 'onclick="claimQuest(\''+q.id+'\')"'}>${q.completed ? '✅ Выполнен' : '🏆 Забрать'}</div>
+                <div class="${q.completed ? 'quest-btn completed' : 'quest-btn'}" ${q.completed ? '' : 'onclick="claimQuest(\''+q.id+'\', true)"'}>${q.completed ? '✅ Выполнен' : '🏆 Забрать'}</div>
+            </div>`;
+        });
+        
+        // Заголовок еженедельных
+        c.innerHTML += `<div style="margin: 20px 0 5px; color:#ffd966;">📅 ЕЖЕНЕДЕЛЬНЫЕ</div>`;
+        weeklyQuests.forEach(q => {
+            const percent = (q.current / q.target) * 100;
+            c.innerHTML += `<div class="quest-item">
+                <div style="flex:2">
+                    <div>${q.name} <span class="quest-badge weekly">неделя</span></div>
+                    <div style="font-size:0.8em;">${q.current}/${q.target}</div>
+                    <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" style="width:${percent}%;background:#ffd700;"></div></div>
+                </div>
+                <div>🌙 ${q.reward}</div>
+                <div class="${q.completed ? 'quest-btn completed' : 'quest-btn'}" ${q.completed ? '' : 'onclick="claimQuest(\''+q.id+'\', false)"'}>${q.completed ? '✅ Выполнен' : '🏆 Забрать'}</div>
             </div>`;
         });
     }
     
-    function claimQuest(id) {
-        const q = quests.find(q => q.id === id);
+    function claimQuest(id, isDaily) {
+        const questsList = isDaily ? dailyQuests : weeklyQuests;
+        const q = questsList.find(q => q.id === id);
         if (q && q.current >= q.target && !q.completed) {
             q.completed = true;
             addCoins(q.reward);
-            addExp(15);
+            addExp(isDaily ? 15 : 20);
             renderQuests();
             saveQuests();
             showNotif(`✅ +${q.reward} 🌙`);
         } else showNotif('📖 Сначала выполни квест');
     }
     
-    // === ЛИДЕРЫ (локальная таблица) ===
+    // === ЛИДЕРЫ ===
     let leaders = [
-        { username: "Читатель", avatar: "🕌", reads: 0 }
+        { username: "Читатель", avatar: "🕌", reads: 0, title: "" }
     ];
     
     function loadLeaders() {
@@ -414,14 +589,13 @@
     }
     
     function updateLeaders() {
-        // Обновляем текущего пользователя в лидерах
         const existing = leaders.find(l => l.username === "Читатель");
         if (existing) {
             existing.reads = fullReads;
+            existing.title = getTitle(fullReads);
         } else {
-            leaders.push({ username: "Читатель", avatar: "🕌", reads: fullReads });
+            leaders.push({ username: "Читатель", avatar: "🕌", reads: fullReads, title: getTitle(fullReads) });
         }
-        // Сортируем и оставляем топ-50
         leaders.sort((a, b) => b.reads - a.reads);
         leaders = leaders.slice(0, 50);
         saveLeaders();
@@ -439,6 +613,7 @@
         leaders.forEach((leader, idx) => {
             const rank = idx + 1;
             let medal = rank === 1 ? '👑' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '📌';
+            const titleHtml = leader.title ? `<div class="leader-title">${leader.title}</div>` : '';
             container.innerHTML += `
                 <div class="leader-card">
                     <div class="leader-rank">${medal} ${rank}</div>
@@ -446,6 +621,7 @@
                     <div class="leader-info">
                         <div class="leader-name">${escapeHtml(leader.username)}</div>
                         <div class="leader-reads">📖 ${leader.reads} прочтений</div>
+                        ${titleHtml}
                     </div>
                 </div>
             `;
@@ -497,7 +673,11 @@
                         addExp(2);
                         const total = document.querySelectorAll('.ayah').length;
                         if (read.length === total) {
-                            updateQuestProgress('sura', currentSura);
+                            completedSurasCount++;
+                            localStorage.setItem('quran_weekly_sura_count', completedSurasCount);
+                            updateQuestProgress('sura_complete', 1);
+                            updateQuestProgress('sura_complete_count', 1);
+                            updateQuestProgress('sura', null, currentSura);
                             addFullRead();
                             updateLeaders();
                         }
@@ -577,10 +757,11 @@
     }
     
     // Запуск
+    checkAndResetQuests();
     loadPassData();
-    loadQuests();
     loadLeaders();
     loadSuraList();
+    renderQuests();
     
     window.setTheme = setTheme;
     window.switchTab = switchTab;
