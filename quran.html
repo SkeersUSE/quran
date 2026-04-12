@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран — Аккаунт по номеру</title>
+    <title>Коран — Вход по почте</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -228,7 +228,6 @@
         .translation { font-size: 0.85em; color: #ccc; padding-left: 12px; border-left: 2px solid #ffd700; }
         .footer { text-align: center; padding: 20px; font-size: 0.7em; opacity: 0.7; margin-top: 20px; }
         
-        /* Модальное окно авторизации */
         .auth-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -369,7 +368,7 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Вход по номеру телефона</div>
+    <div class="footer">Коран | Перевод Кулиева | Вход по почте</div>
 </div>
 
 <script>
@@ -379,18 +378,6 @@
     let currentSura = null;
     let activeTimers = {};
     let passData = { level: 1, exp: 0, coins: 0, ownedItems: [] };
-    let currentTelegramId = null;
-    
-    // Получаем Telegram ID (в реальном приложении нужно получать через WebApp)
-    // Для теста — генерируем случайный ID
-    function getTelegramId() {
-        let id = localStorage.getItem('telegram_id');
-        if (!id) {
-            id = 'telegram_' + Math.random().toString(36).substr(2, 10);
-            localStorage.setItem('telegram_id', id);
-        }
-        return id;
-    }
     
     // === МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ===
     function openAuth() {
@@ -406,19 +393,19 @@
                 <div id="authContent">
                     <div id="loginView">
                         <h3>🔐 Вход</h3>
-                        <input type="tel" id="loginPhone" placeholder="+7 900 000 00 00">
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
                         <button onclick="sendLoginCode()">Получить код</button>
                         <div id="loginCodeDiv" style="display:none;">
-                            <input type="text" id="loginCode" placeholder="Код из Telegram" class="code-input">
+                            <input type="text" id="loginCode" placeholder="Код из почты" class="code-input">
                             <button onclick="verifyLoginCode()">Войти</button>
                         </div>
                     </div>
                     <div id="registerView" style="display:none;">
                         <h3>📝 Регистрация</h3>
-                        <input type="tel" id="regPhone" placeholder="+7 900 000 00 00">
+                        <input type="email" id="regEmail" placeholder="your@email.com">
                         <button onclick="sendRegisterCode()">Получить код</button>
                         <div id="regCodeDiv" style="display:none;">
-                            <input type="text" id="regCode" placeholder="Код из Telegram" class="code-input">
+                            <input type="text" id="regCode" placeholder="Код из почты" class="code-input">
                             <div id="regProfileDiv" style="display:none;">
                                 <input type="text" id="regName" placeholder="Твой никнейм" maxlength="20">
                                 <div class="avatar-options" id="avatarOptions"></div>
@@ -473,14 +460,28 @@
         });
     }
     
+    // === API ЗАПРОСЫ ===
+    async function apiRequest(action, params = {}) {
+        const url = new URL(APP_SCRIPT_URL);
+        url.searchParams.append('action', action);
+        Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+        try {
+            const response = await fetch(url.toString());
+            return await response.json();
+        } catch(e) {
+            console.error('API error:', e);
+            return { success: false, error: e.message };
+        }
+    }
+    
+    // === ВХОД И РЕГИСТРАЦИЯ ===
     async function sendLoginCode() {
-        const phone = document.getElementById('loginPhone').value.trim();
-        if (!phone) { showNotif('Введите номер телефона'); return; }
-        showNotif('📱 Отправка кода...');
-        const telegramId = getTelegramId();
-        const response = await apiRequest('requestCode', { phone: phone, telegramId: telegramId });
+        const email = document.getElementById('loginEmail').value.trim();
+        if (!email) { showNotif('Введите email'); return; }
+        showNotif('📧 Отправка кода...');
+        const response = await apiRequest('requestCode', { email: email });
         if (response.success) {
-            showNotif('✅ Код отправлен в Telegram!');
+            showNotif('✅ Код отправлен на почту!');
             document.getElementById('loginCodeDiv').style.display = 'block';
         } else {
             showNotif(response.error || 'Ошибка');
@@ -488,11 +489,11 @@
     }
     
     async function verifyLoginCode() {
-        const phone = document.getElementById('loginPhone').value.trim();
+        const email = document.getElementById('loginEmail').value.trim();
         const code = document.getElementById('loginCode').value.trim();
         if (!code) { showNotif('Введите код'); return; }
         showNotif('🔐 Проверка кода...');
-        const response = await apiRequest('login', { phone: phone, telegramId: getTelegramId() });
+        const response = await apiRequest('login', { email: email });
         if (response.success) {
             currentUser = response.user;
             localStorage.setItem('quran_user_id', currentUser.userId);
@@ -506,13 +507,12 @@
     }
     
     async function sendRegisterCode() {
-        const phone = document.getElementById('regPhone').value.trim();
-        if (!phone) { showNotif('Введите номер телефона'); return; }
-        showNotif('📱 Отправка кода...');
-        const telegramId = getTelegramId();
-        const response = await apiRequest('requestCode', { phone: phone, telegramId: telegramId });
+        const email = document.getElementById('regEmail').value.trim();
+        if (!email) { showNotif('Введите email'); return; }
+        showNotif('📧 Отправка кода...');
+        const response = await apiRequest('requestCode', { email: email });
         if (response.success) {
-            showNotif('✅ Код отправлен в Telegram!');
+            showNotif('✅ Код отправлен на почту!');
             document.getElementById('regCodeDiv').style.display = 'block';
         } else {
             showNotif(response.error || 'Ошибка');
@@ -520,7 +520,7 @@
     }
     
     async function completeRegistration() {
-        const phone = document.getElementById('regPhone').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
         const code = document.getElementById('regCode').value.trim();
         const username = document.getElementById('regName').value.trim();
         const avatar = document.querySelector('.avatar-option.selected')?.innerText || '🕌';
@@ -531,7 +531,7 @@
         
         showNotif('📝 Регистрация...');
         const response = await apiRequest('verifyCode', { 
-            phone: phone, 
+            email: email, 
             code: code, 
             username: username, 
             avatar: avatar 
@@ -545,20 +545,6 @@
             document.getElementById('statsCard').style.display = 'block';
         } else {
             showNotif(response.error || 'Ошибка регистрации');
-        }
-    }
-    
-    // === API ЗАПРОСЫ ===
-    async function apiRequest(action, params = {}) {
-        const url = new URL(APP_SCRIPT_URL);
-        url.searchParams.append('action', action);
-        Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
-        try {
-            const response = await fetch(url.toString());
-            return await response.json();
-        } catch(e) {
-            console.error('API error:', e);
-            return { success: false, error: e.message };
         }
     }
     
