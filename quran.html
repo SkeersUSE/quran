@@ -27,7 +27,7 @@
             color: #1a1a2e;
         }
         body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
-        body.light-theme .theme-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
+        body.light-theme .theme-btn, body.light-theme .support-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
         
         .glow-title {
             text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
@@ -78,6 +78,26 @@
             font-size: 1.5em;
         }
         .username { font-weight: 600; font-size: 1.1em; }
+        
+        .support-btn {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.5);
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8em;
+            text-decoration: none;
+            color: #ffd966;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .support-btn:hover {
+            background: rgba(255,215,0,0.3);
+            transform: scale(1.02);
+        }
+        
         .theme-buttons { display: flex; gap: 8px; }
         .theme-btn {
             background: rgba(255,255,255,0.1);
@@ -92,8 +112,9 @@
         .action-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-bottom: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         .action-btn {
             background: rgba(255,215,0,0.15);
@@ -273,6 +294,8 @@
             .arabic { font-size: 1.1em; }
             .leader-card { flex-wrap: wrap; }
             .action-buttons { flex-direction: column; }
+            .profile-panel { flex-direction: column; text-align: center; }
+            .theme-buttons { justify-content: center; }
         }
     </style>
 </head>
@@ -285,6 +308,9 @@
             <div class="avatar">🕌</div>
             <div class="username">Читатель</div>
         </div>
+        <a href="https://www.donationalerts.com/r/skeerstm" target="_blank" class="support-btn">
+            🤝 Поддержать нас
+        </a>
         <div class="theme-buttons">
             <button class="theme-btn" onclick="setTheme('dark')">🌙 Тёмная</button>
             <button class="theme-btn" onclick="setTheme('gold')">✨ Золотая</button>
@@ -886,14 +912,6 @@
     window.resetProgress = resetProgress;
     window.loadSura = loadSura;
     window.closeSura = closeSura;
-</script>
-    <script>
-    // Регистрация Service Worker для PWA
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('SW зарегистрирован:', reg))
-            .catch(err => console.log('Ошибка SW:', err));
-    }
 </script>
 </body>
 </html>
