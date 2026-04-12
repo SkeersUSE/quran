@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Коран — Престиж и титулы</title>
+    <title>Коран — Аккаунт по номеру</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
         
@@ -21,14 +21,14 @@
         body.light-theme { background: #f5f5f0; color: #1a1a2e; }
         body.light-theme .sura-card, body.light-theme .quest-item, body.light-theme .pass-panel,
         body.light-theme .sura-content, body.light-theme .profile-panel, body.light-theme .stats-card,
-        body.light-theme .leader-card {
+        body.light-theme .leader-card, body.light-theme .auth-card {
             background: rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
             color: #1a1a2e;
         }
         body.light-theme .tab-btn { color: #1a1a2e; background: rgba(0,0,0,0.05); }
         body.light-theme .theme-btn { color: #1a1a2e; background: rgba(0,0,0,0.1); }
-        body.light-theme .ayah .translation { color: #555; }
+        body.light-theme .auth-card input { color: #1a1a2e; background: rgba(0,0,0,0.1); }
         
         .glow-title {
             text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
@@ -79,7 +79,7 @@
             font-size: 1.5em;
             cursor: pointer;
         }
-        .username { font-weight: 600; font-size: 1.1em; }
+        .username { font-weight: 600; font-size: 1.1em; cursor: pointer; }
         .theme-buttons { display: flex; gap: 8px; }
         .theme-btn {
             background: rgba(255,255,255,0.1);
@@ -167,14 +167,9 @@
             gap: 15px;
             transition: all 0.2s;
         }
-        .leader-rank {
-            width: 50px;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
+        .leader-rank { width: 50px; font-weight: bold; font-size: 1.2em; }
         .leader-avatar {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             border-radius: 50%;
             display: flex;
@@ -182,16 +177,9 @@
             justify-content: center;
             font-size: 1.2em;
         }
-        .leader-info {
-            flex: 1;
-        }
-        .leader-name {
-            font-weight: 600;
-        }
-        .leader-reads {
-            font-size: 0.8em;
-            opacity: 0.7;
-        }
+        .leader-info { flex: 1; }
+        .leader-name { font-weight: 600; }
+        .leader-reads { font-size: 0.8em; opacity: 0.7; }
         
         .sura-list, .quest-list {
             display: grid;
@@ -240,27 +228,85 @@
         .translation { font-size: 0.85em; color: #ccc; padding-left: 12px; border-left: 2px solid #ffd700; }
         .footer { text-align: center; padding: 20px; font-size: 0.7em; opacity: 0.7; margin-top: 20px; }
         
-        .register-overlay {
+        /* Модальное окно авторизации */
+        .auth-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
-        .register-card {
+        .auth-card {
             background: rgba(20,30,50,0.95);
             backdrop-filter: blur(20px);
             border-radius: 44px;
             padding: 30px;
             text-align: center;
-            width: 300px;
+            width: 320px;
         }
-        .register-card input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 30px; border: none; background: rgba(255,255,255,0.2); color: white; text-align: center; }
-        .register-card button { background: #ffd700; border: none; padding: 12px 24px; border-radius: 30px; margin-top: 10px; cursor: pointer; font-weight: bold; }
-        .avatar-options { display: flex; justify-content: center; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
-        .avatar-option { font-size: 2em; cursor: pointer; padding: 8px; border-radius: 50%; transition: 0.2s; }
+        .auth-card h3 { margin-bottom: 20px; }
+        .auth-card input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+            font-size: 1em;
+        }
+        .auth-card button {
+            background: #ffd700;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        .auth-card .secondary-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            margin-top: 5px;
+        }
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .auth-tab.active {
+            background: rgba(255,215,0,0.3);
+        }
+        .code-input {
+            letter-spacing: 5px;
+            font-size: 1.3em;
+        }
+        
+        .avatar-options {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .avatar-option {
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: 0.2s;
+        }
         .avatar-option.selected { background: rgba(255,215,0,0.3); transform: scale(1.1); }
         
         .loading { text-align: center; padding: 40px; color: #ffd966; }
@@ -269,6 +315,7 @@
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
             .arabic { font-size: 1.1em; }
             .leader-card { flex-wrap: wrap; }
+            .auth-card { width: 90%; margin: 20px; }
         }
     </style>
 </head>
@@ -278,8 +325,8 @@
 
     <div class="profile-panel">
         <div class="profile-info">
-            <div class="avatar" id="avatar" onclick="openRegister()">🕌</div>
-            <div class="username" id="usernameDisplay">Гость</div>
+            <div class="avatar" id="avatar" onclick="openAuth()">🕌</div>
+            <div class="username" id="usernameDisplay" onclick="openAuth()">Войти</div>
         </div>
         <div class="theme-buttons">
             <button class="theme-btn" onclick="setTheme('dark')">🌙 Тёмная</button>
@@ -288,7 +335,7 @@
         </div>
     </div>
 
-    <div class="stats-card" id="statsCard">
+    <div class="stats-card" id="statsCard" style="display: none;">
         <div style="font-size: 0.8em; opacity: 0.7;">ПРЕСТИЖ</div>
         <div class="prestige-number" id="prestigeCount">0</div>
         <div class="user-title" id="userTitle"></div>
@@ -322,73 +369,214 @@
         <div id="suraText"></div>
     </div>
 
-    <div class="footer">Коран | Перевод Кулиева | Престиж и титулы</div>
-</div>
-
-<div id="registerOverlay" class="register-overlay" style="display:none;">
-    <div class="register-card">
-        <h3>📝 Регистрация</h3>
-        <input type="text" id="regName" placeholder="Твой никнейм" maxlength="20">
-        <div class="avatar-options" id="avatarOptions"></div>
-        <button onclick="registerUser()">✅ Зарегистрироваться</button>
-        <button onclick="closeRegister()" style="background:#555;">❌ Закрыть</button>
-    </div>
+    <div class="footer">Коран | Перевод Кулиева | Вход по номеру телефона</div>
 </div>
 
 <script>
     // ========== НАСТРОЙКИ ==========
-    // ⚠️ ЗАМЕНИ НА СВОЙ URL ИЗ APPS SCRIPT! ⚠️
     const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPcQLlOac9BfHwPIm3DrwhFkO8roPCSbagah3I6y89Rwnf7mlD4pT-TiOkDj7wlvKaUw/exec";
-    // ==================================
-    
-    // === ТЕМЫ ===
-    function setTheme(theme) {
-        document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
-        if (theme === 'dark') document.body.classList.add('dark-theme');
-        else if (theme === 'gold') document.body.classList.add('gold-theme');
-        else if (theme === 'light') document.body.classList.add('light-theme');
-        localStorage.setItem('quran_theme', theme);
-    }
-    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
-    setTheme(savedTheme);
-    
-    // === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
     let currentUser = null;
     let currentSura = null;
     let activeTimers = {};
     let passData = { level: 1, exp: 0, coins: 0, ownedItems: [] };
-    let quests = [
-        { id: 'read10', name: '📖 10 аятов', target: 10, current: 0, reward: 20, completed: false, type: 'ayat' },
-        { id: 'read50', name: '📚 50 аятов', target: 50, current: 0, reward: 50, completed: false, type: 'ayat' },
-        { id: 'sura1', name: '🌟 Аль-Фатиха', target: 1, current: 0, reward: 30, completed: false, type: 'sura', suraId: 1 },
-        { id: 'sura112', name: '🤲 Аль-Ихлас', target: 1, current: 0, reward: 25, completed: false, type: 'sura', suraId: 112 }
-    ];
+    let currentTelegramId = null;
     
-    // === РАБОТА С API ===
-    async function apiRequest(action, data = {}) {
-        const params = new URLSearchParams({ action: action, ...data });
+    // Получаем Telegram ID (в реальном приложении нужно получать через WebApp)
+    // Для теста — генерируем случайный ID
+    function getTelegramId() {
+        let id = localStorage.getItem('telegram_id');
+        if (!id) {
+            id = 'telegram_' + Math.random().toString(36).substr(2, 10);
+            localStorage.setItem('telegram_id', id);
+        }
+        return id;
+    }
+    
+    // === МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ ===
+    function openAuth() {
+        const overlay = document.createElement('div');
+        overlay.className = 'auth-overlay';
+        overlay.id = 'authOverlay';
+        overlay.innerHTML = `
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')">Вход</div>
+                    <div class="auth-tab" onclick="switchAuthTab('register')">Регистрация</div>
+                </div>
+                <div id="authContent">
+                    <div id="loginView">
+                        <h3>🔐 Вход</h3>
+                        <input type="tel" id="loginPhone" placeholder="+7 900 000 00 00">
+                        <button onclick="sendLoginCode()">Получить код</button>
+                        <div id="loginCodeDiv" style="display:none;">
+                            <input type="text" id="loginCode" placeholder="Код из Telegram" class="code-input">
+                            <button onclick="verifyLoginCode()">Войти</button>
+                        </div>
+                    </div>
+                    <div id="registerView" style="display:none;">
+                        <h3>📝 Регистрация</h3>
+                        <input type="tel" id="regPhone" placeholder="+7 900 000 00 00">
+                        <button onclick="sendRegisterCode()">Получить код</button>
+                        <div id="regCodeDiv" style="display:none;">
+                            <input type="text" id="regCode" placeholder="Код из Telegram" class="code-input">
+                            <div id="regProfileDiv" style="display:none;">
+                                <input type="text" id="regName" placeholder="Твой никнейм" maxlength="20">
+                                <div class="avatar-options" id="avatarOptions"></div>
+                                <button onclick="completeRegistration()">Завершить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="secondary-btn" onclick="closeAuth()">❌ Закрыть</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        renderAvatarOptions();
+    }
+    
+    function closeAuth() {
+        const overlay = document.getElementById('authOverlay');
+        if (overlay) overlay.remove();
+    }
+    
+    function switchAuthTab(tab) {
+        const loginView = document.getElementById('loginView');
+        const registerView = document.getElementById('registerView');
+        const tabs = document.querySelectorAll('.auth-tab');
+        if (tab === 'login') {
+            loginView.style.display = 'block';
+            registerView.style.display = 'none';
+            tabs[0].classList.add('active');
+            tabs[1].classList.remove('active');
+        } else {
+            loginView.style.display = 'none';
+            registerView.style.display = 'block';
+            tabs[0].classList.remove('active');
+            tabs[1].classList.add('active');
+        }
+    }
+    
+    function renderAvatarOptions() {
+        const avatars = ['🕌', '🌟', '🕋', '🌙', '📖', '🤲', '⭐', '💚', '🕊️', '👑'];
+        const container = document.getElementById('avatarOptions');
+        if (!container) return;
+        container.innerHTML = '';
+        avatars.forEach(ava => {
+            const div = document.createElement('div');
+            div.className = 'avatar-option';
+            div.innerText = ava;
+            div.onclick = () => {
+                document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+                div.classList.add('selected');
+            };
+            container.appendChild(div);
+        });
+    }
+    
+    async function sendLoginCode() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        if (!phone) { showNotif('Введите номер телефона'); return; }
+        showNotif('📱 Отправка кода...');
+        const telegramId = getTelegramId();
+        const response = await apiRequest('requestCode', { phone: phone, telegramId: telegramId });
+        if (response.success) {
+            showNotif('✅ Код отправлен в Telegram!');
+            document.getElementById('loginCodeDiv').style.display = 'block';
+        } else {
+            showNotif(response.error || 'Ошибка');
+        }
+    }
+    
+    async function verifyLoginCode() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const code = document.getElementById('loginCode').value.trim();
+        if (!code) { showNotif('Введите код'); return; }
+        showNotif('🔐 Проверка кода...');
+        const response = await apiRequest('login', { phone: phone, telegramId: getTelegramId() });
+        if (response.success) {
+            currentUser = response.user;
+            localStorage.setItem('quran_user_id', currentUser.userId);
+            updateProfileUI();
+            closeAuth();
+            showNotif(`Добро пожаловать, ${currentUser.username}!`);
+            document.getElementById('statsCard').style.display = 'block';
+        } else {
+            showNotif(response.error || 'Ошибка входа');
+        }
+    }
+    
+    async function sendRegisterCode() {
+        const phone = document.getElementById('regPhone').value.trim();
+        if (!phone) { showNotif('Введите номер телефона'); return; }
+        showNotif('📱 Отправка кода...');
+        const telegramId = getTelegramId();
+        const response = await apiRequest('requestCode', { phone: phone, telegramId: telegramId });
+        if (response.success) {
+            showNotif('✅ Код отправлен в Telegram!');
+            document.getElementById('regCodeDiv').style.display = 'block';
+        } else {
+            showNotif(response.error || 'Ошибка');
+        }
+    }
+    
+    async function completeRegistration() {
+        const phone = document.getElementById('regPhone').value.trim();
+        const code = document.getElementById('regCode').value.trim();
+        const username = document.getElementById('regName').value.trim();
+        const avatar = document.querySelector('.avatar-option.selected')?.innerText || '🕌';
+        
+        if (!code) { showNotif('Введите код'); return; }
+        if (!username) { showNotif('Введите никнейм'); return; }
+        if (username.length > 20) { showNotif('Никнейм не длиннее 20 символов'); return; }
+        
+        showNotif('📝 Регистрация...');
+        const response = await apiRequest('verifyCode', { 
+            phone: phone, 
+            code: code, 
+            username: username, 
+            avatar: avatar 
+        });
+        if (response.success) {
+            currentUser = response.user;
+            localStorage.setItem('quran_user_id', currentUser.userId);
+            updateProfileUI();
+            closeAuth();
+            showNotif(`✅ Добро пожаловать, ${username}!`);
+            document.getElementById('statsCard').style.display = 'block';
+        } else {
+            showNotif(response.error || 'Ошибка регистрации');
+        }
+    }
+    
+    // === API ЗАПРОСЫ ===
+    async function apiRequest(action, params = {}) {
+        const url = new URL(APP_SCRIPT_URL);
+        url.searchParams.append('action', action);
+        Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
         try {
-            const response = await fetch(`${APP_SCRIPT_URL}?${params.toString()}`);
-            const result = await response.json();
-            return result;
+            const response = await fetch(url.toString());
+            return await response.json();
         } catch(e) {
-            console.error('API ошибка:', e);
+            console.error('API error:', e);
             return { success: false, error: e.message };
         }
     }
     
-    // === ПРОВЕРКА АВТОРИЗАЦИИ ===
     async function checkAuth() {
-        const savedUserId = localStorage.getItem('quran_user_id');
-        if (savedUserId) {
-            const result = await apiRequest('getProfile', { userId: savedUserId });
-            if (result.success) {
-                currentUser = result.user;
-                currentUser.userId = savedUserId;
+        const userId = localStorage.getItem('quran_user_id');
+        if (userId) {
+            const response = await apiRequest('getProfile', { userId: userId });
+            if (response.success) {
+                currentUser = response.user;
+                currentUser.userId = userId;
                 updateProfileUI();
+                document.getElementById('statsCard').style.display = 'block';
                 return true;
+            } else {
+                localStorage.removeItem('quran_user_id');
             }
         }
+        document.getElementById('statsCard').style.display = 'none';
         return false;
     }
     
@@ -412,104 +600,45 @@
     }
     
     async function checkUserRank() {
-        const result = await apiRequest('getTop');
-        if (result.success && result.leaders) {
-            const rank = result.leaders.findIndex(l => l.username === currentUser.username) + 1;
+        const response = await apiRequest('getTop');
+        if (response.success && response.leaders) {
+            const rank = response.leaders.findIndex(l => l.username === currentUser.username) + 1;
             const rankDiv = document.getElementById('rankBadge');
-            if (rank === 1) {
-                rankDiv.innerHTML = '<span class="rank-badge rank-1">👑 Топ-1 мира</span>';
-            } else if (rank === 2) {
-                rankDiv.innerHTML = '<span class="rank-badge rank-2">🥈 Топ-2 мира</span>';
-            } else if (rank === 3) {
-                rankDiv.innerHTML = '<span class="rank-badge rank-3">🥉 Топ-3 мира</span>';
-            } else {
-                rankDiv.innerHTML = '';
-            }
+            if (rank === 1) rankDiv.innerHTML = '<span class="rank-badge rank-1">👑 Топ-1 мира</span>';
+            else if (rank === 2) rankDiv.innerHTML = '<span class="rank-badge rank-2">🥈 Топ-2 мира</span>';
+            else if (rank === 3) rankDiv.innerHTML = '<span class="rank-badge rank-3">🥉 Топ-3 мира</span>';
+            else rankDiv.innerHTML = '';
         }
     }
     
-    // === РЕГИСТРАЦИЯ ===
-    const avatars = ['🕌', '🌟', '🕋', '🌙', '📖', '🤲', '⭐', '💚', '🕊️', '👑'];
-    
-    function openRegister() {
-        const overlay = document.getElementById('registerOverlay');
-        const optionsDiv = document.getElementById('avatarOptions');
-        optionsDiv.innerHTML = '';
-        avatars.forEach(ava => {
-            const div = document.createElement('div');
-            div.className = 'avatar-option';
-            div.innerText = ava;
-            div.onclick = () => {
-                document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
-                div.classList.add('selected');
-            };
-            optionsDiv.appendChild(div);
-        });
-        overlay.style.display = 'flex';
-    }
-    
-    function closeRegister() { document.getElementById('registerOverlay').style.display = 'none'; }
-    
-    async function registerUser() {
-        const name = document.getElementById('regName').value.trim();
-        if (!name) {
-            showNotif('Введи никнейм!');
-            return;
-        }
-        if (name.length > 20) {
-            showNotif('Никнейм не длиннее 20 символов');
-            return;
-        }
-        const avatar = document.querySelector('.avatar-option.selected')?.innerText || avatars[0];
-        const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-        
-        const result = await apiRequest('register', { data: JSON.stringify({ userId, username: name, avatar }) });
-        if (result.success) {
-            currentUser = { username: name, avatar: avatar, full_reads: 0, prestige: 0, title: "", userId: userId };
-            localStorage.setItem('quran_user_id', userId);
-            updateProfileUI();
-            closeRegister();
-            showNotif(`✅ Добро пожаловать, ${name}!`);
-        } else {
-            showNotif(result.error || 'Ошибка регистрации');
-        }
-    }
-    
-    // === ОБНОВЛЕНИЕ ПРОЧТЕНИЙ ===
     async function addFullRead() {
         if (!currentUser) return;
-        const result = await apiRequest('addRead', { userId: currentUser.userId });
-        if (result.success) {
-            currentUser.full_reads = result.full_reads;
-            currentUser.prestige = result.prestige;
-            currentUser.title = result.title;
+        const response = await apiRequest('addRead', { userId: currentUser.userId });
+        if (response.success) {
+            currentUser.full_reads = response.full_reads;
+            currentUser.prestige = response.prestige;
+            currentUser.title = response.title;
             updateProfileUI();
             showNotif(`🎉 Полное прочтение Корана! +1 престиж!`, 3000);
-            if (result.title === "✨ Великий ✨") {
+            if (response.title === "✨ Великий ✨") {
                 showNotif(`✨ Ты достиг величия! Титул "Великий" получен! ✨`, 5000);
             }
         }
     }
     
-    // === ЗАГРУЗКА ЛИДЕРОВ ===
     async function loadLeaders() {
         const container = document.getElementById('leadersList');
         if (!container) return;
         container.innerHTML = '<div class="loading">🏆 Загрузка лидеров...</div>';
-        const result = await apiRequest('getTop');
-        if (result.success && result.leaders) {
-            if (result.leaders.length === 0) {
+        const response = await apiRequest('getTop');
+        if (response.success && response.leaders) {
+            if (response.leaders.length === 0) {
                 container.innerHTML = '<div class="loading">🏆 Пока нет лидеров. Стань первым!</div>';
                 return;
             }
             container.innerHTML = '';
-            result.leaders.forEach(leader => {
-                let medal = '';
-                if (leader.rank === 1) medal = '👑';
-                else if (leader.rank === 2) medal = '🥈';
-                else if (leader.rank === 3) medal = '🥉';
-                else medal = '📌';
-                
+            response.leaders.forEach(leader => {
+                let medal = leader.rank === 1 ? '👑' : leader.rank === 2 ? '🥈' : leader.rank === 3 ? '🥉' : '📌';
                 container.innerHTML += `
                     <div class="leader-card">
                         <div class="leader-rank">${medal} ${leader.rank}</div>
@@ -526,6 +655,17 @@
         }
     }
     
+    // === ТЕМЫ ===
+    function setTheme(theme) {
+        document.body.classList.remove('dark-theme', 'gold-theme', 'light-theme');
+        if (theme === 'dark') document.body.classList.add('dark-theme');
+        else if (theme === 'gold') document.body.classList.add('gold-theme');
+        else if (theme === 'light') document.body.classList.add('light-theme');
+        localStorage.setItem('quran_theme', theme);
+    }
+    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
+    setTheme(savedTheme);
+    
     // === PASS СИСТЕМА ===
     function loadPassData() {
         const saved = localStorage.getItem('quran_pass');
@@ -533,7 +673,6 @@
         updatePassUI();
     }
     function savePassData() { localStorage.setItem('quran_pass', JSON.stringify(passData)); }
-    
     function addExp(amount) {
         passData.exp += amount;
         while (passData.exp >= 100 && passData.level < 20) {
@@ -545,7 +684,6 @@
         updatePassUI();
         savePassData();
     }
-    
     function addCoins(amount) { passData.coins += amount; updatePassUI(); savePassData(); showNotif(`+${amount} 🌙`, 1000); }
     function updatePassUI() {
         document.getElementById('passLevel').innerText = 'Уровень ' + passData.level;
@@ -554,15 +692,14 @@
         document.getElementById('expDisplay').innerText = `Опыт: ${passData.exp} / 100`;
     }
     
-    function showNotif(msg, dur = 2000) {
-        const n = document.createElement('div');
-        n.innerText = msg;
-        n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;';
-        document.body.appendChild(n);
-        setTimeout(() => n.remove(), dur);
-    }
-    
     // === КВЕСТЫ ===
+    let quests = [
+        { id: 'read10', name: '📖 10 аятов', target: 10, current: 0, reward: 20, completed: false, type: 'ayat' },
+        { id: 'read50', name: '📚 50 аятов', target: 50, current: 0, reward: 50, completed: false, type: 'ayat' },
+        { id: 'sura1', name: '🌟 Аль-Фатиха', target: 1, current: 0, reward: 30, completed: false, type: 'sura', suraId: 1 },
+        { id: 'sura112', name: '🤲 Аль-Ихлас', target: 1, current: 0, reward: 25, completed: false, type: 'sura', suraId: 112 }
+    ];
+    
     function loadQuests() {
         const saved = localStorage.getItem('quran_quests');
         if (saved) {
@@ -627,31 +764,7 @@
     }
     
     // === ЧТЕНИЕ СУР ===
-    const suraNames = {
-        1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",
-        6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",
-        11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",
-        16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",
-        21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",
-        26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",
-        31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",
-        36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",
-        41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",
-        46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",
-        51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",
-        56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",
-        61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",
-        66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",
-        71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",
-        76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",
-        81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",
-        86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",
-        91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",
-        96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",
-        101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",
-        106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",
-        111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"
-    };
+    const suraNames = {1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"};
     
     async function loadSuraList() {
         const c = document.getElementById('suraList');
@@ -696,9 +809,7 @@
                         const total = document.querySelectorAll('.ayah').length;
                         if (read.length === total) {
                             updateQuestProgress('sura', currentSura);
-                            if (currentUser) {
-                                addFullRead();
-                            }
+                            if (currentUser) addFullRead();
                         }
                     }
                 }
@@ -763,14 +874,13 @@
     }
     
     function closeSura() { document.getElementById('suraContent').style.display = 'none'; currentSura = null; }
-    
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    function showNotif(msg, dur = 2000) {
+        const n = document.createElement('div');
+        n.innerText = msg;
+        n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ffd700;color:#1a1a2e;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;';
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), dur);
     }
     
     function switchTab(tab) {
@@ -783,7 +893,6 @@
         else if (tab === 'suras') { btns[2].classList.add('active'); loadSuraList(); }
     }
     
-    // === ЗАПУСК ===
     checkAuth();
     loadPassData();
     loadQuests();
@@ -792,9 +901,13 @@
     window.setTheme = setTheme;
     window.switchTab = switchTab;
     window.claimQuest = claimQuest;
-    window.openRegister = openRegister;
-    window.closeRegister = closeRegister;
-    window.registerUser = registerUser;
+    window.openAuth = openAuth;
+    window.closeAuth = closeAuth;
+    window.switchAuthTab = switchAuthTab;
+    window.sendLoginCode = sendLoginCode;
+    window.verifyLoginCode = verifyLoginCode;
+    window.sendRegisterCode = sendRegisterCode;
+    window.completeRegistration = completeRegistration;
     window.loadSura = loadSura;
     window.closeSura = closeSura;
 </script>
