@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quran Audio Reader — Вход и регистрация</title>
+    <title>Quran Audio Reader — Premium Транскрипция</title>
     <style>
         * {
             margin: 0;
@@ -25,7 +25,6 @@
             -webkit-backdrop-filter: blur(20px);
             border-radius: 32px;
             border: 1px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
 
         .container {
@@ -51,90 +50,6 @@
             color: #ffffff;
         }
 
-        /* Форма входа/регистрации */
-        .auth-container {
-            max-width: 400px;
-            margin: 40px auto;
-        }
-
-        .auth-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(30px);
-            border-radius: 48px;
-            padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-
-        .auth-card h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #ffffff;
-        }
-
-        .auth-input {
-            width: 100%;
-            padding: 14px 16px;
-            margin: 10px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 30px;
-            color: white;
-            font-size: 1em;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .auth-input:focus {
-            border-color: rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 14px;
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1em;
-            color: white;
-            transition: all 0.2s;
-        }
-
-        .auth-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.02);
-        }
-
-        .switch-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 0.9em;
-            text-align: center;
-            width: 100%;
-        }
-
-        .switch-btn:hover {
-            color: white;
-        }
-
-        .error-msg {
-            color: #ff6b6b;
-            font-size: 0.8em;
-            margin-top: 5px;
-            text-align: center;
-        }
-
-        /* Основной интерфейс (после входа) */
-        .main-content {
-            display: none;
-        }
-
         .premium-badge {
             position: fixed;
             top: 20px;
@@ -149,12 +64,6 @@
             z-index: 100;
             border: 1px solid rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .premium-badge:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.2);
         }
 
         .profile-panel {
@@ -195,7 +104,7 @@
             color: #ffffff;
         }
 
-        .logout-btn {
+        .logout-btn, .theme-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 6px 16px;
@@ -205,13 +114,35 @@
             font-size: 0.8em;
         }
 
-        .theme-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 6px 12px;
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            padding: 12px;
             border-radius: 30px;
-            cursor: pointer;
             color: white;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .sounds-section {
@@ -378,10 +309,71 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 28px;
             transition: all 0.2s;
+            position: relative;
+            scroll-margin-top: 80px;
+        }
+
+        .ayah.current {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 3px solid #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
         .ayah:hover {
             background: rgba(255, 255, 255, 0.07);
+        }
+
+        .ayah-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .favorite-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s;
+        }
+
+        .favorite-btn.active {
+            background: rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+        }
+
+        .transcription-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .transcription-btn.locked {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+        .transcription-text {
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #a0a0a0;
+            font-style: italic;
+            display: none;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+        }
+
+        .transcription-text.show {
+            display: block;
         }
 
         .arabic {
@@ -399,6 +391,35 @@
             line-height: 1.5;
             padding-left: 12px;
             border-left: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .favorite-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .favorite-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .favorite-item .remove-fav {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 85, 85, 0.3);
+            border: none;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7em;
+            color: white;
         }
 
         .premium-overlay {
@@ -475,6 +496,12 @@
             color: white;
         }
 
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
         .footer {
             text-align: center;
             padding: 20px;
@@ -488,7 +515,7 @@
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .arabic { font-size: 1.2em; }
             .sounds-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
-            .auth-card { margin: 20px; }
+            .ayah-actions { flex-direction: column; align-items: flex-end; }
         }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -497,39 +524,33 @@
     </style>
 </head>
 <body>
-<!-- Форма входа/регистрации -->
-<div id="authContainer" class="container auth-container">
-    <div class="auth-card">
-        <h2 id="authTitle">🔐 ВХОД</h2>
-        <input type="text" id="loginInput" class="auth-input" placeholder="Логин (a-z, 0-9, _)" autocomplete="off">
-        <input type="password" id="passwordInput" class="auth-input" placeholder="Пароль">
-        <button id="submitBtn" class="auth-btn" onclick="submitAuth()">ВОЙТИ</button>
-        <button class="switch-btn" onclick="toggleAuthMode()">Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ</button>
-        <div id="authError" class="error-msg"></div>
+<div class="container">
+    <div class="premium-badge" onclick="openPremium()">✦ PREMIUM ✦</div>
+    
+    <div class="header">
+        <h1>۞ Quran Audio Reader ۞</h1>
     </div>
-</div>
-
-<!-- Основной интерфейс (после входа) -->
-<div id="mainContent" class="main-content">
-    <div class="container">
-        <div class="premium-badge" onclick="openPremium()">✦ PREMIUM ✦</div>
-        
-        <div class="header">
-            <h1>۞ Quran Audio Reader ۞</h1>
+    
+    <div class="profile-panel">
+        <div class="profile-info">
+            <div class="avatar">۞</div>
+            <div class="username" id="currentUsername">Читатель</div>
         </div>
-        
-        <div class="profile-panel">
-            <div class="profile-info">
-                <div class="avatar">۞</div>
-                <div class="username" id="currentUsername">Читатель</div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
-                <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
-                <button class="theme-btn" onclick="setTheme('light')">☀️</button>
-            </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
+            <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
+            <button class="theme-btn" onclick="setTheme('light')">☀️</button>
         </div>
-        
+    </div>
+    
+    <!-- Вкладки -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('reader')">📖 ЧТЕНИЕ</button>
+        <button class="tab-btn" onclick="switchTab('favorites')">⭐ ИЗБРАННОЕ</button>
+    </div>
+    
+    <!-- Вкладка Чтение -->
+    <div id="readerTab" class="tab-content active">
         <div class="sounds-section">
             <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
             <div class="sounds-grid" id="soundsGrid"></div>
@@ -539,7 +560,7 @@
         </div>
         
         <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
-        <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
+        <div id="suraList" class="sura-list"><div class="empty-msg">✦ ЗАГРУЗКА ✦</div></div>
         
         <div id="readingPanel" class="reading-panel">
             <div class="reading-header">
@@ -548,24 +569,32 @@
             </div>
             <div id="suraText"></div>
         </div>
-        
-        <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
     </div>
+    
+    <!-- Вкладка Избранное -->
+    <div id="favoritesTab" class="tab-content">
+        <div class="section-title">⭐ ИЗБРАННЫЕ АЯТЫ</div>
+        <div id="favoritesList" class="favorite-list">
+            <div class="empty-msg">Нет избранных аятов. Нажмите ⭐ на любом аяте</div>
+        </div>
+    </div>
+    
+    <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — ТРАНСКРИПЦИЯ</div>
 </div>
 
 <!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
-        <p>РАЗБЛОКИРУЙ ВСЕ ЗВУКИ</p>
+        <p>РАЗБЛОКИРУЙ ТРАНСКРИПЦИЮ</p>
         <div class="premium-price">199 ₽ / МЕСЯЦ</div>
         <ul class="premium-features">
+            <li>✧ + ТРАНСКРИПЦИЯ (произношение аятов)</li>
             <li>✧ + ЗВУК "ЛЕС"</li>
             <li>✧ + ЗВУК "ДОЖДЬ"</li>
             <li>✧ + ЗВУК "ПТИЦЫ"</li>
             <li>✧ + ЗВУК "КОСТЕР"</li>
             <li>✧ СОХРАНЕНИЕ НАСТРОЕК</li>
-            <li>✧ БЕЗ РЕКЛАМЫ</li>
         </ul>
         <button class="premium-btn" onclick="buyPremium()">КУПИТЬ PREMIUM</button>
         <button class="close-premium" onclick="closePremium()">ЗАКРЫТЬ</button>
@@ -573,16 +602,15 @@
 </div>
 
 <script>
-    // === СИСТЕМА АВТОРИЗАЦИИ ===
+    // === АВТОРИЗАЦИЯ ===
     let currentUser = null;
-    let isRegisterMode = false;
+    let isPremium = false;
+    let currentAudio = null;
+    let currentSoundId = null;
+    let currentSura = null;
+    let currentAyahObserver = null;
     
-    // Валидация логина (только a-z, 0-9, _)
-    function isValidLogin(login) {
-        return /^[a-z0-9_]+$/.test(login);
-    }
-    
-    // Загрузка пользователей из localStorage
+    // Функции авторизации
     function getUsers() {
         const users = localStorage.getItem('quran_users');
         return users ? JSON.parse(users) : {};
@@ -590,6 +618,44 @@
     
     function saveUsers(users) {
         localStorage.setItem('quran_users', JSON.stringify(users));
+    }
+    
+    function checkAuth() {
+        const savedUser = localStorage.getItem('quran_current_user');
+        if (savedUser && getUsers()[savedUser]) {
+            currentUser = savedUser;
+            isPremium = getUsers()[currentUser]?.premium || false;
+            document.getElementById('currentUsername').innerText = currentUser;
+            document.getElementById('readerTab').style.display = 'block';
+            document.getElementById('favoritesTab').style.display = 'none';
+            renderSounds();
+            loadSuraList();
+            loadFavoritesList();
+            
+            // Восстановление последней суры
+            const lastSura = localStorage.getItem(`quran_last_sura_${currentUser}`);
+            if (lastSura) {
+                setTimeout(() => loadSura(parseInt(lastSura)), 500);
+            }
+        } else {
+            // Показываем форму входа
+            showAuthForm();
+        }
+    }
+    
+    function showAuthForm() {
+        document.body.innerHTML = `
+            <div class="container" style="max-width:400px; margin:80px auto;">
+                <div class="premium-card" style="width:100%;">
+                    <h2>🔐 ВХОД</h2>
+                    <input type="text" id="loginInput" placeholder="Логин (a-z, 0-9, _)" style="width:100%; padding:12px; margin:10px 0; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); border-radius:30px; color:white;">
+                    <input type="password" id="passwordInput" placeholder="Пароль" style="width:100%; padding:12px; margin:10px 0; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); border-radius:30px; color:white;">
+                    <button onclick="submitAuth()" style="width:100%; padding:12px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3); border-radius:40px; color:white; cursor:pointer;">ВОЙТИ</button>
+                    <button onclick="toggleAuthMode()" style="width:100%; background:transparent; border:none; color:rgba(255,255,255,0.6); margin-top:15px; cursor:pointer;">Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                    <div id="authError" style="color:#ff6b6b; margin-top:10px; text-align:center;"></div>
+                </div>
+            </div>
+        `;
     }
     
     function submitAuth() {
@@ -604,9 +670,8 @@
         
         const users = getUsers();
         
-        if (isRegisterMode) {
-            // РЕГИСТРАЦИЯ
-            if (!isValidLogin(login)) {
+        if (window.isRegisterMode) {
+            if (!/^[a-z0-9_]+$/.test(login)) {
                 errorDiv.innerText = 'Логин может содержать только a-z, 0-9 и _';
                 return;
             }
@@ -615,98 +680,121 @@
                 return;
             }
             if (users[login]) {
-                errorDiv.innerText = 'Пользователь с таким логином уже существует';
+                errorDiv.innerText = 'Пользователь уже существует';
                 return;
             }
-            
-            users[login] = { password: password, premium: false, createdAt: new Date().toISOString() };
+            users[login] = { password: password, premium: false, favorites: [] };
             saveUsers(users);
             currentUser = login;
             localStorage.setItem('quran_current_user', login);
-            showMainContent();
-            showNotif('✅ Регистрация успешна! Добро пожаловать!');
+            location.reload();
         } else {
-            // ВХОД
             if (!users[login] || users[login].password !== password) {
                 errorDiv.innerText = 'Неверный логин или пароль';
                 return;
             }
             currentUser = login;
             localStorage.setItem('quran_current_user', login);
-            showMainContent();
-            showNotif(`👋 С возвращением, ${login}!`);
+            location.reload();
         }
     }
     
+    window.isRegisterMode = false;
     function toggleAuthMode() {
-        isRegisterMode = !isRegisterMode;
-        const title = document.getElementById('authTitle');
-        const submitBtn = document.querySelector('#submitBtn');
-        const switchBtn = document.querySelector('.switch-btn');
-        
-        if (isRegisterMode) {
+        window.isRegisterMode = !window.isRegisterMode;
+        const title = document.querySelector('.premium-card h2');
+        const btn = document.querySelector('.premium-card button:first-of-type');
+        const switchBtn = document.querySelector('.premium-card button:last-of-type');
+        if (window.isRegisterMode) {
             title.innerText = '📝 РЕГИСТРАЦИЯ';
-            submitBtn.innerText = 'ЗАРЕГИСТРИРОВАТЬСЯ';
+            btn.innerText = 'ЗАРЕГИСТРИРОВАТЬСЯ';
             switchBtn.innerText = 'Уже есть аккаунт? ВОЙТИ';
         } else {
             title.innerText = '🔐 ВХОД';
-            submitBtn.innerText = 'ВОЙТИ';
+            btn.innerText = 'ВОЙТИ';
             switchBtn.innerText = 'Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ';
         }
         document.getElementById('authError').innerText = '';
     }
     
     function logout() {
-        currentUser = null;
         localStorage.removeItem('quran_current_user');
-        document.getElementById('authContainer').style.display = 'block';
-        document.getElementById('mainContent').style.display = 'none';
-        document.getElementById('loginInput').value = '';
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('authError').innerText = '';
-        isRegisterMode = false;
-        const title = document.getElementById('authTitle');
-        const submitBtn = document.querySelector('#submitBtn');
-        const switchBtn = document.querySelector('.switch-btn');
-        title.innerText = '🔐 ВХОД';
-        submitBtn.innerText = 'ВОЙТИ';
-        switchBtn.innerText = 'Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ';
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio = null;
-        }
+        location.reload();
     }
     
-    function showMainContent() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-        document.getElementById('currentUsername').innerText = currentUser;
-        
+    // === ИЗБРАННОЕ ===
+    function addToFavorites(suraNumber, ayahNumber, arabicText, translationText) {
         const users = getUsers();
-        const isUserPremium = users[currentUser]?.premium || false;
-        isPremium = isUserPremium;
+        if (!users[currentUser]) return;
+        if (!users[currentUser].favorites) users[currentUser].favorites = [];
         
-        renderSounds();
-        loadSuraList();
+        const exists = users[currentUser].favorites.some(f => f.sura === suraNumber && f.ayah === ayahNumber);
+        if (exists) return;
+        
+        users[currentUser].favorites.push({
+            sura: suraNumber,
+            suraName: suraNames[suraNumber],
+            ayah: ayahNumber,
+            arabic: arabicText,
+            translation: translationText
+        });
+        saveUsers(users);
+        loadFavoritesList();
+        showNotif('⭐ Добавлено в избранное');
     }
     
-    function checkAuth() {
-        const savedUser = localStorage.getItem('quran_current_user');
-        if (savedUser && getUsers()[savedUser]) {
-            currentUser = savedUser;
-            showMainContent();
-        } else {
-            document.getElementById('authContainer').style.display = 'block';
-            document.getElementById('mainContent').style.display = 'none';
+    function removeFromFavorites(suraNumber, ayahNumber) {
+        const users = getUsers();
+        if (!users[currentUser]) return;
+        users[currentUser].favorites = users[currentUser].favorites.filter(f => !(f.sura === suraNumber && f.ayah === ayahNumber));
+        saveUsers(users);
+        loadFavoritesList();
+        showNotif('🗑️ Удалено из избранного');
+    }
+    
+    function isFavorite(suraNumber, ayahNumber) {
+        const users = getUsers();
+        if (!users[currentUser] || !users[currentUser].favorites) return false;
+        return users[currentUser].favorites.some(f => f.sura === suraNumber && f.ayah === ayahNumber);
+    }
+    
+    function loadFavoritesList() {
+        const container = document.getElementById('favoritesList');
+        if (!container) return;
+        const users = getUsers();
+        const favorites = users[currentUser]?.favorites || [];
+        
+        if (favorites.length === 0) {
+            container.innerHTML = '<div class="empty-msg">Нет избранных аятов. Нажмите ⭐ на любом аяте</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        favorites.forEach(fav => {
+            container.innerHTML += `
+                <div class="favorite-item">
+                    <button class="remove-fav" onclick="removeFromFavorites(${fav.sura}, ${fav.ayah})">✕ Удалить</button>
+                    <div style="font-size:0.8em; color:#ffd700;">Сура ${fav.sura}. ${fav.suraName} | Аят ${fav.ayah}</div>
+                    <div class="arabic" style="font-size:1.1em; margin-top:10px;">${fav.arabic}</div>
+                    <div class="translation" style="font-size:0.8em;">${fav.translation}</div>
+                </div>
+            `;
+        });
+    }
+    
+    // === ТРАНСКРИПЦИЯ ===
+    function showTranscription(ayahElement, ayahNumber) {
+        if (!isPremium) {
+            openPremium();
+            return;
+        }
+        const transDiv = ayahElement.querySelector('.transcription-text');
+        if (transDiv) {
+            transDiv.classList.toggle('show');
         }
     }
     
-    // === ЗВУКИ И ПРОЧЕЕ ===
-    let isPremium = false;
-    let currentAudio = null;
-    let currentSoundId = null;
-    let currentSura = null;
-    
+    // === ЗВУКИ ===
     const sounds = [
         { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3?filename=ocean-waves-112656.mp3', free: true },
         { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_1c1c1c1c1c.mp3?filename=forest-birds-103441.mp3', free: false },
@@ -715,37 +803,6 @@
         { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_3d3d3d3d3d.mp3?filename=fire-112661.mp3', free: false }
     ];
     
-    function setTheme(theme) {
-        if (theme === 'dark') {
-            document.body.style.background = '#000000';
-        } else {
-            document.body.style.background = '#1a1a1a';
-        }
-        localStorage.setItem('quran_theme', theme);
-    }
-    const savedTheme = localStorage.getItem('quran_theme') || 'dark';
-    setTheme(savedTheme);
-    
-    function openPremium() {
-        document.getElementById('premiumModal').style.display = 'flex';
-    }
-    
-    function closePremium() {
-        document.getElementById('premiumModal').style.display = 'none';
-    }
-    
-    function buyPremium() {
-        const users = getUsers();
-        if (users[currentUser]) {
-            users[currentUser].premium = true;
-            saveUsers(users);
-            isPremium = true;
-        }
-        closePremium();
-        renderSounds();
-        showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
-    }
-    
     function playSound(soundId) {
         const sound = sounds.find(s => s.id === soundId);
         if (!sound) return;
@@ -753,17 +810,12 @@
             openPremium();
             return;
         }
-        
-        if (currentAudio) {
-            currentAudio.pause();
-        }
-        
+        if (currentAudio) currentAudio.pause();
         currentAudio = new Audio(sound.url);
         currentAudio.loop = true;
         currentAudio.volume = document.getElementById('volumeSlider').value / 100;
-        currentAudio.play().catch(e => console.log('Audio play error:', e));
+        currentAudio.play().catch(e => console.log('Audio error'));
         currentSoundId = soundId;
-        
         renderSounds();
         showNotif(`♫ ИГРАЕТ: ${sound.name} ♫`);
     }
@@ -778,21 +830,16 @@
     }
     
     function updateVolume() {
-        const volume = document.getElementById('volumeSlider').value / 100;
-        if (currentAudio) {
-            currentAudio.volume = volume;
-        }
+        if (currentAudio) currentAudio.volume = document.getElementById('volumeSlider').value / 100;
     }
     
     function renderSounds() {
         const container = document.getElementById('soundsGrid');
         if (!container) return;
         container.innerHTML = '';
-        
         sounds.forEach(sound => {
             const isUnlocked = sound.free || isPremium;
             const isActive = currentSoundId === sound.id;
-            
             container.innerHTML += `
                 <div class="sound-card ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}" onclick="${isUnlocked ? `playSound('${sound.id}')` : 'openPremium()'}">
                     <div class="sound-icon">${sound.icon}</div>
@@ -802,31 +849,13 @@
                 </div>
             `;
         });
-        
-        container.innerHTML += `
-            <div class="sound-card" onclick="stopSound()">
-                <div class="sound-icon">■</div>
-                <div class="sound-name">СТОП</div>
-            </div>
-        `;
+        container.innerHTML += `<div class="sound-card" onclick="stopSound()"><div class="sound-icon">■</div><div class="sound-name">СТОП</div></div>`;
     }
     
     document.getElementById('volumeSlider').addEventListener('input', updateVolume);
     
-    const suraNames = {
-        1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",
-        11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",
-        21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",
-        31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",
-        41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",
-        51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",
-        61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",
-        71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",
-        81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",
-        91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",
-        101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",
-        111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"
-    };
+    // === СУРЫ ===
+    const suraNames = {1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",21:"Аль-Анбия",22:"Аль-Хаджж",23:"Аль-Муминун",24:"Ан-Нур",25:"Аль-Фуркан",26:"Аш-Шуара",27:"Ан-Намль",28:"Аль-Касас",29:"Аль-Анкабут",30:"Ар-Рум",31:"Лукман",32:"Ас-Саджда",33:"Аль-Ахзаб",34:"Саба",35:"Фатир",36:"Йа Син",37:"Ас-Саффат",38:"Сад",39:"Аз-Зумар",40:"Гафир",41:"Фуссилят",42:"Аш-Шура",43:"Аз-Зухруф",44:"Ад-Духан",45:"Аль-Джасия",46:"Аль-Ахкаф",47:"Мухаммад",48:"Аль-Фатх",49:"Аль-Худжурат",50:"Каф",51:"Аз-Зарият",52:"Ат-Тур",53:"Ан-Наджм",54:"Аль-Камар",55:"Ар-Рахман",56:"Аль-Вакиа",57:"Аль-Хадид",58:"Аль-Муджадиля",59:"Аль-Хашр",60:"Аль-Мумтахана",61:"Ас-Сафф",62:"Аль-Джумуа",63:"Аль-Мунафикун",64:"Ат-Тагабун",65:"Ат-Талак",66:"Ат-Тахрим",67:"Аль-Мульк",68:"Аль-Калам",69:"Аль-Хакка",70:"Аль-Мааридж",71:"Нух",72:"Аль-Джинн",73:"Аль-Муззаммиль",74:"Аль-Муддассир",75:"Аль-Кийама",76:"Аль-Инсан",77:"Аль-Мурсалят",78:"Ан-Наба",79:"Ан-Назиат",80:"Абаса",81:"Ат-Таквир",82:"Аль-Инфитар",83:"Аль-Мутаффифин",84:"Аль-Иншикак",85:"Аль-Бурудж",86:"Ат-Тарик",87:"Аль-Аля",88:"Аль-Гашия",89:"Аль-Фаджр",90:"Аль-Балад",91:"Аш-Шамс",92:"Аль-Лайль",93:"Ад-Духа",94:"Аль-Инширах",95:"Ат-Тин",96:"Аль-Аляк",97:"Аль-Кадр",98:"Аль-Баййина",99:"Аз-Зальзаля",100:"Аль-Адият",101:"Аль-Кариа",102:"Ат-Такасур",103:"Аль-Аср",104:"Аль-Хумаза",105:"Аль-Филь",106:"Курайш",107:"Аль-Маун",108:"Аль-Каусар",109:"Аль-Кафирун",110:"Ан-Наср",111:"Аль-Масад",112:"Аль-Ихлас",113:"Аль-Фаляк",114:"Ан-Нас"};
     
     async function loadSuraList() {
         const c = document.getElementById('suraList');
@@ -848,9 +877,12 @@
         const titleSpan = document.getElementById('suraTitle');
         
         panel.style.display = 'block';
-        textDiv.innerHTML = '<div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div>';
+        textDiv.innerHTML = '<div class="empty-msg">✦ ЗАГРУЗКА ✦</div>';
         titleSpan.innerHTML = `${num}. ${suraNames[num]}`;
         panel.scrollIntoView({ behavior: 'smooth' });
+        
+        // Сохраняем закладку
+        localStorage.setItem(`quran_last_sura_${currentUser}`, num);
         
         try {
             const [arabicRes, russianRes] = await Promise.all([
@@ -863,54 +895,118 @@
             if (arabicData.status === 'OK' && russianData.status === 'OK') {
                 let html = '';
                 for (let i = 0; i < arabicData.data.ayahs.length; i++) {
+                    const ayahNum = i + 1;
+                    const favActive = isFavorite(num, ayahNum) ? 'active' : '';
                     html += `
-                        <div class="ayah">
+                        <div class="ayah" data-ayah="${ayahNum}" data-sura="${num}">
                             <div class="arabic">${arabicData.data.ayahs[i].text}</div>
-                            <div class="translation">${i+1}. ${russianData.data.ayahs[i].text}</div>
+                            <div class="translation">${ayahNum}. ${russianData.data.ayahs[i].text}</div>
+                            <div class="ayah-actions">
+                                <button class="favorite-btn ${favActive}" onclick="addToFavorites(${num}, ${ayahNum}, \`${arabicData.data.ayahs[i].text.replace(/`/g, '\\`')}\`, \`${russianData.data.ayahs[i].text.replace(/`/g, '\\`')}\`)">⭐</button>
+                                <button class="transcription-btn ${!isPremium ? 'locked' : ''}" onclick="showTranscription(this.parentElement.parentElement, ${ayahNum})">🔊 Транскрипция</button>
+                            </div>
+                            <div class="transcription-text">Premium функция: транскрипция аята ${ayahNum} будет доступна после покупки</div>
                         </div>
                     `;
                 }
                 textDiv.innerHTML = html;
-                localStorage.setItem('quran_last_sura', num);
-            } else {
-                textDiv.innerHTML = '<div class="loading">⚠️ ОШИБКА ЗАГРУЗКИ</div>';
+                setupScrollSpy();
             }
         } catch(e) {
-            textDiv.innerHTML = '<div class="loading">🔌 ОШИБКА СОЕДИНЕНИЯ</div>';
+            textDiv.innerHTML = '<div class="empty-msg">🔌 ОШИБКА СОЕДИНЕНИЯ</div>';
         }
+    }
+    
+    // Выделение текущего аята
+    function setupScrollSpy() {
+        const ayahs = document.querySelectorAll('.ayah');
+        if (!ayahs.length) return;
+        
+        if (currentAyahObserver) currentAyahObserver.disconnect();
+        
+        currentAyahObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.ayah').forEach(a => a.classList.remove('current'));
+                    entry.target.classList.add('current');
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        ayahs.forEach(ayah => currentAyahObserver.observe(ayah));
     }
     
     function closeReading() {
         document.getElementById('readingPanel').style.display = 'none';
-        currentSura = null;
+        if (currentAyahObserver) currentAyahObserver.disconnect();
     }
     
-    function showNotif(msg, dur = 2000) {
+    function setTheme(theme) {
+        document.body.style.background = theme === 'dark' ? '#000000' : '#1a1a1a';
+        localStorage.setItem('quran_theme', theme);
+    }
+    setTheme(localStorage.getItem('quran_theme') || 'dark');
+    
+    function openPremium() {
+        document.getElementById('premiumModal').style.display = 'flex';
+    }
+    
+    function closePremium() {
+        document.getElementById('premiumModal').style.display = 'none';
+    }
+    
+    function buyPremium() {
+        const users = getUsers();
+        if (users[currentUser]) {
+            users[currentUser].premium = true;
+            saveUsers(users);
+            isPremium = true;
+        }
+        closePremium();
+        renderSounds();
+        showNotif('✦ PREMIUM АКТИВИРОВАН! ТРАНСКРИПЦИЯ РАЗБЛОКИРОВАНА ✦');
+        // Обновляем текущую суру для отображения кнопок
+        if (currentSura) loadSura(currentSura);
+    }
+    
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        if (tab === 'reader') {
+            document.querySelector('.tab-btn').classList.add('active');
+            document.getElementById('readerTab').classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            document.getElementById('favoritesTab').classList.add('active');
+            loadFavoritesList();
+        }
+    }
+    
+    function showNotif(msg) {
         const n = document.createElement('div');
         n.innerText = msg;
-        n.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.9);color:#000;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;font-weight:bold;';
+        n.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,0.9);color:#000;padding:10px 20px;border-radius:40px;z-index:1001;animation:fadeOut 2s forwards;font-weight:bold;';
         document.body.appendChild(n);
-        setTimeout(() => n.remove(), dur);
+        setTimeout(() => n.remove(), 2000);
     }
     
-    const lastSura = localStorage.getItem('quran_last_sura');
-    if (lastSura) {
-        setTimeout(() => loadSura(parseInt(lastSura)), 500);
-    }
-    
-    checkAuth();
-    
-    window.setTheme = setTheme;
+    window.addToFavorites = addToFavorites;
+    window.removeFromFavorites = removeFromFavorites;
+    window.showTranscription = showTranscription;
+    window.playSound = playSound;
+    window.stopSound = stopSound;
     window.openPremium = openPremium;
     window.closePremium = closePremium;
     window.buyPremium = buyPremium;
-    window.playSound = playSound;
-    window.stopSound = stopSound;
     window.loadSura = loadSura;
     window.closeReading = closeReading;
+    window.switchTab = switchTab;
+    window.setTheme = setTheme;
+    window.logout = logout;
     window.submitAuth = submitAuth;
     window.toggleAuthMode = toggleAuthMode;
-    window.logout = logout;
+    
+    checkAuth();
 </script>
 </body>
 </html>
