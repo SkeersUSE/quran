@@ -135,15 +135,6 @@
             transform: scale(1.02);
         }
 
-        .premium-activate-btn {
-            color: #ffd700;
-        }
-
-        .premium-activate-btn:hover {
-            background: rgba(255, 215, 0, 0.35);
-            transform: scale(1.02);
-        }
-
         .donate-btn {
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             border: none;
@@ -544,6 +535,20 @@
             color: white;
         }
 
+        /* Стили для активации по коду */
+        .activation-code-input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            color: white;
+            text-align: center;
+            font-size: 1em;
+            letter-spacing: 2px;
+        }
+
         .empty-msg {
             text-align: center;
             padding: 40px;
@@ -648,7 +653,7 @@
     <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — ТРАНСКРИПЦИЯ</div>
 </div>
 
-<!-- Premium модалка с Tribute -->
+<!-- Premium модалка с Tribute и активацией по коду -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
@@ -664,9 +669,21 @@
         <a href="https://t.me/tribute/app?startapp=sSL5" target="_blank" class="premium-btn" id="tributeLink">
             💎 КУПИТЬ PREMIUM (Tribute)
         </a>
+        
+        <div style="margin: 20px 0; position: relative;">
+            <hr style="border-color: rgba(255,255,255,0.2); margin: 10px 0;">
+            <div style="font-size: 0.8em; color: rgba(255,255,255,0.5); margin: 10px 0;">ИЛИ</div>
+        </div>
+        
+        <div>
+            <p style="font-size: 0.8em; margin-bottom: 10px;">Введите код из чека Tribute:</p>
+            <input type="text" id="activationCode" class="activation-code-input" placeholder="XXXX-XXXX-XXXX" maxlength="15">
+            <button class="premium-btn" onclick="activateWithCode()" style="margin-top: 5px;">🔓 АКТИВИРОВАТЬ ПО КОДУ</button>
+        </div>
+        
         <button class="close-premium" onclick="closePremium()">ЗАКРЫТЬ</button>
         <div style="font-size:0.7em; margin-top:15px; opacity:0.6;">
-            После оплаты закройте это окно и нажмите "Активировать Premium"
+            После оплаты вы получите код в Telegram. Введите его здесь.
         </div>
     </div>
 </div>
@@ -679,6 +696,64 @@
     let currentSoundId = null;
     let currentSura = null;
     let currentAyahObserver = null;
+
+    // === PREMIUM КОДЫ (здесь хранятся действительные коды) ===
+    // В реальном проекте коды должны генерироваться и проверяться на сервере
+    // Для демонстрации используем локальное хранилище
+    let validCodes = JSON.parse(localStorage.getItem('quran_premium_codes') || '[]');
+
+    function generateRandomCode() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let code = '';
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            if (i < 3) code += '-';
+        }
+        return code;
+    }
+
+    // Функция для добавления нового кода (вызывается после оплаты вручную)
+    // В реальном проекте коды должны генерироваться через вебхук от Tribute
+    function addPremiumCode() {
+        const newCode = generateRandomCode();
+        validCodes.push(newCode);
+        localStorage.setItem('quran_premium_codes', JSON.stringify(validCodes));
+        console.log('Новый код для активации:', newCode);
+        showNotif(`Ваш код для активации: ${newCode}`, 10000);
+        return newCode;
+    }
+
+    // Активация по коду
+    function activateWithCode() {
+        const inputCode = document.getElementById('activationCode').value.trim().toUpperCase();
+        if (!inputCode) {
+            showNotif('❌ Введите код активации');
+            return;
+        }
+        
+        if (validCodes.includes(inputCode)) {
+            // Удаляем использованный код
+            validCodes = validCodes.filter(c => c !== inputCode);
+            localStorage.setItem('quran_premium_codes', JSON.stringify(validCodes));
+            
+            // Активируем Premium
+            const users = getUsers();
+            if (users[currentUser]) {
+                users[currentUser].premium = true;
+                saveUsers(users);
+                isPremium = true;
+                updateActionButtons();
+                showNotif('✦ PREMIUM АКТИВИРОВАН! ТРАНСКРИПЦИЯ РАЗБЛОКИРОВАНА ✦');
+                renderSounds();
+                if (currentSura) loadSura(currentSura);
+                closePremium();
+            }
+        } else {
+            showNotif('❌ Неверный код активации');
+        }
+    }
 
     function getUsers() {
         const u = localStorage.getItem('quran_users');
@@ -694,35 +769,18 @@
         if (!container) return;
         
         if (isPremium) {
-            // Уже Premium
             container.innerHTML = `
                 <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
                 <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
                 <button class="theme-btn" onclick="setTheme('light')">☀️</button>
             `;
         } else {
-            // Нет Premium — показываем кнопку покупки
             container.innerHTML = `
                 <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
                 <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
                 <button class="theme-btn" onclick="setTheme('light')">☀️</button>
                 <button class="premium-action-btn premium-buy-btn" onclick="openPremium()">💎 КУПИТЬ PREMIUM</button>
             `;
-        }
-    }
-
-    // Добавляем кнопку активации Premium (вызывается после оплаты)
-    function showActivateButton() {
-        const container = document.getElementById('actionButtons');
-        if (!container) return;
-        
-        // Заменяем кнопку покупки на кнопку активации
-        const buyBtn = container.querySelector('.premium-buy-btn');
-        if (buyBtn) {
-            buyBtn.outerHTML = `<button class="premium-action-btn premium-activate-btn" onclick="activatePremiumManually()">💎 АКТИВИРОВАТЬ PREMIUM</button>`;
-        } else {
-            // Если кнопки покупки нет, просто добавляем кнопку активации
-            container.innerHTML += `<button class="premium-action-btn premium-activate-btn" onclick="activatePremiumManually()">💎 АКТИВИРОВАТЬ PREMIUM</button>`;
         }
     }
 
@@ -824,26 +882,14 @@
         location.reload();
     }
 
-    // === АКТИВАЦИЯ PREMIUM ПОСЛЕ ОПЛАТЫ ===
-    function activatePremiumManually() {
-        const users = getUsers();
-        if (users[currentUser]) {
-            users[currentUser].premium = true;
-            saveUsers(users);
-            isPremium = true;
-            updateActionButtons(); // Обновляем кнопки (кнопка активации исчезнет)
-            showNotif('✦ PREMIUM АКТИВИРОВАН! ТРАНСКРИПЦИЯ РАЗБЛОКИРОВАНА ✦');
-            renderSounds();
-            if (currentSura) loadSura(currentSura);
-            closePremium();
-        }
-    }
+    // === АКТИВАЦИЯ PREMIUM ПО КОДУ ===
+    // Функция activateWithCode уже определена выше
 
     // === ТРАНСКРИПЦИЯ ===
     function getTranscription(arabicText) {
         const transMap = {
             'ب': 'б', 'ت': 'т', 'ث': 'с', 'ج': 'дж', 'ح': 'х', 'خ': 'х',
-            'د': 'д', 'ذ': 'з', 'ر': 'р', 'ز': 'з', 'س': 'с', 'ш': 'ш',
+            'د': 'д', 'ذ': 'з', 'ر': 'р', 'ز': 'з', 'س': 'с', 'ش': 'ш',
             'ص': 'с', 'ض': 'з', 'ط': 'т', 'ظ': 'з', 'ع': 'ъ', 'غ': 'г',
             'ف': 'ф', 'ق': 'к', 'ك': 'к', 'ل': 'л', 'м': 'м', 'н': 'н',
             'ه': 'х', 'و': 'у', 'ي': 'й', 'а': 'а', 'и': 'и', 'у': 'у',
@@ -1164,20 +1210,6 @@
     // === PREMIUM МОДАЛКА ===
     function openPremium() {
         document.getElementById('premiumModal').style.display = 'flex';
-        // Добавляем обработчик на ссылку Tribute, чтобы показать кнопку активации после оплаты
-        const tributeLink = document.getElementById('tributeLink');
-        if (tributeLink) {
-            // Убираем старый обработчик, если был
-            const newLink = tributeLink.cloneNode(true);
-            tributeLink.parentNode.replaceChild(newLink, tributeLink);
-            newLink.addEventListener('click', function() {
-                // После клика на ссылку оплаты показываем кнопку активации
-                // (пользователь вернётся на сайт и увидит кнопку)
-                setTimeout(() => {
-                    showActivateButton();
-                }, 100);
-            });
-        }
     }
 
     function closePremium() {
@@ -1217,6 +1249,12 @@
     `;
     document.head.appendChild(styleEl);
 
+    // === ДЛЯ ТЕСТИРОВАНИЯ: сгенерировать демо-код ===
+    // Раскомментируй эту строку, чтобы получить тестовый код в консоли браузера
+    console.log('Для теста Premium: добавьте код через консоль: addPremiumCode()');
+    window.addPremiumCode = addPremiumCode;
+    window.activateWithCode = activateWithCode;
+
     // === ЗАПУСК ===
     checkAuth();
 
@@ -1224,7 +1262,7 @@
     window.switchTab = switchTab;
     window.openPremium = openPremium;
     window.closePremium = closePremium;
-    window.activatePremiumManually = activatePremiumManually;
+    window.activateWithCode = activateWithCode;
     window.playSound = playSound;
     window.stopSound = stopSound;
     window.loadSura = loadSura;
