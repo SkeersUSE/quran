@@ -104,7 +104,7 @@
             color: #ffffff;
         }
 
-        .logout-btn, .theme-btn, .activate-premium-btn {
+        .logout-btn, .theme-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 6px 16px;
@@ -115,13 +115,31 @@
             transition: all 0.2s;
         }
 
-        .activate-premium-btn {
+        .premium-action-btn {
             background: rgba(255, 215, 0, 0.2);
-            border-color: rgba(255, 215, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .premium-buy-btn {
             color: #ffd700;
         }
 
-        .activate-premium-btn:hover {
+        .premium-buy-btn:hover {
+            background: rgba(255, 215, 0, 0.35);
+            transform: scale(1.02);
+        }
+
+        .premium-activate-btn {
+            color: #ffd700;
+        }
+
+        .premium-activate-btn:hover {
             background: rgba(255, 215, 0, 0.35);
             transform: scale(1.02);
         }
@@ -384,13 +402,14 @@
 
         .transcription-text {
             margin-top: 10px;
-            font-size: 0.8em;
-            color: #a0a0a0;
-            font-style: italic;
+            font-size: 0.85em;
+            color: #ffd966;
+            font-style: normal;
             display: none;
-            padding: 8px;
-            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            background: rgba(0,0,0,0.4);
             border-radius: 16px;
+            line-height: 1.5;
         }
 
         .transcription-text.show {
@@ -584,11 +603,8 @@
             <div class="avatar">۞</div>
             <div class="username" id="currentUsername">Читатель</div>
         </div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
-            <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
-            <button class="theme-btn" onclick="setTheme('light')">☀️</button>
-            <button class="activate-premium-btn" onclick="activatePremiumManually()">💎 АКТИВИРОВАТЬ PREMIUM</button>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="actionButtons">
+            <!-- Кнопки будут добавлены через JS -->
         </div>
     </div>
 
@@ -645,12 +661,12 @@
             <li>✧ + ЗВУК "ПТИЦЫ"</li>
             <li>✧ + ЗВУК "КОСТЕР"</li>
         </ul>
-        <a href="https://t.me/tribute/app?startapp=sSL5" target="_blank" class="premium-btn">
+        <a href="https://t.me/tribute/app?startapp=sSL5" target="_blank" class="premium-btn" id="tributeLink">
             💎 КУПИТЬ PREMIUM (Tribute)
         </a>
         <button class="close-premium" onclick="closePremium()">ЗАКРЫТЬ</button>
         <div style="font-size:0.7em; margin-top:15px; opacity:0.6;">
-            После оплаты нажмите "Активировать Premium" в профиле
+            После оплаты закройте это окно и нажмите "Активировать Premium"
         </div>
     </div>
 </div>
@@ -673,12 +689,50 @@
         localStorage.setItem('quran_users', JSON.stringify(u));
     }
 
+    function updateActionButtons() {
+        const container = document.getElementById('actionButtons');
+        if (!container) return;
+        
+        if (isPremium) {
+            // Уже Premium
+            container.innerHTML = `
+                <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
+                <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
+                <button class="theme-btn" onclick="setTheme('light')">☀️</button>
+            `;
+        } else {
+            // Нет Premium — показываем кнопку покупки
+            container.innerHTML = `
+                <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
+                <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
+                <button class="theme-btn" onclick="setTheme('light')">☀️</button>
+                <button class="premium-action-btn premium-buy-btn" onclick="openPremium()">💎 КУПИТЬ PREMIUM</button>
+            `;
+        }
+    }
+
+    // Добавляем кнопку активации Premium (вызывается после оплаты)
+    function showActivateButton() {
+        const container = document.getElementById('actionButtons');
+        if (!container) return;
+        
+        // Заменяем кнопку покупки на кнопку активации
+        const buyBtn = container.querySelector('.premium-buy-btn');
+        if (buyBtn) {
+            buyBtn.outerHTML = `<button class="premium-action-btn premium-activate-btn" onclick="activatePremiumManually()">💎 АКТИВИРОВАТЬ PREMIUM</button>`;
+        } else {
+            // Если кнопки покупки нет, просто добавляем кнопку активации
+            container.innerHTML += `<button class="premium-action-btn premium-activate-btn" onclick="activatePremiumManually()">💎 АКТИВИРОВАТЬ PREMIUM</button>`;
+        }
+    }
+
     function checkAuth() {
         const saved = localStorage.getItem('quran_current_user');
         if (saved && getUsers()[saved]) {
             currentUser = saved;
             isPremium = getUsers()[currentUser]?.premium || false;
             document.getElementById('currentUsername').innerText = currentUser;
+            updateActionButtons();
             renderSounds();
             loadSuraList();
             loadFavoritesList();
@@ -770,13 +824,14 @@
         location.reload();
     }
 
-    // === РУЧНАЯ АКТИВАЦИЯ PREMIUM ===
+    // === АКТИВАЦИЯ PREMIUM ПОСЛЕ ОПЛАТЫ ===
     function activatePremiumManually() {
         const users = getUsers();
         if (users[currentUser]) {
             users[currentUser].premium = true;
             saveUsers(users);
             isPremium = true;
+            updateActionButtons(); // Обновляем кнопки (кнопка активации исчезнет)
             showNotif('✦ PREMIUM АКТИВИРОВАН! ТРАНСКРИПЦИЯ РАЗБЛОКИРОВАНА ✦');
             renderSounds();
             if (currentSura) loadSura(currentSura);
@@ -785,19 +840,34 @@
     }
 
     // === ТРАНСКРИПЦИЯ ===
-    function generateTranscription(arabicText) {
-        const map = {
+    function getTranscription(arabicText) {
+        const transMap = {
             'ب': 'б', 'ت': 'т', 'ث': 'с', 'ج': 'дж', 'ح': 'х', 'خ': 'х',
-            'د': 'д', 'ذ': 'з', 'ر': 'р', 'ز': 'з', 'س': 'с', 'ش': 'ш',
+            'د': 'д', 'ذ': 'з', 'ر': 'р', 'ز': 'з', 'س': 'с', 'ш': 'ш',
             'ص': 'с', 'ض': 'з', 'ط': 'т', 'ظ': 'з', 'ع': 'ъ', 'غ': 'г',
-            'ف': 'ф', 'ق': 'к', 'ك': 'к', 'ل': 'л', 'م': 'м', 'н': 'н',
-            'ه': 'х', 'و': 'у', 'ي': 'й'
+            'ف': 'ф', 'ق': 'к', 'ك': 'к', 'ل': 'л', 'м': 'м', 'н': 'н',
+            'ه': 'х', 'و': 'у', 'ي': 'й', 'а': 'а', 'и': 'и', 'у': 'у',
+            'إ': 'и', 'أ': 'а', 'آ': 'а', 'ة': 'а', 'ى': 'а', 'ئ': 'й',
+            'ء': 'ъ', ' ': ' ', 'ٱ': 'а', 'ۡ': '', 'َ': 'а', 'ُ': 'у', 'ِ': 'и',
+            'ّ': '', 'ْ': '', 'ً': 'ан', 'ٌ': 'ун', 'ٍ': 'ин'
         };
+        
         let result = '';
-        for (let char of arabicText) {
-            result += map[char] || char;
+        for (let i = 0; i < arabicText.length; i++) {
+            const char = arabicText[i];
+            if (transMap[char]) {
+                const trans = transMap[char];
+                if (trans !== '' && trans !== 'ъ') {
+                    result += trans;
+                }
+            } else {
+                result += char;
+            }
         }
-        return result.substring(0, 150);
+        
+        result = result.replace(/\s+/g, ' ').trim();
+        result = result.substring(0, 200);
+        return result;
     }
 
     function showTranscription(ayahElement, ayahNum) {
@@ -810,8 +880,8 @@
             transDiv.classList.remove('show');
         } else {
             const arabicDiv = ayahElement.querySelector('.arabic');
-            const transcription = generateTranscription(arabicDiv.innerText);
-            transDiv.innerHTML = `<strong>🔊 Транскрипция (аят ${ayahNum}):</strong><br>${transcription}...`;
+            const transcription = getTranscription(arabicDiv.innerText);
+            transDiv.innerHTML = `<strong>🔊 Транскрипция (аят ${ayahNum}):</strong><br>${transcription}`;
             transDiv.classList.add('show');
         }
     }
@@ -1094,6 +1164,20 @@
     // === PREMIUM МОДАЛКА ===
     function openPremium() {
         document.getElementById('premiumModal').style.display = 'flex';
+        // Добавляем обработчик на ссылку Tribute, чтобы показать кнопку активации после оплаты
+        const tributeLink = document.getElementById('tributeLink');
+        if (tributeLink) {
+            // Убираем старый обработчик, если был
+            const newLink = tributeLink.cloneNode(true);
+            tributeLink.parentNode.replaceChild(newLink, tributeLink);
+            newLink.addEventListener('click', function() {
+                // После клика на ссылку оплаты показываем кнопку активации
+                // (пользователь вернётся на сайт и увидит кнопку)
+                setTimeout(() => {
+                    showActivateButton();
+                }, 100);
+            });
+        }
     }
 
     function closePremium() {
@@ -1123,16 +1207,15 @@
         setTimeout(() => n.remove(), dur);
     }
 
-    // Добавляем стиль для анимации уведомлений
-    const style = document.createElement('style');
-    style.textContent = `
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `
         @keyframes fadeOut {
             0% { opacity: 1; transform: translateX(-50%) scale(1); }
             70% { opacity: 1; transform: translateX(-50%) scale(1); }
             100% { opacity: 0; transform: translateX(-50%) scale(0.9); visibility: hidden; }
         }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(styleEl);
 
     // === ЗАПУСК ===
     checkAuth();
