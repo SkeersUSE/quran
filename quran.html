@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Quran Audio Reader — Звуки природы</title>
+    <title>Quran Audio Reader — Вход и регистрация</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,6 @@
             background: #000000;
             min-height: 100vh;
             color: #ffffff;
-            transition: background 0.3s;
         }
 
         .glass-card {
@@ -27,11 +26,6 @@
             border-radius: 32px;
             border: 1px solid rgba(255, 255, 255, 0.25);
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: scale(1.02);
         }
 
         .container {
@@ -55,6 +49,90 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             margin-bottom: 15px;
             color: #ffffff;
+        }
+
+        /* Форма входа/регистрации */
+        .auth-container {
+            max-width: 400px;
+            margin: 40px auto;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(30px);
+            border-radius: 48px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 30px;
+            color: white;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+            color: white;
+            transition: all 0.2s;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+        .switch-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-align: center;
+            width: 100%;
+        }
+
+        .switch-btn:hover {
+            color: white;
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.8em;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        /* Основной интерфейс (после входа) */
+        .main-content {
+            display: none;
         }
 
         .premium-badge {
@@ -117,6 +195,16 @@
             color: #ffffff;
         }
 
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.8em;
+        }
+
         .theme-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -165,10 +253,6 @@
         .sound-card.locked {
             opacity: 0.5;
             cursor: default;
-        }
-
-        .sound-card.locked:hover {
-            transform: none;
         }
 
         .sound-card:hover:not(.locked) {
@@ -404,6 +488,7 @@
             .sura-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
             .arabic { font-size: 1.2em; }
             .sounds-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+            .auth-card { margin: 20px; }
         }
 
         ::-webkit-scrollbar { width: 6px; }
@@ -412,46 +497,63 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="premium-badge" onclick="openPremium()">✦ PREMIUM ✦</div>
-    
-    <div class="header">
-        <h1>۞ Quran Audio Reader ۞</h1>
+<!-- Форма входа/регистрации -->
+<div id="authContainer" class="container auth-container">
+    <div class="auth-card">
+        <h2 id="authTitle">🔐 ВХОД</h2>
+        <input type="text" id="loginInput" class="auth-input" placeholder="Логин (a-z, 0-9, _)" autocomplete="off">
+        <input type="password" id="passwordInput" class="auth-input" placeholder="Пароль">
+        <button id="submitBtn" class="auth-btn" onclick="submitAuth()">ВОЙТИ</button>
+        <button class="switch-btn" onclick="toggleAuthMode()">Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ</button>
+        <div id="authError" class="error-msg"></div>
     </div>
-    
-    <div class="profile-panel">
-        <div class="profile-info">
-            <div class="avatar">۞</div>
-            <div class="username">Читатель</div>
-        </div>
-        <div style="display: flex; gap: 8px;">
-            <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
-            <button class="theme-btn" onclick="setTheme('light')">☀️</button>
-        </div>
-    </div>
-    
-    <div class="sounds-section">
-        <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
-        <div class="sounds-grid" id="soundsGrid"></div>
-        <div class="volume-slider">
-            <input type="range" id="volumeSlider" min="0" max="100" value="30">
-        </div>
-    </div>
-    
-    <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
-    <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
-    
-    <div id="readingPanel" class="reading-panel">
-        <div class="reading-header">
-            <span id="suraTitle"></span>
-            <button class="close-btn" onclick="closeReading()">✕ ЗАКРЫТЬ</button>
-        </div>
-        <div id="suraText"></div>
-    </div>
-    
-    <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
 </div>
 
+<!-- Основной интерфейс (после входа) -->
+<div id="mainContent" class="main-content">
+    <div class="container">
+        <div class="premium-badge" onclick="openPremium()">✦ PREMIUM ✦</div>
+        
+        <div class="header">
+            <h1>۞ Quran Audio Reader ۞</h1>
+        </div>
+        
+        <div class="profile-panel">
+            <div class="profile-info">
+                <div class="avatar">۞</div>
+                <div class="username" id="currentUsername">Читатель</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="logout-btn" onclick="logout()">🚪 ВЫЙТИ</button>
+                <button class="theme-btn" onclick="setTheme('dark')">🌙</button>
+                <button class="theme-btn" onclick="setTheme('light')">☀️</button>
+            </div>
+        </div>
+        
+        <div class="sounds-section">
+            <div class="section-title">♫ ФОНОВЫЕ ЗВУКИ ♫</div>
+            <div class="sounds-grid" id="soundsGrid"></div>
+            <div class="volume-slider">
+                <input type="range" id="volumeSlider" min="0" max="100" value="30">
+            </div>
+        </div>
+        
+        <div class="section-title">۞ ВЫБЕРИ СУРУ ۞</div>
+        <div id="suraList" class="sura-list"><div class="loading" style="text-align:center; padding:40px;">✦ ЗАГРУЗКА ✦</div></div>
+        
+        <div id="readingPanel" class="reading-panel">
+            <div class="reading-header">
+                <span id="suraTitle"></span>
+                <button class="close-btn" onclick="closeReading()">✕ ЗАКРЫТЬ</button>
+            </div>
+            <div id="suraText"></div>
+        </div>
+        
+        <div class="footer">ЧИТАЙ КОРАН ПОД ЗВУКИ ПРИРОДЫ | PREMIUM — БОЛЬШЕ ЗВУКОВ</div>
+    </div>
+</div>
+
+<!-- Premium модалка -->
 <div id="premiumModal" class="premium-overlay" style="display:none;">
     <div class="premium-card">
         <h3>✦ PREMIUM ✦</h3>
@@ -471,13 +573,140 @@
 </div>
 
 <script>
-    // === НАСТРОЙКИ ===
-    let isPremium = localStorage.getItem('quran_premium') === 'true';
+    // === СИСТЕМА АВТОРИЗАЦИИ ===
+    let currentUser = null;
+    let isRegisterMode = false;
+    
+    // Валидация логина (только a-z, 0-9, _)
+    function isValidLogin(login) {
+        return /^[a-z0-9_]+$/.test(login);
+    }
+    
+    // Загрузка пользователей из localStorage
+    function getUsers() {
+        const users = localStorage.getItem('quran_users');
+        return users ? JSON.parse(users) : {};
+    }
+    
+    function saveUsers(users) {
+        localStorage.setItem('quran_users', JSON.stringify(users));
+    }
+    
+    function submitAuth() {
+        const login = document.getElementById('loginInput').value.trim().toLowerCase();
+        const password = document.getElementById('passwordInput').value;
+        const errorDiv = document.getElementById('authError');
+        
+        if (!login || !password) {
+            errorDiv.innerText = 'Заполните все поля';
+            return;
+        }
+        
+        const users = getUsers();
+        
+        if (isRegisterMode) {
+            // РЕГИСТРАЦИЯ
+            if (!isValidLogin(login)) {
+                errorDiv.innerText = 'Логин может содержать только a-z, 0-9 и _';
+                return;
+            }
+            if (password.length < 4) {
+                errorDiv.innerText = 'Пароль должен быть не менее 4 символов';
+                return;
+            }
+            if (users[login]) {
+                errorDiv.innerText = 'Пользователь с таким логином уже существует';
+                return;
+            }
+            
+            users[login] = { password: password, premium: false, createdAt: new Date().toISOString() };
+            saveUsers(users);
+            currentUser = login;
+            localStorage.setItem('quran_current_user', login);
+            showMainContent();
+            showNotif('✅ Регистрация успешна! Добро пожаловать!');
+        } else {
+            // ВХОД
+            if (!users[login] || users[login].password !== password) {
+                errorDiv.innerText = 'Неверный логин или пароль';
+                return;
+            }
+            currentUser = login;
+            localStorage.setItem('quran_current_user', login);
+            showMainContent();
+            showNotif(`👋 С возвращением, ${login}!`);
+        }
+    }
+    
+    function toggleAuthMode() {
+        isRegisterMode = !isRegisterMode;
+        const title = document.getElementById('authTitle');
+        const submitBtn = document.querySelector('#submitBtn');
+        const switchBtn = document.querySelector('.switch-btn');
+        
+        if (isRegisterMode) {
+            title.innerText = '📝 РЕГИСТРАЦИЯ';
+            submitBtn.innerText = 'ЗАРЕГИСТРИРОВАТЬСЯ';
+            switchBtn.innerText = 'Уже есть аккаунт? ВОЙТИ';
+        } else {
+            title.innerText = '🔐 ВХОД';
+            submitBtn.innerText = 'ВОЙТИ';
+            switchBtn.innerText = 'Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ';
+        }
+        document.getElementById('authError').innerText = '';
+    }
+    
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('quran_current_user');
+        document.getElementById('authContainer').style.display = 'block';
+        document.getElementById('mainContent').style.display = 'none';
+        document.getElementById('loginInput').value = '';
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('authError').innerText = '';
+        isRegisterMode = false;
+        const title = document.getElementById('authTitle');
+        const submitBtn = document.querySelector('#submitBtn');
+        const switchBtn = document.querySelector('.switch-btn');
+        title.innerText = '🔐 ВХОД';
+        submitBtn.innerText = 'ВОЙТИ';
+        switchBtn.innerText = 'Нет аккаунта? ЗАРЕГИСТРИРОВАТЬСЯ';
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+        }
+    }
+    
+    function showMainContent() {
+        document.getElementById('authContainer').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        document.getElementById('currentUsername').innerText = currentUser;
+        
+        const users = getUsers();
+        const isUserPremium = users[currentUser]?.premium || false;
+        isPremium = isUserPremium;
+        
+        renderSounds();
+        loadSuraList();
+    }
+    
+    function checkAuth() {
+        const savedUser = localStorage.getItem('quran_current_user');
+        if (savedUser && getUsers()[savedUser]) {
+            currentUser = savedUser;
+            showMainContent();
+        } else {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+    }
+    
+    // === ЗВУКИ И ПРОЧЕЕ ===
+    let isPremium = false;
     let currentAudio = null;
     let currentSoundId = null;
     let currentSura = null;
     
-    // Звуки природы (рабочие ссылки)
     const sounds = [
         { id: 'waves', name: 'ВОЛНЫ', icon: '≈', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8c8c8c8.mp3?filename=ocean-waves-112656.mp3', free: true },
         { id: 'forest', name: 'ЛЕС', icon: '⌘', url: 'https://cdn.pixabay.com/download/audio/2022/01/18/audio_1c1c1c1c1c.mp3?filename=forest-birds-103441.mp3', free: false },
@@ -486,7 +715,6 @@
         { id: 'fire', name: 'КОСТЕР', icon: '⌂', url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_3d3d3d3d3d.mp3?filename=fire-112661.mp3', free: false }
     ];
     
-    // === ТЕМЫ ===
     function setTheme(theme) {
         if (theme === 'dark') {
             document.body.style.background = '#000000';
@@ -498,7 +726,6 @@
     const savedTheme = localStorage.getItem('quran_theme') || 'dark';
     setTheme(savedTheme);
     
-    // === PREMIUM ===
     function openPremium() {
         document.getElementById('premiumModal').style.display = 'flex';
     }
@@ -508,14 +735,17 @@
     }
     
     function buyPremium() {
-        isPremium = true;
-        localStorage.setItem('quran_premium', 'true');
+        const users = getUsers();
+        if (users[currentUser]) {
+            users[currentUser].premium = true;
+            saveUsers(users);
+            isPremium = true;
+        }
         closePremium();
         renderSounds();
         showNotif('✦ PREMIUM АКТИВИРОВАН! ВСЕ ЗВУКИ РАЗБЛОКИРОВАНЫ ✦');
     }
     
-    // === ЗВУКИ ===
     function playSound(soundId) {
         const sound = sounds.find(s => s.id === soundId);
         if (!sound) return;
@@ -583,7 +813,6 @@
     
     document.getElementById('volumeSlider').addEventListener('input', updateVolume);
     
-    // === СУРЫ ===
     const suraNames = {
         1:"Аль-Фатиха",2:"Аль-Бакара",3:"Аль Имран",4:"Ан-Ниса",5:"Аль-Маида",6:"Аль-Анам",7:"Аль-Араф",8:"Аль-Анфаль",9:"Ат-Тауба",10:"Йунус",
         11:"Худ",12:"Йусуф",13:"Ар-Рад",14:"Ибрахим",15:"Аль-Хиджр",16:"Ан-Нахль",17:"Аль-Исра",18:"Аль-Кахф",19:"Марьям",20:"Та Ха",
@@ -669,8 +898,7 @@
         setTimeout(() => loadSura(parseInt(lastSura)), 500);
     }
     
-    renderSounds();
-    loadSuraList();
+    checkAuth();
     
     window.setTheme = setTheme;
     window.openPremium = openPremium;
@@ -680,6 +908,9 @@
     window.stopSound = stopSound;
     window.loadSura = loadSura;
     window.closeReading = closeReading;
+    window.submitAuth = submitAuth;
+    window.toggleAuthMode = toggleAuthMode;
+    window.logout = logout;
 </script>
 </body>
 </html>
